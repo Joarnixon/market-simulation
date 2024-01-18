@@ -7,6 +7,7 @@ from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
 from desummation import Desummation
 from utils import f_round
+from utils import sellers_test
 
 
 # Define the table headers
@@ -80,6 +81,7 @@ class Market:
         for seller in Market.sellers:
             x_axis[seller] = []
             seller_wealth[seller] = []
+
     @staticmethod
     def start():
         Market.day += 1
@@ -158,7 +160,6 @@ class Market:
                 Market.sellers_count += 1
                 Market.new_sellers.remove(new_seller)
 
-
         x_axis2 = [v for v in range(Market.ticks)]
         fig1, axs1 = plt.subplots(2, 5, figsize=(15, 10))
         for d, product in enumerate(Market.products):
@@ -168,11 +169,11 @@ class Market:
             axs1[1, d].plot(x_axis2, ask[product], color="y")
             axs1[0, d].set_title(Market.product_names[d])
             axs1[1, d].set_title(Market.product_names[d] + " r - Ask/b - Bid")
-        plt.show()
+        #plt.show()
         fig2, axs2 = plt.subplots(4, 5, figsize=(15, 10))
         for b, seller in enumerate(Market.sellers):
             axs2[b//5, b % 5].plot(x_axis2[iteration - seller.days + 1:], seller_wealth[seller])
-        plt.show()
+        #plt.show()
         fig3, axs3 = plt.subplots(1, 5, figsize=(15, 10))
         axs3[0].plot(x_axis2, buyers_money)
         axs3[0].set_title("Wealth")
@@ -184,7 +185,8 @@ class Market:
         axs3[3].set_title("Satisfaction")
         axs3[4].plot(x_axis2, buyers_count)
         axs3[4].set_title("Number of buyers")
-        plt.show()
+        #plt.show()
+        print('Seller score:', sellers_test(ask, bid, Market.buyers_count))
 
 
 class Products:
@@ -304,11 +306,10 @@ class Seller:
             x = np.array(self.memory[product])
             y = np.array(self.memory_incomes[product])
 
-        model = self.brain
-        model.fit(x, y)
+        # Pick a random point with some help of knowing the global market info
         adding_point = self.forcheckX[product][-1]
-        changes = rd.randint(0, 10 + self.days // 10)
-        if changes >= (4 + self.days // 10):
+        changes = rd.randint(0, 10 + self.days // 4)
+        if changes >= (4 + self.days // 4):
             change_value = rd.randint(0, 2)
             change_direction = rd.randint(0, 1)
             if change_direction == 1:
@@ -354,43 +355,24 @@ class Seller:
         else:
             model = LinearRegression()
             model.fit(x, y)
-            max_income = y[-1]
-            max_change = []
-            for k in range(len(adding_point)):
-                original_value = adding_point[k]
-                if k == 2:
-                    if original_value >= int(volatility_index[product]):
-                        raise_value = original_value + int(volatility_index[product])
-                        reduce_value = original_value - int(volatility_index[product])
-                    else:
-                        raise_value = original_value + int(volatility_index[product])
-                        reduce_value = 0
-                else:
-                    raise_value = round(original_value * (1 + rd.randint(1, 2) / 20), 2)
-                    reduce_value = round(original_value * (1 + rd.randint(-2, -1) / 20), 2)
-
-                adding_point[k] = round(raise_value, 2)
-                predicted_income_raise = model.predict([adding_point])[0]
-
-                adding_point[k] = round(reduce_value, 2)
-                predicted_income_reduce = model.predict([adding_point])[0]
-
-                if predicted_income_raise > predicted_income_reduce and predicted_income_raise > max_income:
-                    max_income = round(predicted_income_raise, 2)
-                    max_change = [k, raise_value]
-                elif predicted_income_reduce > predicted_income_raise and predicted_income_reduce > max_income:
-                    max_income = round(predicted_income_reduce, 2)
-                    max_change = [k, reduce_value]
-
-                adding_point[k] = original_value
-
-            if max_change:
-                adding_point[max_change[0]] = max_change[1]
+            adding_point = np.array(adding_point)
+            # can be proven to be a local maximum direction
+            # instead there used to be a greedy search for that maximum with model predictions
+            z_adding = np.copysign(adding_point * rd.randint(1, 4) / 20, np.round(model.coef_, 1))
 
             if iteration == 5:
-                adding_point[2] = Buyer.product_ask[product]//Market.sellers_count
+                z_adding[2] = Buyer.product_ask[product]//Market.sellers_count
+            else:
+                z_adding[2] = np.copysign(volatility_index[product], z_adding[2])
+
             if not self.from_start and self.days == 5:
                 adding_point[2] = int(ask[product][-1] * (1 + rd.uniform(-0.4, 0.4)))
+                z_adding[2] = 0
+
+            adding_point = adding_point + z_adding
+            adding_point[1] = np.clip(adding_point[1], 0, 1)  # quality
+            adding_point[0] = np.clip(adding_point[0], 0, 10000000)  # overprice
+            adding_point[2] = np.clip(adding_point[2], 1, 10000000)  # amount
 
             self.qualities[product] = adding_point[0]
             self.overprices[product] = adding_point[1]
