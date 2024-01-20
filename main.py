@@ -4,7 +4,7 @@ import time
 from random import shuffle
 from scipy.spatial import KDTree
 from sklearn.cluster import KMeans
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression, TheilSenRegressor, ARDRegression
 import matplotlib.pyplot as plt
 from desummation import Desummation
 from utils import f_round
@@ -158,8 +158,8 @@ class Market:
                     ask[product] += [Buyer.product_ask[product] - Buyer.product_bought[product]]
                     if Buyer.product_prices[product] != []:
                         new_y = np.mean(Buyer.product_prices[product])
-                        if 1.5 < new_y / y_axis[product][-1] < 0.5:
-                            y_axis[product] += [new_y / 3 + 2 * y_axis[product][-1] / 3]
+                        if 1.2 < new_y / y_axis[product][-1] < 0.8:
+                            y_axis[product] += [y_axis[product][-1]]
                         else:
                             y_axis[product] += [new_y]
                     else:
@@ -192,11 +192,11 @@ class Market:
             axs1[1, d].plot(x_axis2, ask[product], color="y")
             axs1[0, d].set_title(Market.product_names[d])
             axs1[1, d].set_title(Market.product_names[d] + " r - Ask/b - Bid")
-        #  plt.show()
+        plt.show()
         fig2, axs2 = plt.subplots(4, 5, figsize=(15, 10))
         for b, seller in enumerate(Market.sellers):
             axs2[b//5, b % 5].plot(x_axis2[iteration - seller.days + 1:], seller_wealth[seller])
-        #  plt.show()
+        plt.show()
         fig3, axs3 = plt.subplots(1, 5, figsize=(15, 10))
         axs3[0].plot(x_axis2, buyers_money)
         axs3[0].set_title("Wealth")
@@ -380,7 +380,7 @@ class Seller:
             self.amounts[product] = np.clip(adding_point[2], 3, 10000000)
             np.vstack((x, adding_point))
         else:
-            model = LinearRegression()
+            model = self.brain
             model.fit(x, y)
             adding_point = np.array(adding_point)
             # can be proven to be a local maximum direction
