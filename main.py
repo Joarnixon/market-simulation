@@ -10,6 +10,7 @@ from desummation import Desummation
 from utils import f_round
 from utils import sellers_test
 from utils import assign_numbers
+from utils import buyers_test
 
 
 # Define the table headers
@@ -21,6 +22,7 @@ buyers_starvation = []
 buyers_satisfaction = []
 buyers_count = []
 volatility_index = {}
+salary_distribution = {}
 bid = {}
 ask = {}
 demand = {}
@@ -56,6 +58,7 @@ class Market:
     init_sellers_count = 4
     buyers_count = 80
     manufacturers_count = 1
+    initial_salary = 4
     ticks = 150
     newcomers_sellers = {}
     inspecting_buyer = None
@@ -72,7 +75,7 @@ class Market:
         for j in range(Market.buyers_count):
             loyalty = rd.randint(0, 100)
             plainness = rd.randint(0, 100)
-            salary = np.random.poisson(6)
+            salary = np.random.poisson(Market.initial_salary)
             salary = np.clip(salary, 2, 9)
             needs = round(salary/9, 2)
             needs = np.clip(needs, 0, 1)
@@ -192,11 +195,12 @@ class Market:
             axs1[1, d].plot(x_axis2, ask[product], color="y")
             axs1[0, d].set_title(Market.product_names[d])
             axs1[1, d].set_title(Market.product_names[d] + " r - Ask/b - Bid")
-        plt.show()
+        #plt.show()
         fig2, axs2 = plt.subplots(4, 5, figsize=(15, 10))
-        for b, seller in enumerate(Market.sellers):
-            axs2[b//5, b % 5].plot(x_axis2[iteration - seller.days + 1:], seller_wealth[seller])
-        plt.show()
+        if Market.sellers_count < 20:
+            for b, seller in enumerate(Market.sellers):
+                axs2[b//5, b % 5].plot(x_axis2[iteration - seller.days + 1:], seller_wealth[seller])
+            #plt.show()
         fig3, axs3 = plt.subplots(1, 5, figsize=(15, 10))
         axs3[0].plot(x_axis2, buyers_money)
         axs3[0].set_title("Wealth")
@@ -209,7 +213,14 @@ class Market:
         axs3[4].plot(x_axis2, buyers_count)
         axs3[4].set_title("Number of buyers")
         #  plt.show()
-        print('Seller score:', sellers_test(demand, satisfied, Market.buyers_count))
+        for buyer in Market.buyers:
+            if buyer.generation in salary_distribution.keys():
+                salary_distribution[buyer.generation] += [buyer.salary]
+            else:
+                salary_distribution[buyer.generation] = [buyer.salary]
+        print(sellers_test(demand, satisfied, buyers_count))
+        print(buyers_test(Market.initial_salary, salary_distribution))
+        print(salary_distribution)
 
 
 class Products:
@@ -456,6 +467,7 @@ class Buyer:
         self.ambition = 0
         self.birth_threshold = 35 + rd.randint(-5, 30)
         self.birth = 0
+        self.generation = 0
 
     def become_seller(self):
         #  print("NEW ENTERED")
@@ -766,21 +778,30 @@ class Buyer:
             #  print("BUYER ELIMINATED")
             del self
             return False
-
         self.birth += 1
-
         if self.birth >= self.birth_threshold:
             if self.starvation >= 7000 * (1 + self.needs):
                 if self.wealth >= 3 * self.salary * (1 + self.needs):
-                    self.wealth -= 2 * self.salary * (1 + self.needs)
-                    self.starvation = 4000
-                    self.birth_threshold = 0
-                    new_salary = int(self.salary * (1 + rd.uniform(-0.4, 0.2)))
-                    new_buyer = Buyer(loyalty=self.loyalty, plainness=self.plainness, salary=new_salary, needs=round(np.clip(new_salary/8, 0, 1), 2))
-                    for product in Market.products:
-                        new_buyer.fed_up[product] = 0
-                    Market.buyers.append(new_buyer)
-                    Market.buyers_count += 1
-                    #  print("NEW BUYER")
-lets_start = Market()
-Market.start()
+                    self.birth_new()
+
+    def birth_new(self):
+        self.wealth -= 2 * self.salary * (1 + self.needs)
+        self.starvation = 4000
+        self.birth_threshold = 0
+        new_salary = self.inherit_salary(Market.initial_salary, self.salary)
+        new_buyer = Buyer(loyalty=self.loyalty, plainness=self.plainness, salary=new_salary, needs=round(np.clip(new_salary/8, 0, 1), 2))
+        for product in Market.products:
+            new_buyer.fed_up[product] = 0
+        new_buyer.generation = self.generation + 1
+        Market.buyers.append(new_buyer)
+        Market.buyers_count += 1
+        #  print("NEW BUYER")
+
+    @staticmethod
+    def inherit_salary(initial_salary, previous_salary):
+        return np.random.poisson(initial_salary) + int(round(previous_salary * (rd.uniform(0, 0.5))))
+
+
+if __name__ == "__main__":
+    lets_start = Market()
+    Market.start()
