@@ -4,7 +4,7 @@ import time
 from random import shuffle
 from scipy.spatial import KDTree
 from sklearn.cluster import KMeans
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression, TheilSenRegressor, ARDRegression
 import matplotlib.pyplot as plt
 from desummation import Desummation
 from utils import f_round
@@ -56,7 +56,7 @@ class Market:
     init_sellers_count = 4
     buyers_count = 80
     manufacturers_count = 1
-    ticks = 300
+    ticks = 150
     newcomers_sellers = {}
     inspecting_buyer = None
     inspecting_seller = None
@@ -103,8 +103,7 @@ class Market:
             for seller in Market.sellers:
                 x_axis[seller] += [iteration]
                 if sum(seller_wealth[seller][-50:]) < -50:
-                    print(seller)
-                    print("ELIMINATED")
+                    #  print("ELIMINATED")
                     Market.sellers.remove(seller)
                     Market.sellers_count -= 1
                     if Market.sellers_count == 0:
@@ -131,7 +130,7 @@ class Market:
                                 buyer.best_offers[product]["seller"] = new2
                                 buyer.loyalty = 0
                     del seller
-                    print('deleted')
+                    #  print('deleted')
             for seller in Market.sellers:
                 seller.summarize(iteration)
 
@@ -158,9 +157,13 @@ class Market:
                     satisfied[product] += [Buyer.product_bought[product]]
                     ask[product] += [Buyer.product_ask[product] - Buyer.product_bought[product]]
                     if Buyer.product_prices[product] != []:
-                        y_axis[product] += [np.mean(Buyer.product_prices[product])]
+                        new_y = np.mean(Buyer.product_prices[product])
+                        if 1.2 < new_y / y_axis[product][-1] < 0.8:
+                            y_axis[product] += [y_axis[product][-1]]
+                        else:
+                            y_axis[product] += [new_y]
                     else:
-                        y_axis[product] += [0]
+                        y_axis[product] += [y_axis[product][-1]]
                 Buyer.product_prices[product] = []
                 Buyer.product_bought[product] = 0
                 Buyer.product_ask[product] = 0
@@ -205,7 +208,7 @@ class Market:
         axs3[3].set_title("Satisfaction")
         axs3[4].plot(x_axis2, buyers_count)
         axs3[4].set_title("Number of buyers")
-        plt.show()
+        #  plt.show()
         print('Seller score:', sellers_test(demand, satisfied, Market.buyers_count))
 
 
@@ -312,17 +315,17 @@ class Seller:
             x_grouped = []
             y_grouped = []
             for i in range(kmeans.n_clusters):
-                x_cluster = x[cluster_labels == i]
-                y_cluster = y[cluster_labels == i]
-                mean_x = np.round(np.mean(x_cluster, axis=0), 3)
-                # bug: # TODO correct this here
-                if mean_x[2] == np.nan:
-                    print(mean_x)
-                    print(x_cluster)
-                    print(cluster_labels)
-                mean_x[2] = int(mean_x[2])
-                x_grouped.append(mean_x)
-                y_grouped.append(np.round(np.mean(y_cluster), 3))
+                try:
+                    x_cluster = x[cluster_labels == i]
+                    y_cluster = y[cluster_labels == i]
+                    mean_x = np.round(np.mean(x_cluster, axis=0), 3)
+                    # bug: # TODO correct this here
+                    mean_x[2] = int(mean_x[2])
+                    x_grouped.append(mean_x)
+                    y_grouped.append(np.round(np.mean(y_cluster), 3))
+                except ValueError:
+                    print('helped')
+                    continue
             x = x_grouped
             y = y_grouped
             self.memory[product] = x_grouped
@@ -377,12 +380,12 @@ class Seller:
             self.amounts[product] = np.clip(adding_point[2], 3, 10000000)
             np.vstack((x, adding_point))
         else:
-            model = LinearRegression()
+            model = self.brain
             model.fit(x, y)
             adding_point = np.array(adding_point)
             # can be proven to be a local maximum direction
             # instead there used to be a greedy search for that maximum with model predictions
-            z_adding = np.copysign(adding_point * np.random.randint(1, 4+1, len(adding_point)) / 20, np.round(model.coef_, 1))
+            z_adding = np.copysign(adding_point * rd.randint(1, 2+1) / 20, np.round(model.coef_, 1))
             z_adding = z_adding * assign_numbers(model.coef_)
 
             if iteration == 5:
@@ -455,9 +458,9 @@ class Buyer:
         self.birth = 0
 
     def become_seller(self):
-        print("NEW ENTERED")
+        #  print("NEW ENTERED")
         new_seller = Seller()
-        print(new_seller)
+        #  print(new_seller)
         x_axis[new_seller] = []
         seller_wealth[new_seller] = []
         for product in Market.products:
@@ -466,7 +469,7 @@ class Buyer:
         new_seller.from_start = False
         Market.new_sellers.append(new_seller)
         Market.newcomers_sellers[new_seller] = 10
-        print("added")
+        #  print("added")
 
 
     def get_satisfaction(self, current, product: Products):
@@ -723,7 +726,7 @@ class Buyer:
             require_buyer = requires
             starvation_factor = np.clip((1 + (-self.starvation) / 4000), 1, 3)
             require_buyer[1] = max(C)
-            require_buyer[0] = np.clip(starvation_factor ** 2 * self.salary / 2, 0, self.wealth)
+            require_buyer[0] = np.clip((starvation_factor ** 2 - 1/2) * self.salary / 2, 0, self.wealth)
             require_buyer[2] = 2200 * starvation_factor
             D = np.vstack((A, C, B))
             dsm.basis = [D[:, k] for k in range(len(D[0]))]
@@ -760,7 +763,7 @@ class Buyer:
         if self.starvation < -20000:
             Market.buyers.remove(self)
             Market.buyers_count -= 1
-            print("BUYER ELIMINATED")
+            #  print("BUYER ELIMINATED")
             del self
             return False
 
@@ -772,13 +775,12 @@ class Buyer:
                     self.wealth -= 2 * self.salary * (1 + self.needs)
                     self.starvation = 4000
                     self.birth_threshold = 0
-                    new_salary = int((self.salary) * (1 + rd.uniform(-0.4, 0.2)))
+                    new_salary = int(self.salary * (1 + rd.uniform(-0.4, 0.2)))
                     new_buyer = Buyer(loyalty=self.loyalty, plainness=self.plainness, salary=new_salary, needs=round(np.clip(new_salary/8, 0, 1), 2))
                     for product in Market.products:
                         new_buyer.fed_up[product] = 0
                     Market.buyers.append(new_buyer)
                     Market.buyers_count += 1
-                    print("NEW BUYER")
-
+                    #  print("NEW BUYER")
 lets_start = Market()
 Market.start()
