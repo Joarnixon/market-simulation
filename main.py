@@ -2,18 +2,24 @@ import random as rd
 import numpy as np
 import time
 from random import shuffle
+
+import sklearn.exceptions
 from scipy.spatial import KDTree
 from sklearn.cluster import KMeans
-from sklearn.linear_model import LinearRegression, TheilSenRegressor, ARDRegression
+import warnings
+from sklearn import exceptions
+from sklearn.linear_model import LinearRegression, TheilSenRegressor, ARDRegression, SGDRegressor
 import matplotlib.pyplot as plt
 from desummation import Desummation
 from utils import f_round
 from utils import sellers_test
 from utils import assign_numbers
 from utils import buyers_test
+from utils import log
 
 
 # Define the table headers
+warnings.filterwarnings("ignore")
 x_axis = {}
 y_axis = {}
 time_axis = []
@@ -59,7 +65,7 @@ class Market:
     buyers_count = 80
     manufacturers_count = 1
     initial_salary = 4
-    ticks = 150
+    ticks = 100
     newcomers_sellers = {}
     inspecting_buyer = None
     inspecting_seller = None
@@ -87,6 +93,7 @@ class Market:
             volatility_index[product] = 1
             for buyer in Market.buyers:
                 buyer.fed_up[product] = 0
+                buyer.stf_brains[product] = SGDRegressor(max_iter=20)
         for seller in Market.sellers:
             x_axis[seller] = []
             seller_wealth[seller] = []
@@ -189,22 +196,26 @@ class Market:
         x_axis2 = [v for v in range(Market.ticks)]
         fig1, axs1 = plt.subplots(2, 5, figsize=(15, 10))
         for d, product in enumerate(Market.products):
-            axs1[0, d].plot(x_axis2, y_axis[product])
+            y1 = np.cumsum(np.insert(y_axis[product], 0, 0))
+            y2 = (y1[3:] - y1[:-3]) / 3
+            axs1[0, d].plot(y2)
             axs1[1, d].plot(x_axis2, demand[product], color="r")
             axs1[1, d].plot(x_axis2, bid[product], color="b")
             axs1[1, d].plot(x_axis2, ask[product], color="y")
             axs1[0, d].set_title(Market.product_names[d])
             axs1[1, d].set_title(Market.product_names[d] + " r - Ask/b - Bid")
-        #plt.show()
+        # plt.show()
         fig2, axs2 = plt.subplots(4, 5, figsize=(15, 10))
         if Market.sellers_count < 20:
             for b, seller in enumerate(Market.sellers):
                 axs2[b//5, b % 5].plot(x_axis2[iteration - seller.days + 1:], seller_wealth[seller])
-            #plt.show()
+            # plt.show()
         fig3, axs3 = plt.subplots(1, 5, figsize=(15, 10))
         axs3[0].plot(x_axis2, buyers_money)
         axs3[0].set_title("Wealth")
-        axs3[1].plot(x_axis2, time_axis)
+        tm1 = np.cumsum(np.insert(time_axis, 0, 0))
+        tm2 = (tm1[3:] - tm1[:-3]) / 3
+        axs3[1].plot(tm2)
         axs3[1].set_title("Execution Time")
         axs3[2].plot(x_axis2, buyers_starvation)
         axs3[2].set_title("Starvation")
@@ -218,10 +229,11 @@ class Market:
                 salary_distribution[buyer.generation] += [buyer.salary]
             else:
                 salary_distribution[buyer.generation] = [buyer.salary]
-        print(sellers_test(demand, satisfied, buyers_count))
-        print(buyers_test(Market.initial_salary, salary_distribution))
-        print(salary_distribution)
-
+        st = sellers_test(demand, satisfied, buyers_count)
+        bt = buyers_test(Market.initial_salary, salary_distribution)
+        print('Sellers test:', st)
+        print('Buyers test:', bt[0], '\n', bt[1])
+        log(st, bt[0], bt[1])
 
 class Products:
     def __init__(self, name: str, calories: int, satisfaction_bonus: float):
@@ -453,6 +465,7 @@ class Buyer:
         self.offers = {}
         self.offers_stf = {}
         self.estimated = {}
+        self.stf_brains = {}
         self.estimated_stf = {}
         self.wealth = salary * 3
         self.salary = salary
@@ -483,33 +496,60 @@ class Buyer:
         Market.newcomers_sellers[new_seller] = 10
         #  print("added")
 
-
     def get_satisfaction(self, current, product: Products):
+        """
+        A secret for buyer function that it will try to interpolate for himself.
+        """
         mean = np.round(np.mean(list(self.fed_up.values())), 3)
-        return round((self.salary - current.prices[product]) * (1 + 1.25*(current.qualities[product] - self.needs) * np.sign(self.salary - current.prices[product])) ** 2 * product.satisfaction_bonus + ((mean - np.clip(self.fed_up[product], 0, mean))/5 + 0.2), 3)
+        return round((self.salary - current.prices[product]) * (
+                    1 + 1.25 * (current.qualities[product] - self.needs) * np.sign(
+                self.salary - current.prices[product])) ** 2 * product.satisfaction_bonus + (
+                                 (mean - np.clip(self.fed_up[product], 0, mean)) / 5 + 0.2), 3)
 
-    def estimate(self, product: Products):
+    def estimate_satisfaction(self, product: Products, price: float, quality: float):
+        model = self.stf_brains[product]
+        return model.predict([[price, quality]])[0]
+
+    def train_stf_brains(self, products=None):
+        if products is None:
+            to_train = self.memory.keys()
+        else:
+            to_train = [products]
+
+        for product in to_train:
+            if len(self.memory_stf[product]) > 20:
+                # Saving only last memories of products
+                self.memory[product] = self.memory[product][-20:]  # Price and quality memory.
+                self.memory_stf[product] = self.memory_stf[product][-20:]  # Satisfactions memory.
+
+            x = np.array(self.memory[product])
+            y = np.array(self.memory_stf[product])
+
+            model = self.stf_brains[product]
+            model.fit(x, y)
+
+    def estimate_best_offer(self, product: Products):
+        """
+        Function to estimate what is the best product parameters for this person to get max satisfaction.
+        It is made to preserve diverse and experience-based choices for buyer.
+        """
         if product not in self.memory_stf:
             return False
         if len(self.memory_stf[product]) > 20:
-            self.memory[product] = self.memory[product][-20:]
-            self.memory_stf[product] = self.memory_stf[product][-20:]
+            # Saving only last memories of products
+            self.memory[product] = self.memory[product][-20:]  # Price and quality memory.
+            self.memory_stf[product] = self.memory_stf[product][-20:]  # Satisfactions memory.
 
         x = np.array(self.memory[product])
-        y = np.array(self.memory_stf[product])
-        x_normalized = (x - np.mean(x)) / np.std(x)
-        x_bias = np.c_[np.ones(x.shape[0]), x_normalized]
-        weights = np.random.randn(x_bias.shape[1])
-        learning_rate = 0.01
-        num_epochs = 20
+        model = self.stf_brains[product]
 
-        for epoch in range(num_epochs):
-            for i in range(x_bias.shape[0]):
-                y_pred = np.dot(x_bias[i], weights)
-                gradient = 2 * (y_pred - y[i]) * x_bias[i]
-                weights -= learning_rate * gradient
+        try:
+            estimations = model.predict(x)
+        except sklearn.exceptions.NotFittedError:
+            self.train_stf_brains(products=product)
+            estimations = model.predict(x)
 
-        max_satisfaction_index = np.argmax(np.dot(x_bias, weights))
+        max_satisfaction_index = np.argmax(estimations)
         temporary_seller = Seller()
         temporary_seller.prices[product] = x[max_satisfaction_index][0]
         temporary_seller.qualities[product] = x[max_satisfaction_index][1]
@@ -747,12 +787,12 @@ class Buyer:
             for c, product in enumerate(self.best_offers):
                 if amounts[c] != 0:
                     self.think(product, amounts[c])
-                    self.estimate(product)
+                    self.estimate_best_offer(product)
                     Buyer.product_ask[product] += amounts[c]
         else:
             for product in Market.products:
                 self.think(product, 1)
-                self.estimate(product)
+                self.estimate_best_offer(product)
                 Buyer.product_ask[product] += 1
 
     def start(self):
@@ -764,6 +804,8 @@ class Buyer:
         self.ambition += rd.randint(-1, 1) * 5
         if self.ambition < 0:
             self.ambition = 0
+        if self.live % 3 == 0:
+            self.train_stf_brains()
         Buyer.starvation_index += [self.starvation]
         if len(self.estimated) == Market.products_count:
             if self.wealth >= 25 * (1 + self.needs)**2:
@@ -792,6 +834,7 @@ class Buyer:
         new_buyer = Buyer(loyalty=self.loyalty, plainness=self.plainness, salary=new_salary, needs=round(np.clip(new_salary/8, 0, 1), 2))
         for product in Market.products:
             new_buyer.fed_up[product] = 0
+            new_buyer.stf_brains[product] = SGDRegressor(max_iter=20)
         new_buyer.generation = self.generation + 1
         Market.buyers.append(new_buyer)
         Market.buyers_count += 1

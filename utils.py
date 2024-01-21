@@ -29,7 +29,7 @@ def assign_numbers(coefficients):
     return assigned_weights
 
 
-def sellers_test(market_demands: dict, market_bought: dict, population: list) -> str:
+def sellers_test(market_demands: dict, market_bought: dict, population: list) -> float:
     '''
     Shows the mean unsatisfaction with products for a person taken in average for one day.
     Closer to zero - better.
@@ -41,10 +41,10 @@ def sellers_test(market_demands: dict, market_bought: dict, population: list) ->
         x = (abs(x) + x)/2  # 0 for negative values e.g. taking only positive unsatisfied ask.
         t = len(market_demands[product])
         unsatisfied += sum(x) / t
-    return f'Seller score: {-unsatisfied}'
+    return -unsatisfied
 
 
-def buyers_test(initial_salary: int, distribution: dict) -> str:
+def buyers_test(initial_salary: int, distribution: dict) -> list:
     from main import Buyer
     from numpy.random import poisson
     from numpy import mean, std
@@ -70,5 +70,36 @@ def buyers_test(initial_salary: int, distribution: dict) -> str:
         distance1 += [wasserstein_distance(values, ethalon_distribution)]
         distance2 += [energy_distance(values, ethalon_distribution)]
 
-    return (f'Score wasserstein: {mean(distance1)} ± {std(distance1)} \n'
-            f'Score energy: {mean(distance2)} ± {std(distance2)}. \n')
+    return [f'{mean(distance1)} ± {std(distance1)}', f'{mean(distance2)} ± {std(distance2)}']
+
+
+def get_current_branch():
+    import subprocess
+    command = ['git', 'rev-parse', '--abbrev-ref', 'HEAD']
+    try:
+        result = subprocess.check_output(command).decode('utf-8').strip()
+        return result
+    except subprocess.CalledProcessError:
+        return None
+
+
+def log(metric1, metric2, metric3):
+    import os
+    branch_name = get_current_branch()
+
+    log_folder = "metrics"
+    if not os.path.exists(log_folder):
+        os.makedirs(log_folder)
+
+    file_name = "logs.txt"
+    if branch_name:
+        file_name = f"logs_{branch_name}.txt"
+
+    file_path = os.path.join(log_folder, file_name)
+
+    with open(file_path, 'a') as f:
+        f.write(f"SellersTest: {metric1}\n")
+        f.write(f"BuyerTestWasserstein: {metric2}\n")
+        f.write(f"BuyerTestEnergy: {metric3}\n")
+
+        f.write("-" * 30 + "\n")  # Separator between logs
