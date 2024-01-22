@@ -1,8 +1,9 @@
 import random as rd
 import numpy as np
 import time
+from operator import itemgetter
 from random import shuffle
-
+from typing import Union
 import sklearn.exceptions
 from scipy.spatial import KDTree
 from sklearn.cluster import KMeans
@@ -79,17 +80,17 @@ class Market:
             Market.sellers.append(Seller())
         Market.inspecting_seller = Market.sellers[rd.randint(0, Market.sellers_count-1)]
         for j in range(Market.buyers_count):
-            loyalty = rd.randint(0, 100)
             plainness = rd.randint(0, 100)
             salary = np.random.poisson(Market.initial_salary)
             salary = np.clip(salary, 2, 9)
             needs = round(salary/9, 2)
             needs = np.clip(needs, 0, 1)
-            Market.buyers.append(Buyer(loyalty=loyalty, plainness=plainness, salary=salary, needs=needs))
+            Market.buyers.append(Buyer(plainness=plainness, salary=salary, needs=needs))
         Market.inspecting_buyer = Market.buyers[rd.randint(0, Market.buyers_count-1)]
         for product in Market.products:
             Buyer.product_ask[product] = 0
             Buyer.product_bought[product] = 0
+            Buyer.product_prices[product] = []
             volatility_index[product] = 1
             for buyer in Market.buyers:
                 buyer.fed_up[product] = 0
@@ -97,6 +98,8 @@ class Market:
         for seller in Market.sellers:
             x_axis[seller] = []
             seller_wealth[seller] = []
+            for product in Market.products:
+                seller.local_ask[product] = []
 
     @staticmethod
     def start():
@@ -256,7 +259,7 @@ class Manufacturer:
 class Seller:
     def __init__(self):
         self.from_start = True
-        self.buyers = []
+        self.buyers = 0
         self.forcheckX = {}
         self.forcheckY = {}
         self.memory = {}
@@ -265,6 +268,7 @@ class Seller:
         self.overprices = {}
         self.qualities = {}
         self.providers = {}
+        self.local_ask = {}
         self.days = 0
         self.death = Market.ticks
         self.amounts = {}
@@ -276,7 +280,7 @@ class Seller:
         self.brain = LinearRegression()
 
     def start(self):
-        self.buyers = []
+        self.buyers = 0
         for product in Market.products:
             offers = {}
             if product not in self.qualities:
@@ -432,15 +436,17 @@ class Seller:
             self.amounts[product] = adding_point[2]
             np.vstack((x, adding_point))
 
-    def sell(self, product: Products, buyer, amount: int):
-        if amount > self.amounts[product]:
-            self.income[product] += self.prices[product] * self.amounts[product]
-            self.amounts[product] = 0
-            self.buyers.append(buyer)
+    def sell(self, product: Union[dict, Products], buyer, amount: Union[dict, int]):
+        if type(amount) == int:
+            asks = {product: amount}
         else:
+            asks = dict(zip(product, amount))
+        for product, amount in asks.items():
+            amount = min(amount, self.amounts[product])
             self.income[product] += self.prices[product] * amount
             self.amounts[product] -= amount
-            self.buyers.append(buyer)
+            self.local_ask[product] += [amount]
+        self.buyers = self.buyers + 1
 
     def summarize(self, iterat):
         for product in self.income:
@@ -457,7 +463,7 @@ class Buyer:
     starvation_index = []
     product_bought = {}
 
-    def __init__(self, plainness: int, salary: int, needs: float, loyalty: int):
+    def __init__(self, plainness: int, salary: int, needs: float):
         self.memory = {}
         self.live = 1
         self.memory_stf = {}
@@ -474,7 +480,7 @@ class Buyer:
         self.needs = needs
         self.consumption = np.random.poisson(1 + needs*5)*100
         self.plainness = plainness
-        self.loyalty = loyalty
+        self.loyalty = {}
         self.fed_up = {}
         self.plan = {}
         self.ambition = 0
@@ -496,14 +502,14 @@ class Buyer:
         Market.newcomers_sellers[new_seller] = 10
         #  print("added")
 
-    def get_satisfaction(self, current, product: Products):
+    def get_satisfaction(self, seller: Seller, product: Products, amount: int = 1):
         """
         A secret for buyer function that it will try to interpolate for himself.
         """
         mean = np.round(np.mean(list(self.fed_up.values())), 3)
-        return round((self.salary - current.prices[product]) * (
-                    1 + 1.25 * (current.qualities[product] - self.needs) * np.sign(
-                self.salary - current.prices[product])) ** 2 * product.satisfaction_bonus + (
+        return amount * round((self.salary - seller.prices[product]) * (
+                    1 + 1.25 * (seller.qualities[product] - self.needs) * np.sign(
+                self.salary - seller.prices[product])) ** 2 * product.satisfaction_bonus + (
                                  (mean - np.clip(self.fed_up[product], 0, mean)) / 5 + 0.2), 3)
 
     def estimate_satisfaction(self, product: Products, price: float, quality: float):
@@ -529,6 +535,7 @@ class Buyer:
             model.fit(x, y)
 
     def estimate_best_offer(self, product: Products):
+
         """
         Function to estimate what is the best product parameters for this person to get max satisfaction.
         It is made to preserve diverse and experience-based choices for buyer.
@@ -554,224 +561,189 @@ class Buyer:
         temporary_seller.prices[product] = x[max_satisfaction_index][0]
         temporary_seller.qualities[product] = x[max_satisfaction_index][1]
         self.estimated[product] = x[max_satisfaction_index]
-        self.estimated_stf[product] = self.get_satisfaction(current=temporary_seller, product=product)
+        self.estimated_stf[product] = self.get_satisfaction(seller=temporary_seller, product=product)
 
-    def think(self, product: Products, amount: int):
-        satisfactions = {}
-        available = [seller for seller in Market.sellers if seller.amounts[product] >= amount and seller.prices[product] * amount <= self.wealth]
-        if available == []:
-            available = [seller for seller in Market.sellers if seller.amounts[product] < amount and seller.prices[product] * seller.amounts[product] <= self.wealth]
-            if available == []:
-                return False
-        else:
-            if product not in self.best_offers:
-                current = rd.choice(available)
-                self.buy(seller=current, product=product, amount=amount)
-                Seller.sell(current, product, buyer=self, amount=amount)
-                for produc in current.amounts:
-                    self.offers[produc] = {
-                        current: {"cost": current.prices[produc], "quality": current.qualities[produc]}
-                    }
-                    self.offers_stf[produc] = {
-                        current: self.get_satisfaction(current, produc)
-                    }
-                return True
-
-            if len(Market.newcomers_sellers) != 0 and rd.randint(0, 10) == 10:
-                current = rd.choice(list(Market.newcomers_sellers))
-                for produc in current.amounts:
-                    self.offers[produc].update({
-                        current: {"cost": current.prices[produc], "quality": current.qualities[produc]}
-                    })
-                    self.offers_stf[produc].update({
-                        current: self.get_satisfaction(current, produc)
-                    })
-                if current in available:
-                    satisfactions[current] = self.get_satisfaction(current, product)
-                    if rd.randint(0, 100) >= 30:
-                        threshold = 1 - self.plainness / 1000
-                    else:
-                        threshold = (1 + (0.02 - self.plainness / 5000))
-                    if satisfactions[current] > self.estimated_stf[product] * threshold or len(available) <= 1:
-                        self.buy(seller=current, product=product, amount=amount)
-                        Seller.sell(current, product, buyer=self, amount=amount)
-                        self.loyalty += 10
-                        if self.loyalty > 100:
-                            self.loyalty = 100
-                        return True
-            if self.best_offers[product]["seller"].amounts[product] >= amount and self.best_offers[product]["seller"].prices[product] * amount <= self.wealth:
-                current = self.best_offers[product]["seller"]
-                for produc in current.amounts:
-                    self.offers[produc].update({
-                        current: {"cost": current.prices[produc], "quality": current.qualities[produc]}
-                    })
-                    self.offers_stf[produc].update({
-                        current: self.get_satisfaction(current, produc)
-                    })
-                satisfactions[current] = self.get_satisfaction(current, product)
-                if rd.randint(0, 100) >= 30:
-                    threshold = 1 - self.plainness / 1000
-                else:
-                    threshold = (1 + (0.02 - self.plainness / 5000))
-                if satisfactions[current] > self.estimated_stf[product] * threshold or len(available) <= 1:
-                    self.buy(seller=current, product=product, amount=amount)
-                    Seller.sell(current, product, buyer=self, amount=amount)
-                    self.loyalty += 10
-                    if self.loyalty > 100:
-                        self.loyalty = 100
-
-                elif rd.randint(0, 350) > 2 * self.loyalty + self.plainness:
-                    memory_available = set(self.offers[product].keys()) & set(available)
-                    if len(self.offers[product]) <= 2 or rd.randint(0, 100) < 70 or len(memory_available) == 0:
-                        new_current = current
-                        while new_current == current:
-                            new_current = rd.choice(available)
-                        for produc in new_current.amounts:
-                            self.offers[produc].update({
-                                new_current: {"cost": new_current.prices[produc], "quality": new_current.qualities[produc]}
-                            })
-                            self.offers_stf[produc].update({
-                                new_current: self.get_satisfaction(new_current, produc)
-                            })
-                        satisfactions[new_current] = self.get_satisfaction(new_current, product)
-                        max_stsf = max(satisfactions.values())
-                        max_seller = [seller for seller, stsf in satisfactions.items() if stsf == max_stsf][0]
-                        if max_stsf > self.estimated_stf[product] * (1 - self.plainness / 1000):
-                            if max_seller != current:
-                                self.loyalty = 20
-                            else:
-                                self.loyalty += 5
-                                if self.loyalty > 100:
-                                    self.loyalty = 100
-
-                            self.buy(seller=max_seller, product=product, amount=amount)
-                            Seller.sell(max_seller, product, buyer=self, amount=amount)
-                        else:
-                            self.satisfaction -= 10
-                    else:
-                        tree = KDTree(
-                            [list(self.offers[product][seller].values()) for seller in list(memory_available)])
-                        index = tree.query([self.estimated[product][0], self.estimated[product][1]])[1]
-                        new_current = list(memory_available)[index]
-                        for produc in new_current.amounts:
-                            self.offers[produc].update({
-                                new_current: {"cost": new_current.prices[produc],
-                                                                      "quality": new_current.qualities[produc]}
-                            })
-                            self.offers_stf[produc].update({
-                                new_current: self.get_satisfaction(new_current, produc)
-                            })
-                        satisfactions[new_current] = self.get_satisfaction(new_current, product)
-                        max_stsf = max(satisfactions.values())
-                        max_seller = [seller for seller, stsf in satisfactions.items() if stsf == max_stsf][0]
-                        if max_stsf > self.estimated_stf[product] * (1 - self.plainness / 1000):
-                            if max_seller != current:
-                                self.loyalty = 20
-                            else:
-                                self.loyalty += 5
-                                if self.loyalty > 100:
-                                    self.loyalty = 100
-
-                            self.buy(seller=max_seller, product=product, amount=amount)
-                            Seller.sell(max_seller, product, buyer=self, amount=amount)
-                        else:
-                            self.satisfaction -= 10
-
-                else:
-                    self.buy(seller=current, product=product, amount=amount)
-                    Seller.sell(current, product, buyer=self, amount=amount)
-            elif len(available) > 0:
-                memory_available = set(self.offers[product].keys()) & set(available)
-                if len(self.offers[product]) <= 2 or rd.randint(0, 100) < 70 or len(memory_available) == 0:
-                    new_current = rd.choice(available)
-                    for produc in new_current.amounts:
-                        self.offers[produc].update({new_current: {"cost": new_current.prices[produc],
-                                                                  "quality": new_current.qualities[produc]}})
-                        self.offers_stf[produc].update({
-                            new_current: self.get_satisfaction(new_current, produc)
-                        })
-                    satisfactions[new_current] = self.get_satisfaction(new_current, product)
-                    max_stsf = max(satisfactions.values())
-                    max_seller = [seller for seller, stsf in satisfactions.items() if stsf == max_stsf][0]
-                    if max_stsf > self.estimated_stf[product] * (1 - self.plainness / 1000):
-                        self.loyalty -= 10
-                        if self.loyalty < 0:
-                            self.loyalty = 0
-                        self.buy(seller=max_seller, product=product, amount=amount)
-                        Seller.sell(max_seller, product, buyer=self, amount=amount)
-                    else:
-                        self.satisfaction -= 10
-
-                else:
-                    tree = KDTree([list(self.offers[product][seller].values()) for seller in list(memory_available)])
-                    index = tree.query([self.estimated[product][0], self.estimated[product][1]])[1]
-                    new_current = list(memory_available)[index]
-                    for produc in new_current.amounts:
-                        self.offers[produc].update({new_current: {"cost": new_current.prices[produc],
-                                                                  "quality": new_current.qualities[produc]}})
-                        self.offers_stf[produc].update({
-                            new_current: self.get_satisfaction(new_current, produc)
-                        })
-                    satisfactions[new_current] = self.get_satisfaction(new_current, product)
-                    max_stsf = max(satisfactions.values())
-                    max_seller = [seller for seller, stsf in satisfactions.items() if stsf == max_stsf][0]
-                    if max_stsf > self.estimated_stf[product] * (1 - self.plainness / 1000):
-                        self.loyalty -= 10
-                        if self.loyalty < 0:
-                            self.loyalty = 0
-                        self.buy(seller=max_seller, product=product, amount=amount)
-                        Seller.sell(max_seller, product, buyer=self, amount=amount)
-                    else:
-                        self.satisfaction -= 10
+    def remember_seller(self, seller: Seller):
+        for item in seller.amounts:
+            if item in self.offers:
+                self.offers[item][seller] = {"cost": seller.prices[item], "quality": seller.qualities[item]}
+                self.offers_stf[item][seller] = self.get_satisfaction(seller=seller, product=item)
             else:
-                self.satisfaction -= 10
+                self.offers[item] = {seller: {'cost': seller.prices[item], 'quality': seller.qualities[item]}}
+                self.offers_stf[item] = {seller: self.get_satisfaction(seller=seller, product=item)}
 
-    def buy(self, seller: Seller, product: Products, amount: int):
-        if product not in self.fed_up:
-            self.fed_up[product] = amount
+    def think(self, list_of_products: dict):
+        satisfactions = {}
+        products = list_of_products
+        available = {product: [seller for seller in Market.sellers if seller.amounts[product] > 0] for product in products.keys()}
+        visited = 0
+
+        if len(available) == 0:
+            return False
+        
+        def random_visit(products, initial=True):
+            #  If there someday will be +x new products, then with some change it will trigger buyer to get it.
+            if sum([product not in self.best_offers for product in Market.products]) > rd.randint(0, Market.products_count):
+                if initial:
+                    not_tried = [product for product in Market.products if product not in self.best_offers and product in available]
+                    if len(not_tried) == 0:
+                        return {}
+                    current = rd.choice(sum(itemgetter(*not_tried)(available), start=[]))
+                else:
+                    current = rd.choice(sum(itemgetter(*products.keys())(available), start=[]))
+
+                bought = self.buy(seller=current, product=products.keys(), amount=products.values())
+                self.remember_seller(seller=current)
+                return bought
+        
+        def final_decision(seller: Seller, product: Products, availables, amount: int):
+            if rd.randint(0, 100) >= 30:
+                threshold = 1 - self.plainness / 1000
+            else:
+                threshold = (1 + (0.1 - self.plainness / 1000))
+            #  The mechanic is: when a buyer see a product that exactly satisfies his perfect view on a product - he buys it.
+            if satisfactions[seller][product] > self.estimated_stf[product] * threshold * amount or len(availables) <= 1:
+                bought = self.buy(seller=seller, product=product, amount=amount)
+                self.loyalty[seller] += 10
+                if self.loyalty[seller] > 100:
+                    self.loyalty[seller] = 100
+                return bought
+            else:
+                return {product: 0}
+            
+        def newcomers_visit(products):
+            if len(Market.newcomers_sellers) != 0 and rd.randint(0, 10) == 10:
+                new_available = sum([[seller for seller in Market.newcomers_sellers if seller.amounts[product] > 0] for product in products.keys()], start=[])
+                #  print(new_available)
+                if not new_available:
+                    return {}
+                current = rd.choice(new_available)
+                self.remember_seller(seller=current)
+                bought = {}
+                for product, amount in products:
+                    amounts = min(amount, current.amounts[product])
+                    satisfactions[current] = {product: self.get_satisfaction(current, product, amount=amounts)}
+                    bought.update(final_decision(seller=current, product=product, availables=available[product], amount=amounts))
+                print(bought)
+                return bought
+        
+                
+        def default_visit_best(products):
+            best_available = {product: self.best_offers[product]["seller"] for product in products if self.best_offers[product]["seller"] in available[product]}
+            if len(best_available) == 0:
+                return False
+ 
+            loyalties = [self.loyalty[seller] for seller in list(best_available.values())]
+            current = rd.choices(best_available, loyalties)[0]  # choosing to which to go (visits are limited) based on loyalty
+            self.remember_seller(seller=current)
+            bought = {}
+            for product, amount in products:
+                amounts = min(amount, current.amounts[product])
+                satisfactions[current] = {product: self.get_satisfaction(seller=current, product=product, amount=amounts)}
+                bought.update(final_decision(seller=current, product=product, availables=available[product], amount=amounts))
+            return bought
+        
+        def get_memory_available(products):
+            else_available = []
+            product_available = set(sum(itemgetter(*products.keys())(available), start=[]))
+            else_available_dicts = itemgetter(*products.keys())(self.offers)
+            best_available = set(self.best_offers[product]["seller"] for product in products if self.best_offers[product]["seller"] in available[product])
+
+            for d in else_available_dicts:
+                if list(d.keys()) in product_available:
+                    else_available += list(d.keys())
+
+            print(else_available)
+            memory_available = list(set(else_available) - best_available)
+            return memory_available
+
+        def default_visit_else(products):
+            #  if rd.randint(0, 350) > 2 * self.loyalty + self.plainness:
+            memory_available = get_memory_available(products=products)
+
+            if len(memory_available) == 0:
+                return random_visit(products=products, initial=False)
+            
+            loyalties = [self.loyalty[seller] for seller in memory_available]
+            new_current = rd.choices(memory_available, loyalties)[0]
+            self.remember_seller(seller=new_current)
+            bought = {}
+            for product, amount in products:
+                amounts = min(amount, new_current.amounts[product])
+                satisfactions[new_current] = {product: self.get_satisfaction(new_current, product=product, amount=amounts)}
+                bought.update(final_decision(seller=new_current, product=product, availables=available[product], amount=amounts))
+
+            return bought
+
+        def precise_visit_else(products):
+            memory_available = get_memory_available(products=products)
+            if len(memory_available) == 0:
+                return random_visit(products=products, initial=False)
+            
+            bought = {}
+            for product, amount in products: 
+                tree = KDTree(
+                    [list(self.offers[product][seller].values()) for seller in list(memory_available)])
+                index = tree.query([self.estimated[product][0], self.estimated[product][1]])[1]
+                new_current = list(memory_available)[index]
+                amounts = min(amount, new_current.amounts[product])
+                self.remember_seller(seller=new_current)
+                satisfactions[new_current] = {product: self.get_satisfaction(new_current, product, amount=amounts)}
+                bought.update(final_decision(seller=new_current, product=product, availables=available[product], amount=amounts))
+            return bought
+        random_visit(products=products)
+
+    def buy(self, seller: Seller, product: Union[dict, Products], amount: Union[dict, int]):
+        if type(amount) == int:
+            plan = {product: amount}
         else:
-            self.fed_up[product] += amount
-        cost = seller.prices[product]
-        quality = seller.qualities[product]
-        stsf = self.get_satisfaction(seller, product)
-        if amount > seller.amounts[product]:
-            spend = cost * seller.amounts[product]
-            satisfied = stsf * seller.amounts[product]
-            self.starvation += product.calories * seller.amounts[product]
-            Buyer.product_bought[product] = seller.amounts[product]
-        else:
-            spend = cost * amount
-            satisfied = stsf * amount
-            self.starvation += product.calories * amount
-            Buyer.product_bought[product] += amount
+            plan = dict(zip(product, amount))
+        bought = {}
+        for product, amount in plan.items():
+            amounts = min(seller.amounts[product], amount)
+            
+            if product not in self.fed_up:
+                self.fed_up[product] = amounts
+            else:
+                self.fed_up[product] += amounts
 
-        self.wealth = self.wealth - spend
-        self.satisfaction = self.satisfaction + satisfied
+            cost = seller.prices[product]
+            quality = seller.qualities[product]
+            stsf = self.get_satisfaction(seller, product, amount=amounts)
 
-        if product not in self.memory:
-            self.memory_stf[product] = [stsf]
-            self.memory[product] = [[cost, quality]]
-            Buyer.product_prices[product] = [cost]
+            spend = cost * amounts
+            satisfied = stsf
+            self.starvation += product.calories * amounts
 
-        else:
-            self.memory[product] += [[cost, quality]]
-            self.memory_stf[product] += [stsf]
-            self.fed_up[product] += amount
+            Buyer.product_bought[product] += amounts
             Buyer.product_prices[product] += [cost]
 
-        if product not in self.best_offers:
-            self.best_offers[product] = {"seller": seller, "satisfaction": stsf}
-        else:
-            if stsf >= self.best_offers[product]["satisfaction"]:
+            self.wealth = self.wealth - spend
+            self.satisfaction = self.satisfaction + satisfied
+            seller.sell(product=product, buyer=self, amount=amounts)
+            bought[product] = amounts
+
+            if product not in self.memory:
+                self.memory_stf[product] = [stsf]
+                self.memory[product] = [[cost, quality]]
+            else:
+                self.memory[product] += [[cost, quality]]
+                self.memory_stf[product] += [stsf]
+
+            if product not in self.best_offers:
                 self.best_offers[product] = {"seller": seller, "satisfaction": stsf}
             else:
-                if seller == self.best_offers[product]["seller"]:
-                    if rd.randint(0, 110) > self.loyalty:
-                        self.best_offers[product] = {"seller": seller, "satisfaction": stsf}
-                        self.loyalty -= 20
+                if stsf >= self.best_offers[product]["satisfaction"]:
+                    self.best_offers[product] = {"seller": seller, "satisfaction": stsf}
+                else:
+                    if seller == self.best_offers[product]["seller"]:
+                        if rd.randint(0, 110) > self.loyalty[seller]:
+                            self.best_offers[product] = {"seller": seller, "satisfaction": stsf}
+                            self.loyalty[seller] -= 3  # Always expect for seller to become better
+            return bought
 
     def planning(self):
-        if len(self.best_offers) > 1:
+        if len(self.offers.keys()) > 1:
             A = [np.mean([self.offers[product][seller]["cost"] for seller in self.offers[product].keys()]) for product in self.best_offers]  # ценник
             C = [np.mean([self.offers_stf[product][seller] for seller in self.offers_stf[product].keys()]) for product in self.best_offers] # удовольствие
             B = [product.calories for product in self.best_offers] # калории
@@ -783,15 +755,14 @@ class Buyer:
             D = np.vstack((A, C, B))
             dsm.basis = [D[:, k] for k in range(len(D[0]))]
             dsm.predict(require_buyer, positive=True)
-            amounts = [f_round(number) for number in dsm.weights]
-            for c, product in enumerate(self.best_offers):
-                if amounts[c] != 0:
-                    self.think(product, amounts[c])
-                    self.estimate_best_offer(product)
-                    Buyer.product_ask[product] += amounts[c]
+            amounts = {product: f_round(dsm.weights[i]) for i, product in enumerate(self.best_offers.keys())}
+            self.think(amounts)
+            for product in self.best_offers:
+                self.estimate_best_offer(product)
+                Buyer.product_ask[product] += amounts[product]
         else:
+            self.think({product: 1 for product in Market.products})
             for product in Market.products:
-                self.think(product, 1)
                 self.estimate_best_offer(product)
                 Buyer.product_ask[product] += 1
 
@@ -831,7 +802,7 @@ class Buyer:
         self.starvation = 4000
         self.birth_threshold = 0
         new_salary = self.inherit_salary(Market.initial_salary, self.salary)
-        new_buyer = Buyer(loyalty=self.loyalty, plainness=self.plainness, salary=new_salary, needs=round(np.clip(new_salary/8, 0, 1), 2))
+        new_buyer = Buyer(plainness=self.plainness, salary=new_salary, needs=round(np.clip(new_salary/8, 0, 1), 2))
         for product in Market.products:
             new_buyer.fed_up[product] = 0
             new_buyer.stf_brains[product] = SGDRegressor(max_iter=20)
