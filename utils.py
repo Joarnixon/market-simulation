@@ -8,26 +8,30 @@ def f_round(number):
         return ceil(number)
 
 
-def assign_numbers(coefficients, max_assigning=1):
+def assign_numbers(coefficients, max_assigning=1, default_max=None):
     from numpy import max, abs, zeros
     coefficients = abs(coefficients)
-    assigned_weights = zeros(len(coefficients), dtype=int)
-    max_val = max(coefficients)
+    assigned_weights = zeros(len(coefficients), dtype=float)
+
+    if default_max is None:
+        max_val = max(coefficients)
+    else:
+        max_val = default_max
 
     if max_val < 1e-2:
         return assigned_weights
 
     for i, coefficient in enumerate(coefficients):
-        if coefficient > 2 * max_val / 3:
+        if coefficient > 5 * max_val / 6:
             assigned_weights[i] = 2 * max_assigning
-        elif coefficient > max_val / 3:
+        elif coefficient > 2 * max_val / 3:
             assigned_weights[i] = 3 * max_assigning / 2
-        elif coefficient > max_val / 5:
-            assigned_weights[i] = 4 * max_assigning / 5
-        elif coefficient > max_val / 7:
-            assigned_weights[i] = 5 * max_assigning / 8
-        elif coefficient > max_val / 9:
-            assigned_weights[i] = 6 * max_assigning / 11
+        elif coefficient > max_val / 3:
+            assigned_weights[i] = 2 * max_assigning / 3
+        elif coefficient > max_val / 8:
+            assigned_weights[i] = max_assigning / 3
+        elif coefficient > max_val / 10:
+            assigned_weights[i] = max_assigning / 5
         else:
             assigned_weights[i] = 0
 

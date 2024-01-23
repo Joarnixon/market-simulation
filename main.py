@@ -1,7 +1,7 @@
 import random as rd
 import numpy as np
 import time
-from math import copysign, floor
+from math import floor
 from operator import itemgetter
 from random import shuffle
 from typing import Union
@@ -9,7 +9,6 @@ import sklearn.exceptions
 from scipy.spatial import KDTree
 from sklearn.cluster import KMeans
 import warnings
-from sklearn import exceptions
 from sklearn.linear_model import LinearRegression, TheilSenRegressor, ARDRegression, SGDRegressor
 import matplotlib.pyplot as plt
 from desummation import Desummation
@@ -28,7 +27,6 @@ time_axis = []
 buyers_money = []
 buyers_starvation = []
 buyers_satisfaction = []
-buyers_count = []
 volatility_index = {}
 salary_distribution = {}
 bid = {}
@@ -40,22 +38,24 @@ dsm = Desummation()
 requires = [0, 10, 2000]
 dsm.fit(requires)
 
-# TODO: консервативная модель для продавца (100 записей) и волатильная модель ( последние 20 записей)
-# TODO: bug: вначале количество товара > кол-во покупателей всегда!
-# TODO: продавцы обучаются каждую итерацию заново, необходим другая модель
-# TODO: нужно ли открывать новый бизнес должно решаться с помощью модели, а не подглядывая в общий спрос по рынку
-# TODO: нужно исправлять недостаточное предложение на рынке в следствие чего умирание большого числа людей
-# TODO: асинхронизация на GPU
+# TODO: Seller conservative model (memory 100) and volatile (memory 10)
+# TODO: Requires to find better starting position as I am still adjusting the sellers amount on 5 iteration from start.
+# TODO: Seller may be neural network.
+# TODO: Whether to open a new business for seller should be judged by model that has learned the market situation when others opened.
+# TODO: New info variable to seller - amount of buyers it has.
+# TODO: GPU / async
 # TODO: transfer to C++
 # TODO: bug: возникакает unable to convert NaN to integer error. Can't catch it myself + can't fix this. Mostly for big runs
 # TODO: check how new seller makes his price decision. There must be estimated price minus real one.
 # TODO: add another pattern for 3 visits strategy
+# TODO: uncontollable rise of prise. Handle - restrict buyers amount of money for session es estimated budget.
 
 class Market:
     day = 1
     sellers = []
     new_sellers = []
     new_buyers = []
+    buyers_count_list = []
     buyers = []
     manufacturers = []
     products = []
@@ -70,7 +70,7 @@ class Market:
     buyers_count = 80
     manufacturers_count = 1
     initial_salary = 4
-    ticks = 300
+    ticks = 150
     newcomers_sellers = {}
     inspecting_buyer = None
     inspecting_seller = None
@@ -121,7 +121,7 @@ class Market:
             for seller in Market.sellers:
                 x_axis[seller] += [iteration]
                 if sum(seller_wealth[seller][-50:]) < -50:
-                    print("SELLER ELIMINATED")
+                    #  print("SELLER ELIMINATED")
                     Market.sellers.remove(seller)
                     Market.sellers_count -= 1
                     if Market.sellers_count == 0:
@@ -181,7 +181,7 @@ class Market:
             buyers_money.append(np.mean([buyer.wealth for buyer in Market.buyers]))
             buyers_starvation.append(np.mean(Buyer.starvation_index))
             buyers_satisfaction.append(np.mean([buyer.satisfaction for buyer in Market.buyers]))
-            buyers_count.append(Market.buyers_count)
+            Market.buyers_count_list.append(Market.buyers_count)
             for seller in Market.sellers:
                 seller_wealth[seller] += [seller.wealth]
             Buyer.starvation_index = []
@@ -214,7 +214,7 @@ class Market:
         fig2, axs2 = plt.subplots(5, 6, figsize=(15, 10))
         if Market.sellers_count < 30:
             for b, seller in enumerate(Market.sellers):
-                axs2[b//5, b % 6].plot(x_axis2[iteration - seller.days + 1:], seller_wealth[seller])
+                axs2[b//6, b % 6].plot(x_axis2[iteration - seller.days + 1:], seller_wealth[seller])
             plt.show()
         fig3, axs3 = plt.subplots(1, 5, figsize=(15, 10))
         axs3[0].plot(x_axis2, buyers_money)
@@ -227,7 +227,7 @@ class Market:
         axs3[2].set_title("Starvation")
         axs3[3].plot(x_axis2, buyers_satisfaction)
         axs3[3].set_title("Satisfaction")
-        axs3[4].plot(x_axis2, buyers_count)
+        axs3[4].plot(x_axis2, Market.buyers_count_list)
         axs3[4].set_title("Number of buyers")
         plt.show()
         for buyer in Market.buyers:
@@ -235,7 +235,7 @@ class Market:
                 salary_distribution[buyer.generation] += [buyer.salary]
             else:
                 salary_distribution[buyer.generation] = [buyer.salary]
-        st = sellers_test(demand, satisfied, buyers_count)
+        st = sellers_test(demand, satisfied, Market.buyers_count_list)
         bt = buyers_test(Market.initial_salary, salary_distribution)
         print('Sellers test:', st)
         print('Buyers test:', bt[0], '\n', bt[1])
@@ -290,14 +290,15 @@ class Seller:
                 self.initial_guess[product] = self.get_guess(product)
                 for manufactory in Market.manufacturers:
                     offers[manufactory] = Manufacturer.get_price(manufactory, product, self.initial_guess[product]["quality"])
-                min_price = min(offers.items(), key=lambda x: x[1])
+                min_price = min(offers.items(), key=lambda d: d[1])
                 min_manufactory = min_price[0]
                 min_price = min_price[1]
                 self.overprices[product] = self.get_guess_price(min_price, product)
                 self.prices[product] = min_price + self.overprices[product]
                 self.qualities[product] = self.initial_guess[product]["quality"]
-                self.providers[product] = {"manufactory": min_manufactory, "quality": self.qualities[product]}
                 self.amounts[product] = self.initial_guess[product]["amount"]
+
+                self.providers[product] = {"manufactory": min_manufactory, "quality": self.qualities[product]}
                 self.income[product] = - self.amounts[product] * min_price
                 self.memory[product] = [[self.qualities[product], self.overprices[product], self.amounts[product]]]
                 self.memory_incomes[product] = []
@@ -334,7 +335,7 @@ class Seller:
         if self.from_start:
             return round(price * (rd.uniform(0.2, 0.2 + self.greed)), 2)
         else:
-            return self.prices[product] - price
+            return (self.prices[product] - price) * (rd.uniform(0.7 + self.greed / 5, 1))
 
     def estimate(self, product: Products, iteration):
         if len(self.memory[product]) >= 60:
@@ -577,10 +578,11 @@ class Buyer:
                 self.offers_stf[item] = {seller: self.get_satisfaction(seller=seller, product=item)}
 
     def update_loyalty(self, satisfactions: dict = None, event=None) -> None:
-        if satisfactions is dict:
+        if isinstance(satisfactions, dict):
             for i, seller in enumerate(self.loyalty):
-                weights = assign_numbers(list(satisfactions[seller].values()), max_assigning=10)
-                self.loyalty[seller] = np.clip(self.loyalty[seller] + copysign(weights[i], satisfactions[seller]), 5, 100)
+                if len(satisfactions[seller]) != 0:
+                    weights = assign_numbers(list(satisfactions[seller].values()), max_assigning=5)
+                    self.loyalty[seller] = int(np.clip(self.loyalty[seller] + sum(np.copysign(weights, list(satisfactions[seller].values()))), 5, 100))
 
     def think(self, plans: dict):
         satisfactions = {seller: {} for seller in set(Market.sellers).union(set(Market.new_sellers))}
@@ -618,11 +620,11 @@ class Buyer:
                 else:
                     return {}
 
-            for product in products.keys():
-                amounts = min(products[product], current.amounts[product], floor(self.wealth / current.prices[product]))
-                satisfactions[current].update({product: self.get_satisfaction(seller=current, product=product, amount=amounts)})
-
             bought = self.buy(seller=current, product=products.keys(), amount=products.values())
+
+            for product in products.keys():
+                satisfactions[current].update({product: self.get_satisfaction(seller=current, product=product) - 0.95 * self.estimated_stf[product]})
+
             self.remember_seller(seller=current)
             return bought
 
@@ -633,7 +635,7 @@ class Buyer:
                 threshold = (1 + (0.2 + (120 - self.loyalty[seller]) / 1000 - self.plainness / 1000))
 
             #  The mechanic is: when a buyer see a product that exactly satisfies his perfect view on a product - he buys it.
-            if satisfactions[seller][product] > self.estimated_stf[product] * threshold * amount or len(availables) <= 1:
+            if satisfactions[seller][product] > self.estimated_stf[product] * threshold or len(availables) <= 1:
                 bought = self.buy(seller=seller, product=product, amount=amount)
                 return bought
             else:
@@ -675,7 +677,7 @@ class Buyer:
                     #  Хотя satisfaction назначается всеми только возможными продавцами в самом начале.
                     #  Новый появиться не может во время хода покупателей.
                     #  Соответственно и не ясно откуда это берется. Идей нет.
-                    satisfactions[current].update({product: self.get_satisfaction(seller=current, product=product, amount=amounts)})
+                    satisfactions[current].update({product: self.get_satisfaction(seller=current, product=product) - 0.95 * self.estimated_stf[product]})
                     bought.update(final_decision(seller=current, product=product, availables=available[product], amount=amounts))
                 except KeyError:
                     return {}
@@ -692,7 +694,8 @@ class Buyer:
             bought = {}
             for product, amount in products.items():
                 amounts = min(amount, current.amounts[product], floor(self.wealth / current.prices[product]))
-                satisfactions[current].update({product: self.get_satisfaction(seller=current, product=product, amount=amounts)})
+                satisfactions[current].update(
+                    {product: self.get_satisfaction(seller=current, product=product) - 0.95 * self.estimated_stf[product]})
                 bought.update(final_decision(seller=current, product=product, availables=available[product], amount=amounts))
             return bought
 
@@ -708,7 +711,8 @@ class Buyer:
             bought = {}
             for product, amount in products.items():
                 amounts = min(amount, new_current.amounts[product], floor(self.wealth / new_current.prices[product]))
-                satisfactions[new_current].update({product: self.get_satisfaction(new_current, product=product, amount=amounts)})
+                satisfactions[new_current].update(
+                    {product: self.get_satisfaction(seller=new_current, product=product) - 0.95 * self.estimated_stf[product]})
                 bought.update(final_decision(seller=new_current, product=product, availables=available[product], amount=amounts))
 
             return bought
@@ -720,20 +724,15 @@ class Buyer:
             
             bought = {}
             for product, amount in products.items():
-                try:
-                    tree = KDTree(
-                        [list(self.offers[product][seller].values()) for seller in list(memory_available)])
-                    index = tree.query([self.estimated[product][0], self.estimated[product][1]])[1]
-                    new_current = list(memory_available)[index]
-                    amounts = min(amount, new_current.amounts[product], floor(self.wealth/new_current.prices[product]))
-                    self.remember_seller(seller=new_current)
-                    satisfactions[new_current].update({product: self.get_satisfaction(seller=new_current, product=product, amount=amounts)})
-                    bought.update(final_decision(seller=new_current, product=product, availables=available[product], amount=amounts))
-                except KeyError:
-                    print(self.best_offers)
-                    print(self.memory)
-                    print(self.estimated)
-                    print(self.live)
+                tree = KDTree(
+                    [list(self.offers[product][seller].values()) for seller in list(memory_available)])
+                index = tree.query([self.estimated[product][0], self.estimated[product][1]])[1]
+                new_current = list(memory_available)[index]
+                amounts = min(amount, new_current.amounts[product], floor(self.wealth/new_current.prices[product]))
+                self.remember_seller(seller=new_current)
+                satisfactions[new_current].update(
+                    {product: self.get_satisfaction(seller=new_current, product=product) - 0.95 * self.estimated_stf[product]})
+                bought.update(final_decision(seller=new_current, product=product, availables=available[product], amount=amounts))
             return bought
 
         def visit(products, visit_func):
@@ -747,43 +746,35 @@ class Buyer:
             known_products = sum([product not in self.best_offers for product in Market.products])
             if known_products > rd.randint(0, Market.products_count // 2):
                 if visit(list_of_products, random_visit):
-                    self.update_loyalty(satisfactions)
                     return True
 
             if len(Market.newcomers_sellers) != 0 and rd.randint(0, 10) == 10:
                 if visit(list_of_products, newcomers_visit):
-                    self.update_loyalty(satisfactions)
                     return True
 
             if known_products < Market.products_count:
                 if visit(list_of_products, default_visit_best):
-                    self.update_loyalty(satisfactions)
                     return True
 
             if visited == 3:
-                self.update_loyalty(satisfactions)
                 return True
 
-            if rd.randint(0, 400) > 2 * max(list(self.loyalty.values())) + self.plainness:
+            if rd.randint(0, 400) > 2 * np.mean(list(self.loyalty.values())) + self.plainness:
                 if visit(list_of_products, precise_visit_else):
-                    self.update_loyalty(satisfactions)
                     return True
             else:
                 if visit(list_of_products, default_visit_else):
-                    self.update_loyalty(satisfactions)
                     return True
 
             if visited == 3:
-                self.update_loyalty(satisfactions)
                 return True
 
             if self.starvation < 0:
                 visit(list_of_products, lambda p: random_visit(p, initial=False))
             else:
                 visit(list_of_products, default_visit_else)
-            self.update_loyalty(satisfactions)
-
         outcome = logic()
+        self.update_loyalty(satisfactions)
         return outcome
 
     def buy(self, seller: Seller, product: Union[dict, Products], amount: Union[dict, int]):
