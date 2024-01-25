@@ -24,9 +24,6 @@ warnings.filterwarnings("ignore")
 x_axis = {}
 y_axis = {}
 time_axis = []
-buyers_money = []
-buyers_starvation = []
-buyers_satisfaction = []
 volatility_index = {}
 salary_distribution = {}
 bid = {}
@@ -49,13 +46,18 @@ dsm.fit(requires)
 # TODO: check how new seller makes his price decision. There must be estimated price minus real one.
 # TODO: add another pattern for 3 visits strategy
 # TODO: uncontollable rise of prise. Handle - restrict buyers amount of money for session es estimated budget.
+# TODO: complex bug: At the same time in almost every run there is high drop of execution time and massive hunger.
 
+# noinspection PyShadowingNames
 class Market:
     day = 1
     sellers = []
     new_sellers = []
     new_buyers = []
     buyers_count_list = []
+    buyers_money = []
+    buyers_starvation = []
+    buyers_satisfaction = []
     buyers = []
     manufacturers = []
     products = []
@@ -96,6 +98,11 @@ class Market:
             Buyer.product_bought[product] = 0
             Buyer.product_prices[product] = []
             volatility_index[product] = 1
+            y_axis[product] = []
+            bid[product] = []
+            demand[product] = []
+            satisfied[product] = []
+            ask[product] = []
             for buyer in Market.buyers:
                 buyer.fed_up[product] = 0
                 buyer.stf_brains[product] = SGDRegressor(max_iter=20)
@@ -107,97 +114,124 @@ class Market:
 
     @staticmethod
     def start():
-        Market.day += 1
-        for iteration in range(Market.ticks):
-            start_time = time.time()
-            print(iteration, 'Buyers:', Market.buyers_count, 'Sellers:', Market.sellers_count)
-            shuffle(Market.buyers)
-            shuffle(Market.sellers)
-            for seller in Market.sellers:
-                seller.start()
-            for buyer in Market.buyers:
-                buyer.start()
+        for k in range(Market.ticks):
+            Market._iteration(k, verbose=0)
+        Market.visualise(verbose=1)
 
+    @staticmethod
+    def _iteration(n: int, verbose: int = 0):
+        start_time = time.time()
+        Market.day += 1
+        print(n, 'Buyers:', Market.buyers_count, 'Sellers:', Market.sellers_count)
+        shuffle(Market.buyers)
+        shuffle(Market.sellers)
+        for seller in Market.sellers:
+            seller_wealth[seller] += [seller.wealth]
+            x_axis[seller] += [n]
+            seller.start()
+        for buyer in Market.buyers:
+            buyer.start()
+        for seller in Market.sellers:
+            seller.summarize(n)
+
+        def function_sequence():
+            statistics_gather()
+            check_sellers_bankrupt(verbose=verbose)
+            handle_new_sellers(verbose=verbose)
+            handle_new_buyers(verbose=verbose)
+
+        def check_sellers_bankrupt(verbose: int = 0):
             for seller in Market.sellers:
-                x_axis[seller] += [iteration]
                 if sum(seller_wealth[seller][-50:]) < -50:
-                    #  print("SELLER ELIMINATED")
                     Market.sellers.remove(seller)
                     Market.sellers_count -= 1
+                    clean_up_seller_info(seller)
+
                     if Market.sellers_count == 0:
-                        #  print('END OF SIMULATION')
+                        print('No sellers left')
                         del seller
                         return False
-                    for buyer in Market.buyers:
-                        del buyer.loyalty[seller]
-                        for product in Market.products:
-                            if seller in buyer.offers[product]:
-                                del buyer.offers[product][seller]
-                                del buyer.offers_stf[product][seller]
-
-                        for product in list(buyer.best_offers):
-                            if buyer.best_offers[product]["seller"] == seller:
-                                del buyer.best_offers[product]
                     del seller
-                    #  print('deleted')
-            for seller in Market.sellers:
-                seller.summarize(iteration)
 
-            new_sellers_to_delete = []
+                    if verbose > 0:
+                        print('Seller eliminated')
 
-            for new_seller in Market.newcomers_sellers:
-                Market.newcomers_sellers[new_seller] -= 1
-                if Market.newcomers_sellers[new_seller] == 0:
-                    new_sellers_to_delete.append(new_seller)
+        def clean_up_seller_info(seller: Seller):
+            for buyer in Market.buyers:
+                del buyer.loyalty[seller]
+                for product in Market.products:
+                    if seller in buyer.offers[product]:
+                        del buyer.offers[product][seller]
+                        del buyer.offers_stf[product][seller]
 
-            for seller in new_sellers_to_delete:
-                del Market.newcomers_sellers[seller]
+                for product in list(buyer.best_offers):
+                    if buyer.best_offers[product]["seller"] == seller:
+                        del buyer.best_offers[product]
 
-            for product in Market.products:
-                if product not in y_axis:
-                    y_axis[product] = [np.mean(Buyer.product_prices[product])]
-                    bid[product] = [sum([seller.amounts[product] for seller in Market.sellers])]
-                    demand[product] = [Buyer.product_ask[product]]
-                    satisfied[product] = [Buyer.product_bought[product]]
-                    ask[product] = [Buyer.product_ask[product] - Buyer.product_bought[product]]
-                else:
-                    bid[product] += [sum([seller.amounts[product] for seller in Market.sellers])]
-                    demand[product] += [Buyer.product_ask[product]]
-                    satisfied[product] += [Buyer.product_bought[product]]
-                    ask[product] += [Buyer.product_ask[product] - Buyer.product_bought[product]]
-                    if Buyer.product_prices[product] != []:
-                        new_y = np.mean(Buyer.product_prices[product])
-                        if 1.2 < new_y / y_axis[product][-1] < 0.8:
-                            y_axis[product] += [y_axis[product][-1]]
-                        else:
-                            y_axis[product] += [new_y]
-                    else:
-                        y_axis[product] += [y_axis[product][-1]]
-                Buyer.product_prices[product] = []
-                Buyer.product_bought[product] = 0
-                Buyer.product_ask[product] = 0
-                volatility_index[product] = np.clip(abs((bid[product][-1]-ask[product][-1]))//(Market.buyers_count//5), np.clip(Market.buyers_count//(10*Market.sellers_count), 1, 100), 1000)
-
-            buyers_money.append(np.mean([buyer.wealth for buyer in Market.buyers]))
-            buyers_starvation.append(np.mean(Buyer.starvation_index))
-            buyers_satisfaction.append(np.mean([buyer.satisfaction for buyer in Market.buyers]))
-            Market.buyers_count_list.append(Market.buyers_count)
-            for seller in Market.sellers:
-                seller_wealth[seller] += [seller.wealth]
-            Buyer.starvation_index = []
-            time_axis.append(time.time()-start_time)
-
-            for new_seller in Market.new_sellers:
+        def handle_new_sellers(verbose: int = 0):
+            for new_seller in list(Market.new_sellers):
                 Market.sellers.append(new_seller)
                 Market.newcomers_sellers[new_seller] = 10
                 Market.sellers_count += 1
                 Market.new_sellers.remove(new_seller)
                 for product in Market.products:
                     new_seller.local_ask[product] = []
-            for new_buyer in Market.new_buyers:
+                if verbose > 0:
+                    print('New seller')
+
+            for new_seller in list(Market.newcomers_sellers):
+                Market.newcomers_sellers[new_seller] -= 1
+                if Market.newcomers_sellers[new_seller] == 0:
+                    del Market.newcomers_sellers[new_seller]
+
+        def handle_new_buyers(verbose: int = 0):
+            for new_buyer in list(Market.new_buyers):
                 Market.buyers.append(new_buyer)
                 Market.buyers_count += 1
                 Market.new_buyers.remove(new_buyer)
+                if verbose > 0:
+                    print('New buyer')
+
+        def statistics_gather():
+            for product in Market.products:
+                bid[product] += [sum([seller.amounts[product] for seller in Market.sellers])]
+                demand[product] += [Buyer.product_ask[product]]
+                satisfied[product] += [Buyer.product_bought[product]]
+                ask[product] += [Buyer.product_ask[product] - Buyer.product_bought[product]]
+                if Buyer.product_prices[product]:
+                    y_axis[product] += [np.mean(Buyer.product_prices[product])]
+                else:
+                    y_axis[product] += [y_axis[product][-1]]
+                Buyer.product_prices[product] = []
+                Buyer.product_bought[product] = 0
+                Buyer.product_ask[product] = 0
+                volatility_index[product] = np.clip(abs((bid[product][-1]-ask[product][-1]))//(Market.buyers_count//5), np.clip(Market.buyers_count//(10*Market.sellers_count), 1, 100), 1000)
+
+            Market.buyers_money += [np.mean([buyer.wealth for buyer in Market.buyers])]
+            Market.buyers_satisfaction += [np.mean([buyer.satisfaction for buyer in Market.buyers])]
+            Market.buyers_count_list += [Market.buyers_count]
+            Market.buyers_starvation += [np.mean(Buyer.starvation_index)]
+            Buyer.starvation_index = []
+            time_axis.append(time.time()-start_time)
+
+        function_sequence()
+
+    @staticmethod
+    def visualise(verbose: int = 0):
+        for buyer in Market.buyers:
+            if buyer.generation in salary_distribution.keys():
+                salary_distribution[buyer.generation] += [buyer.salary]
+            else:
+                salary_distribution[buyer.generation] = [buyer.salary]
+
+        st = sellers_test(demand, satisfied, Market.buyers_count_list)
+        bt = buyers_test(Market.initial_salary, salary_distribution)
+        print('Sellers test:', st)
+        print('Buyers test:', bt[0], '\n', bt[1])
+        log(st, bt[0], bt[1])
+
+        if verbose <= 0:
+            return True
 
         x_axis2 = [v for v in range(Market.ticks)]
         fig1, axs1 = plt.subplots(2, 5, figsize=(15, 10))
@@ -214,32 +248,23 @@ class Market:
         fig2, axs2 = plt.subplots(5, 6, figsize=(15, 10))
         if Market.sellers_count < 30:
             for b, seller in enumerate(Market.sellers):
-                axs2[b//6, b % 6].plot(x_axis2[iteration - seller.days + 1:], seller_wealth[seller])
+                axs2[b//6, b % 6].plot(x_axis2[Market.ticks - seller.days:], seller_wealth[seller])
             plt.show()
         fig3, axs3 = plt.subplots(1, 5, figsize=(15, 10))
-        axs3[0].plot(x_axis2, buyers_money)
+        axs3[0].plot(Market.buyers_money)
         axs3[0].set_title("Wealth")
         tm1 = np.cumsum(np.insert(time_axis, 0, 0))
         tm2 = (tm1[3:] - tm1[:-3]) / 3
         axs3[1].plot(tm2)
         axs3[1].set_title("Execution Time")
-        axs3[2].plot(x_axis2, buyers_starvation)
+        axs3[2].plot(Market.buyers_starvation)
         axs3[2].set_title("Starvation")
-        axs3[3].plot(x_axis2, buyers_satisfaction)
+        axs3[3].plot(Market.buyers_satisfaction)
         axs3[3].set_title("Satisfaction")
         axs3[4].plot(x_axis2, Market.buyers_count_list)
         axs3[4].set_title("Number of buyers")
         plt.show()
-        for buyer in Market.buyers:
-            if buyer.generation in salary_distribution.keys():
-                salary_distribution[buyer.generation] += [buyer.salary]
-            else:
-                salary_distribution[buyer.generation] = [buyer.salary]
-        st = sellers_test(demand, satisfied, Market.buyers_count_list)
-        bt = buyers_test(Market.initial_salary, salary_distribution)
-        print('Sellers test:', st)
-        print('Buyers test:', bt[0], '\n', bt[1])
-        log(st, bt[0], bt[1])
+
 
 class Products:
     def __init__(self, name: str, calories: int, satisfaction_bonus: float):
@@ -407,7 +432,7 @@ class Seller:
             #     adding_point[2] = int(ask[product][-1] * (0.3 + rd.uniform(-0.2, 0.2)))
 
             self.qualities[product] = float(np.clip(adding_point[0], 0.05, 1))  # quality)
-            self.overprices[product] =  float(np.clip(adding_point[1], 0, 10000000))  # overprice
+            self.overprices[product] = float(np.clip(adding_point[1], 0, 10000000))  # overprice
             self.amounts[product] = int(np.clip(adding_point[2], 3, 10000000))
             np.vstack((x, adding_point))
         else:
