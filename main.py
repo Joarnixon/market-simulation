@@ -72,10 +72,12 @@ class Market:
     buyers_count = 80
     manufacturers_count = 1
     initial_salary = 4
-    ticks = 150
+    ticks = 100
     newcomers_sellers = {}
     inspecting_buyer = None
     inspecting_seller = None
+    inspecting_time = {'random': [], 'best': [], 'else': [], 'hunger_else': []}
+    average_inspecting_time = {'random': [], 'best': [], 'else': [], 'hunger_else': []}
 
     def __init__(self):
         for k in range(Market.products_count):
@@ -129,8 +131,16 @@ class Market:
             seller_wealth[seller] += [seller.wealth]
             x_axis[seller] += [n]
             seller.start()
+
         for buyer in Market.buyers:
             buyer.start()
+        Market.average_inspecting_time['random'] += [np.mean(Market.inspecting_time['random'])]
+        Market.average_inspecting_time['best'] += [np.mean(Market.inspecting_time['best'])]
+        Market.average_inspecting_time['else'] += [np.mean(Market.inspecting_time['else'])]
+        Market.average_inspecting_time['hunger_else'] += [np.mean(Market.inspecting_time['hunger_else'])]
+
+        Market.inspecting_time = {'random': [], 'best': [], 'else': [], 'hunger_else': []}
+
         for seller in Market.sellers:
             seller.summarize(n)
 
@@ -263,6 +273,35 @@ class Market:
         axs3[3].set_title("Satisfaction")
         axs3[4].plot(x_axis2, Market.buyers_count_list)
         axs3[4].set_title("Number of buyers")
+        plt.show()
+
+        fig4, axs4 = plt.subplots(1, 5, figsize=(15, 10))
+        axs4[0].plot(tm2)
+        axs4[0].set_title("Execution Time")
+
+        tm3 = np.cumsum(np.insert(Market.average_inspecting_time['random'], 0, 0))
+        tm4 = (tm3[3:] - tm3[:-3]) / 3
+        axs4[1].plot(tm4)
+        axs4[1].set_title('Random time')
+
+        tm5 = np.cumsum(np.insert(Market.average_inspecting_time['best'], 0, 0))
+        tm6 = (tm5[3:] - tm5[:-3]) / 3
+
+        axs4[2].plot(tm6)
+        axs4[2].set_title('Best time')
+
+        tm7 = np.cumsum(np.insert(Market.average_inspecting_time['else'], 0, 0))
+        tm8 = (tm7[3:] - tm7[:-3]) / 3
+
+        axs4[3].plot(tm8)
+        axs4[3].set_title('Else time')
+
+        tm9 = np.cumsum(np.insert(Market.average_inspecting_time['hunger_else'], 0, 0))
+        tm10 = (tm9[3:] - tm9[:-3]) / 3
+
+        axs4[4].plot(tm10)
+        axs4[4].set_title('Hunger_else time')
+
         plt.show()
 
 
@@ -536,11 +575,13 @@ class Buyer:
         """
         A secret for buyer function that it will try to interpolate for himself.
         """
-        mean = np.round(np.mean(list(self.fed_up.values())), 3)
         return amount * round((self.salary - seller.prices[product]) * (
                     1 + 1.25 * (seller.qualities[product] - self.needs) * np.sign(
-                self.salary - seller.prices[product])) ** 2 * product.satisfaction_bonus + (
-                                 (mean - np.clip(self.fed_up[product], 0, mean)) / 5 + 0.2), 3)
+                self.salary - seller.prices[product])) ** 2 * product.satisfaction_bonus, 3)
+
+    def get_product_bonus(self, product):
+        mean = np.round(np.mean(list(self.fed_up.values())), 3)
+        return mean - np.clip(self.fed_up[product], 0, mean) / 5 + 0.2
 
     def estimate_satisfaction(self, product: Products, price: float, quality: float):
         model = self.stf_brains[product]
@@ -768,36 +809,45 @@ class Buyer:
 
         def logic():
             # If someday there will be some new product, then with some chance it will trigger buyer to get it.
+            st_tm1 = time.time()
             known_products = sum([product not in self.best_offers for product in Market.products])
             if known_products > rd.randint(0, Market.products_count // 2):
                 if visit(list_of_products, random_visit):
                     return True
+            Market.inspecting_time['random'] += [time.time() - st_tm1]
 
             if len(Market.newcomers_sellers) != 0 and rd.randint(0, 10) == 10:
                 if visit(list_of_products, newcomers_visit):
                     return True
 
+            st_tm2 = time.time()
             if known_products < Market.products_count:
                 if visit(list_of_products, default_visit_best):
                     return True
+            Market.inspecting_time['best'] += [time.time() - st_tm2]
 
             if visited == 3:
                 return True
 
+            st_tm3 = time.time()
             if rd.randint(0, 400) > 2 * np.mean(list(self.loyalty.values())) + self.plainness:
                 if visit(list_of_products, precise_visit_else):
                     return True
             else:
                 if visit(list_of_products, default_visit_else):
                     return True
+            Market.inspecting_time['else'] += [time.time() - st_tm3]
 
             if visited == 3:
                 return True
 
+            st_tm4 = time.time()
             if self.starvation < 0:
                 visit(list_of_products, lambda p: random_visit(p, initial=False))
             else:
                 visit(list_of_products, default_visit_else)
+            Market.inspecting_time['hunger_else'] += [time.time() - st_tm4]
+
         outcome = logic()
         self.update_loyalty(satisfactions)
         return outcome
