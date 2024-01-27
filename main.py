@@ -17,6 +17,7 @@ from utils import sellers_test
 from utils import assign_numbers
 from utils import buyers_test
 from utils import log
+from seller_nn_model import SellerNN, train_epochs
 
 
 # Define the table headers
@@ -78,10 +79,16 @@ class Market:
     inspecting_seller = None
     inspecting_time = {'random': [], 'best': [], 'else': [], 'hunger_else': []}
     average_inspecting_time = {'random': [], 'best': [], 'else': [], 'hunger_else': []}
+    ticks = 150
+    newcomers_sellers = {}
+    inspecting_buyer = None
+    inspecting_seller = None
+    inspecting_product = None
 
     def __init__(self):
         for k in range(Market.products_count):
             Market.products.append(Products(name=Market.product_names[k], calories=Market.product_calories[k], satisfaction_bonus=Market.product_bonuses[k]))
+        Market.inspecting_product = Market.products[rd.randint(0, Market.products_count-1)]
         for n in range(Market.manufacturers_count):
             Market.manufacturers.append(Manufacturer(Market.manufacturer_names[n]))
         for i in range(Market.sellers_count):
@@ -113,6 +120,8 @@ class Market:
             seller_wealth[seller] = []
             for product in Market.products:
                 seller.local_ask[product] = []
+                seller.brains['nn'][product] = SellerNN()
+                seller.scores[product] = []
 
     @staticmethod
     def start():
@@ -344,7 +353,9 @@ class Seller:
         self.income = {}
         self.initial_guess = {}
         self.guess = {}
-        self.brain = LinearRegression()
+        self.scores = {}
+        self.brains = {'regression': LinearRegression(), 'nn': {}}
+        self.brain = self.brains['regression'] #  switches brains
 
     def start(self):
         self.buyers = 0
@@ -425,6 +436,9 @@ class Seller:
             y = y_grouped
             self.memory[product] = x_grouped
             self.memory_incomes[product] = y_grouped
+            score = train_epochs(x, y, self.brains['nn'][product], 50)
+            self.scores[product] += [score]
+
         else:
             x = np.array(self.memory[product])
             y = np.array(self.memory_incomes[product])
@@ -475,14 +489,20 @@ class Seller:
             self.amounts[product] = int(np.clip(adding_point[2], 3, 10000000))
             np.vstack((x, adding_point))
         else:
-            model = self.brain
-            model.fit(x, y)
+            train_epochs(x[-10:], y[-10:], self.brains['nn'][product], 5)
             adding_point = np.array(adding_point)
-            # can be proven to be a local maximum direction
-            # instead there used to be a greedy search for that maximum with model predictions
-            z_adding = np.copysign(adding_point * rd.randint(1, 2+1) / 20, np.round(model.coef_, 1))
-            z_adding = z_adding * assign_numbers(model.coef_)
 
+            if self.days > 60:
+                coefficient = -np.array(self.brains['nn'][product].get_grad(x[-1]))
+                z_adding = np.copysign(adding_point * rd.randint(1, 3+1) / 20, np.round(coefficient, 1))
+                z_adding = z_adding * assign_numbers(coefficient)
+            else:
+                model = self.brain
+                model.fit(x, y)
+                # can be proven to be a local maximum direction
+                # instead there used to be a greedy search for that maximum with model predictions
+                z_adding = np.copysign(adding_point * rd.randint(1, 3 + 1) / 20, np.round(model.coef_, 1))
+                z_adding = z_adding * assign_numbers(model.coef_)
             if iteration == 5:
                 adding_point[2] = Buyer.product_ask[product]//Market.sellers_count
                 z_adding[2] = 0
@@ -494,11 +514,12 @@ class Seller:
             #     z_adding[2] = 0
 
             z_adding[2] = round(z_adding[2])
+            z_adding[0] = round(z_adding[0], 3)
+            z_adding[1] = round(z_adding[1], 3)
             adding_point = adding_point + z_adding
             adding_point[0] = np.clip(adding_point[0], 0.05, 1)  # quality
             adding_point[1] = np.clip(adding_point[1], 0, 10000000)  # overprice
             adding_point[2] = np.clip(adding_point[2], 3, 10000000)  # amount
-
             self.qualities[product] = float(adding_point[0])
             self.overprices[product] = float(adding_point[1])
             self.amounts[product] = int(adding_point[2])
@@ -520,10 +541,13 @@ class Seller:
 
     def summarize(self, iterat):
         for product in self.income:
+            if self.days == 80 or self.days == 140:
+                print(self.scores[product])
             self.wealth = self.wealth + self.income[product]
             self.memory_incomes[product] += [self.income[product]]
             self.forcheckY[product] += [self.income[product]]
             self.estimate(product, iterat)
+
         self.days += 1
 
 
@@ -559,14 +583,15 @@ class Buyer:
         self.generation = 0
 
     def become_seller(self):
-        #  print("NEW ENTERED")
         new_seller = Seller()
-        #  print(new_seller)
+
         x_axis[new_seller] = []
         seller_wealth[new_seller] = []
         for product in Market.products:
             new_seller.guess[product] = {"quality": self.estimated[product][1], "amount": int(ask[product][-1] * 0.2)}
             new_seller.prices[product] = self.estimated[product][0]
+            new_seller.brains['nn'][product] = SellerNN()
+            new_seller.scores[product] = []
         new_seller.from_start = False
         Market.new_sellers.append(new_seller)
         #  print("added")
@@ -963,7 +988,6 @@ class Buyer:
             if self.starvation >= 7000 * (1 + self.needs):
                 if self.wealth >= 3 * self.salary * (1 + self.needs):
                     self.birth_new()
-
     def birth_new(self):
         self.wealth -= 2 * self.salary * (1 + self.needs)
         self.starvation = 4000
