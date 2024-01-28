@@ -73,16 +73,12 @@ class Market:
     buyers_count = 80
     manufacturers_count = 1
     initial_salary = 4
-    ticks = 100
+    ticks = 300
     newcomers_sellers = {}
     inspecting_buyer = None
     inspecting_seller = None
     inspecting_time = {'random': [], 'best': [], 'else': [], 'hunger_else': []}
     average_inspecting_time = {'random': [], 'best': [], 'else': [], 'hunger_else': []}
-    ticks = 150
-    newcomers_sellers = {}
-    inspecting_buyer = None
-    inspecting_seller = None
     inspecting_product = None
 
     def __init__(self):
@@ -349,7 +345,7 @@ class Seller:
         self.death = Market.ticks
         self.amounts = {}
         self.greed = rd.uniform(0.2, 0.5)
-        self.wealth = 100
+        self.wealth = 200
         self.income = {}
         self.initial_guess = {}
         self.guess = {}
@@ -416,6 +412,8 @@ class Seller:
         if len(self.memory[product]) >= 60:
             x = np.array(self.memory[product])
             y = np.array(self.memory_incomes[product])
+            score = train_epochs(x, y, self.brains['nn'][product], 50)
+            self.scores[product] += [score]
             kmeans = KMeans(n_clusters=20, n_init="auto")  # set the number of clusters to group
             cluster_labels = kmeans.fit_predict(x)
             x_grouped = []
@@ -436,8 +434,6 @@ class Seller:
             y = y_grouped
             self.memory[product] = x_grouped
             self.memory_incomes[product] = y_grouped
-            score = train_epochs(x, y, self.brains['nn'][product], 50)
-            self.scores[product] += [score]
 
         else:
             x = np.array(self.memory[product])
@@ -489,11 +485,12 @@ class Seller:
             self.amounts[product] = int(np.clip(adding_point[2], 3, 10000000))
             np.vstack((x, adding_point))
         else:
-            train_epochs(x[-10:], y[-10:], self.brains['nn'][product], 5)
+            if len(y) > 1:
+                train_epochs(x[-10:], y[-10:], self.brains['nn'][product], 3)
             adding_point = np.array(adding_point)
 
             if self.days > 60:
-                coefficient = -np.array(self.brains['nn'][product].get_grad(x[-1]))
+                coefficient = -np.array(self.brains['nn'][product].get_grad(x[-2:]))
                 z_adding = np.copysign(adding_point * rd.randint(1, 3+1) / 20, np.round(coefficient, 1))
                 z_adding = z_adding * assign_numbers(coefficient)
             else:
