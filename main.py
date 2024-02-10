@@ -32,7 +32,7 @@ demand = {}
 satisfied = {}
 seller_wealth = {}
 dsm = Desummation()
-requires = [0, 10, 2000]
+requires = [0, 10, 2000, 2]
 dsm.fit(requires)
 
 # TODO: Seller conservative model (memory 100) and volatile (memory 10)
@@ -110,7 +110,11 @@ class Market:
         for seller in Market.sellers:
             x_axis[seller] = []
             seller_wealth[seller] = []
-
+            for product in Market.products:
+                seller.local_ask[product] = []
+            for buyer in Market.buyers:
+                buyer.loyalty[seller] = 5
+                
     @staticmethod
     def start():
         for k in range(Market.ticks):
@@ -137,10 +141,8 @@ class Market:
         Market.average_inspecting_time['hunger_else'] += [np.mean(Market.inspecting_time['hunger_else'])]
 
         Market.inspecting_time = {'random': [], 'best': [], 'else': [], 'hunger_else': []}
-
         for seller in Market.sellers:
             seller.summarize(n)
-
         def function_sequence():
             statistics_gather()
             check_sellers_bankrupt(verbose=verbose)
@@ -167,6 +169,8 @@ class Market:
             for buyer in Market.buyers:
                 del buyer.loyalty[seller]
                 for product in Market.products:
+                    if product not in buyer.offers:
+                        continue
                     if seller in buyer.offers[product]:
                         del buyer.offers[product][seller]
                         del buyer.offers_stf[product][seller]
@@ -183,6 +187,8 @@ class Market:
                 Market.new_sellers.remove(new_seller)
                 for product in Market.products:
                     new_seller.local_ask[product] = 0
+                for buyer in Market.buyers:
+                    buyer.loyalty[new_seller] = 5
                 if verbose > 0:
                     print('New seller')
 
@@ -196,6 +202,8 @@ class Market:
                 Market.buyers.append(new_buyer)
                 Market.buyers_count += 1
                 Market.new_buyers.remove(new_buyer)
+                for seller in Market.sellers:
+                    new_buyer.loyalty[seller] = 5
                 if verbose > 0:
                     print('New buyer')
 
@@ -568,11 +576,13 @@ class Buyer:
         self.salary = salary
         self.satisfaction = 0
         self.starvation = 2000
+        self.day_saturation = 0
         self.needs = needs
         self.consumption = np.random.poisson(1 + needs*5)*100
         self.plainness = plainness
         self.loyalty = {}
         self.fed_up = {}
+        self.product_found = {}
         self.plan = {}
         self.ambition = 0
         self.birth_threshold = 35 + rd.randint(-5, 30)
@@ -631,9 +641,10 @@ class Buyer:
                     1 + 1.25 * (seller.qualities[product] - self.needs) * np.sign(
                 self.salary - seller.prices[product])) ** 2 * product.satisfaction_bonus, 3)
 
-    def get_product_bonus(self, product):
-        mean = np.round(np.mean(list(self.fed_up.values())), 3)
-        return mean - np.clip(self.fed_up[product], 0, mean) / 5 + 0.2
+    def get_fed_up_bonus(self, product):
+        mean_fed = np.mean(list(self.fed_up.values()))
+        max_fed = np.max(list(self.fed_up.values()))
+        return 1 + (self.fed_up[product] - mean_fed) / (max_fed - mean_fed) / 2
 
     def estimate_satisfaction(self, product: Products, price: float, quality: float):
         model = self.stf_brains[product]
@@ -707,16 +718,39 @@ class Buyer:
         list_of_products = plans
         available = {product: [seller for seller in Market.sellers if seller.amounts[product] > 0] for product in list_of_products.keys()}
         visited = 0
+        for product in Market.products:
+            self.product_found[product] = 0
+        # TODO: visited sellers and thus count them as missing (don't visit them because their offer is bad)
+        # if len(available) == 0:
+        #     return False
 
-        if len(available) == 0:
-            return False
-
-        def update_dict(products: dict, bought: dict) -> None:
+        def update_dict(products: dict, bought: dict):
             for product, amount in bought.items():
                 if products[product] == amount:
                     del products[product]
                 else:
                     products[product] -= amount
+
+            if len(products) == 0:
+                return True
+            available = {product: [seller for seller in Market.sellers if seller.amounts[product] > 0] for product in
+                         products.keys()}
+            missing = []
+            for product in products:
+                if len(available[product]) == 0:
+                    missing += [product]
+            if len(missing) == 0:
+                return False
+
+            new_plan = self.planning(exclude_products=missing)
+            if len(new_plan) == 0:
+                return True
+
+            products.update(new_plan)
+            for product in list(products):
+                if product not in new_plan:
+                    del products[product]
+            return False
 
         def random_visit(products, initial=True):
             if initial:
@@ -756,11 +790,12 @@ class Buyer:
                 threshold = (1 - threshold) + 1
 
             #  The mechanic is: when a buyer see a product that exactly satisfies his perfect view on a product - he buys it.
-            if satisfactions[seller][product] > self.estimated_stf[product] * threshold or len(availables) <= 1:
-                bought = self.buy(seller=seller, product=product, amount=amount)
-                return bought
-            else:
-                return {product: 0}
+            if amount > 0:
+                self.product_found[product] = 1
+                if satisfactions[seller][product] > self.estimated_stf[product] * threshold or len(availables) <= 1:
+                    bought = self.buy(seller=seller, product=product, amount=amount)
+                    return bought
+            return {product: 0}
 
         def get_memory_available(products):
             else_available_all = []
@@ -805,7 +840,7 @@ class Buyer:
             return bought
                 
         def default_visit_best(products):
-            best_available = {product: self.best_offers[product]["seller"] for product in products if self.best_offers[product]["seller"] in available[product]}
+            best_available = {product: self.best_offers[product]["seller"] for product in products if product in self.best_offers and self.best_offers[product]["seller"] in available[product]}
             if len(best_available) == 0:
                 return {}
 
@@ -856,21 +891,26 @@ class Buyer:
                 bought.update(final_decision(seller=new_current, product=product, availables=available[product], amount=amounts))
             return bought
 
-        def visit(products, visit_func):
+        def visit(availables, products, visit_func):
             bought = visit_func(products)
-            update_dict(products, bought)
-            not_bought = sum(list(products.values()))
-            return not_bought == 0
+            outcome = update_dict(products, bought)
+            new_available = {product: [seller for seller in Market.sellers if seller.amounts[product] > 0] for product in
+                         products.keys()}
+            availables.update(new_available)
+            for product in list(availables):
+                if product not in new_available:
+                    del availables[product]
+            return outcome
+
 
         def logic():
             # If someday there will be some new product, then with some chance it will trigger buyer to get it.
             st_tm1 = time.time()
             known_products = sum([product not in self.best_offers for product in Market.products])
             if known_products > rd.randint(0, Market.products_count // 2):
-                if visit(list_of_products, random_visit):
+                if visit(available, list_of_products, random_visit):
                     return True
             Market.inspecting_time['random'] += [time.time() - st_tm1]
-
 
             # 8 is questionable but for now it will stay like this
             if len(set(Market.newcomers_sellers) & set(sum([list(self.offers[item].keys()) for item in self.offers], start=[]))) != len(Market.newcomers_sellers) and rd.randint(0, 10) >= 8:
@@ -879,7 +919,7 @@ class Buyer:
 
             st_tm2 = time.time()
             if known_products < Market.products_count:
-                if visit(list_of_products, default_visit_best):
+                if visit(available, list_of_products, default_visit_best):
                     return True
             Market.inspecting_time['best'] += [time.time() - st_tm2]
 
@@ -888,10 +928,10 @@ class Buyer:
 
             st_tm3 = time.time()
             if rd.randint(0, 400) > 2 * np.mean(list(self.loyalty.values())) + self.plainness:
-                if visit(list_of_products, precise_visit_else):
+                if visit(available, list_of_products, precise_visit_else):
                     return True
             else:
-                if visit(list_of_products, default_visit_else):
+                if visit(available, list_of_products, default_visit_else):
                     return True
             Market.inspecting_time['else'] += [time.time() - st_tm3]
 
@@ -899,10 +939,10 @@ class Buyer:
                 return True
 
             st_tm4 = time.time()
-            if self.starvation < 0:
-                visit(list_of_products, lambda p: random_visit(p, initial=False))
+            if self.starvation + self.day_saturation < 0:
+                visit(available, list_of_products, lambda p: random_visit(p, initial=False))
             else:
-                visit(list_of_products, default_visit_else)
+                visit(available, list_of_products, default_visit_else)
             Market.inspecting_time['hunger_else'] += [time.time() - st_tm4]
 
         outcome = logic()
@@ -929,7 +969,7 @@ class Buyer:
 
             spend = cost * amounts
             satisfied = stsf
-            self.starvation += product.calories * amounts
+            self.day_saturation += product.calories * amounts
 
             Buyer.product_bought[product] += amounts
             Buyer.product_prices[product] += [cost]
@@ -959,42 +999,49 @@ class Buyer:
                             self.loyalty[seller] = np.clip(self.loyalty[seller] - 3, 5, 100)  # Always expect for seller to become better
         return bought
 
-    def planning(self):
-        if len(self.best_offers.keys()) >= 1:
-            A = [np.mean([self.offers[product][seller]["cost"] for seller in self.offers[product].keys()]) for product in self.best_offers]  # ценник
-            C = [np.mean([self.offers_stf[product][seller] for seller in self.offers_stf[product].keys()]) for product in self.best_offers] # удовольствие
-            B = [product.calories for product in self.best_offers] # калории
+    def planning(self, exclude_products: list = None):
+        exclude_products = exclude_products if exclude_products else []
+        planning_products = [product for product in self.best_offers if product not in exclude_products]
+        if len(planning_products) != 0:
+            A = [np.mean([self.offers[product][seller]["cost"] for seller in self.offers[product].keys()]) for product in planning_products]  # ценник
+            B = [np.mean([self.offers_stf[product][seller] for seller in self.offers_stf[product].keys()]) for product in planning_products]  # удовольствие
+            C = [product.calories for product in planning_products]  # калории
+            D = [self.product_found[product] for product in planning_products]  # был ли в прошлый раз найден.
             require_buyer = requires
-            starvation_factor = np.clip((1 + (-self.starvation) / 4000), 1, 3)
-            require_buyer[1] = max(C)
-            require_buyer[0] = np.clip((starvation_factor ** 2 - 1/2) * self.salary / 2, 0, self.wealth) * 0
-            require_buyer[2] = 2200 * starvation_factor
-            D = np.vstack((A, C, B))
-            dsm.basis = [D[:, k] for k in range(len(D[0]))]
+            starvation_factor = np.clip((1 + (-self.starvation + self.day_saturation) / 4000), 1, 3)
+            max_prod_call = np.argmax(np.array(C) / np.array(A))
+            require_buyer[1] = max(B) * round((2200 / C[np.argmax(B)]))
+            require_buyer[0] = np.clip((starvation_factor ** 2 - 1/2) * (2200 // C[max_prod_call]) * A[max_prod_call], 0, self.wealth) * 0
+            require_buyer[2] = (2200 - self.day_saturation) * starvation_factor
+            require_buyer[3] = 2 * (1 + starvation_factor) / 2
+            E = np.vstack((A, B, C, D))
+            dsm.basis = [E[:, k] for k in range(len(E[0]))]
+
             dsm.predict(require_buyer, positive=True)
-            amounts = {product: f_round(dsm.weights[i]) for i, product in enumerate(self.best_offers.keys()) if f_round(dsm.weights[i]) != 0}
-            # if we got new seller:
-            for seller in Market.sellers:
-                if seller not in self.loyalty:
-                    self.loyalty[seller] = 5
+            amounts = {planning_products[i]: f_round(dsm.weights[i]) for i in range(len(planning_products)) if f_round(dsm.weights[i]) != 0}
+            if len(amounts) == 0:
+                return {}
             for product in amounts:
                 Buyer.product_ask[product] += amounts[product]
                 self.estimate_best_offer(product)
-            self.think(amounts)
+            return amounts
         else:
-            for seller in Market.sellers:
-                if seller not in self.loyalty:
-                    self.loyalty[seller] = 5
-            for product in Market.products:
-                Buyer.product_ask[product] += 1
-            self.think({product: 1 for product in Market.products})
+            do_something_plan = {product: 1 for product in Market.products if product not in exclude_products}
+            if len(do_something_plan) == 0:
+                return {}
+            else:
+                for product in do_something_plan:
+                    Buyer.product_ask[product] += 1
+                return do_something_plan
 
     def start(self):
-        self.starvation -= 2000
+        self.starvation -= (2000 - self.day_saturation)
+        self.day_saturation = 0
         self.live += 1
         self.wealth += self.salary
         self.satisfaction -= 0.5 * (2 + self.needs)
-        self.planning()
+        plan = self.planning()
+        self.think(plan)
         self.ambition += rd.randint(-1, 1) * 5
         if self.ambition < 0:
             self.ambition = 0
