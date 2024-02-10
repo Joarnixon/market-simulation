@@ -36,21 +36,15 @@ requires = [0, 10, 2000]
 dsm.fit(requires)
 
 # TODO: Seller conservative model (memory 100) and volatile (memory 10)
-# TODO: Requires to find better starting position as I am still adjusting the sellers amount on 5 iteration from start.
-# TODO: Seller may be neural network.
 # TODO: Whether to open a new business for seller should be judged by model that has learned the market situation when others opened.
-# TODO: New info variable to seller - amount of buyers it has.
 # TODO: GPU / async
 # TODO: transfer to C++
-# TODO: bug: возникакает unable to convert NaN to integer error. Can't catch it myself + can't fix this. Mostly for big runs
-# TODO: check how new seller makes his price decision. There must be estimated price minus real one.
 # TODO: add another pattern for 3 visits strategy
-# TODO: uncontollable rise of prise. Handle - restrict buyers amount of money for session es estimated budget.
-# TODO: complex bug: At the same time in almost every run there is high drop of execution time and massive hunger.
+# TODO: complex bug: At the same time in almost every run there is a massive hunger.
 # TODO: конкуренция формируется не только из лучшего предложения, но и из самого успешного на данный момент продавца. Снизить цены.
 # TODO: Parameters in planning can be adjusted with bayes or rl method. Spending more cause satisfaction, but can't achieve anything more pleasurable without saving
 # TODO: when buyer ends up buying what he is not fully satisfied with *?* it will give other sellers loyalty
-# TODO: buyer should visit only those newcommer sellers that he didn't visit. Too big choice of them can happen sometimes.
+# TODO: final desicion for buyer should be more complex
 
 # noinspection PyShadowingNames
 class Market:
@@ -82,7 +76,8 @@ class Market:
     inspecting_seller = None
     inspecting_time = {'random': [], 'best': [], 'else': [], 'hunger_else': []}
     average_inspecting_time = {'random': [], 'best': [], 'else': [], 'hunger_else': []}
-
+    buyer_brain_constant = 10
+    buyer_memory_len_constant = 20
     def __init__(self):
         for k in range(Market.products_count):
             Market.products.append(Products(name=Market.product_names[k], calories=Market.product_calories[k], satisfaction_bonus=Market.product_bonuses[k]))
@@ -111,7 +106,7 @@ class Market:
             ask[product] = []
             for buyer in Market.buyers:
                 buyer.fed_up[product] = 0
-                buyer.stf_brains[product] = SGDRegressor(max_iter=30)
+                buyer.stf_brains[product] = SGDRegressor(max_iter=Market.buyer_brain_constant)
         for seller in Market.sellers:
             x_axis[seller] = []
             seller_wealth[seller] = []
@@ -317,14 +312,31 @@ class Products:
 
 
 class Manufacturer:
-    def __init__(self, name: str):
+    def __init__(self, name: str, number_of_vacancies: int = None, working_hours: int = None, salary: float = None, technology_param: float = None):
         self.name = name
+        self.number_of_vacancies = number_of_vacancies
+        self.working_hours = working_hours
+        self.salary = salary
+        self.technology_param = technology_param
+        self.workers = []
 
     def get_price(self, product: Products, quality: float):
         return Market.product_first_price[product.name] * Manufacturer.technology(self, quality)
 
     def technology(self, x: float):
         return 1 + (50**x) / 20
+
+    def pay_salary(self):
+        for worker in self.workers:
+            worker.money += self.salary
+
+    def hire(self, buyer):
+        if self.number_of_vacancies > 0:
+            self.workers.append(buyer)
+            self.number_of_vacancies -= 1
+
+    def __str__(self):
+        return self.name
 
 
 class Seller:
@@ -566,6 +578,8 @@ class Buyer:
         self.birth_threshold = 35 + rd.randint(-5, 30)
         self.birth = 0
         self.generation = 0
+        self.employer = None
+        self.workaholic_param = rd.uniform(0, 1)
 
     def become_seller(self):
         #  print(self.salary)
@@ -585,7 +599,29 @@ class Buyer:
             new_seller.prices[product] = price
         new_seller.from_start = False
         Market.new_sellers.append(new_seller)
-        #  print("added")
+        #  print("added")\
+
+    def choose_job(self, manufacturers):
+        best_manufacturer = None
+        best_score = float('-inf')
+
+        for manufacturer in manufacturers:
+            # example
+            score = (manufacturer.working_hours - 8) * self.workaholic_param * manufacturer.salary
+
+            if score > best_score and manufacturer.number_of_vacancies > 0:
+                best_score = score
+                best_manufacturer = manufacturer
+
+        if best_manufacturer is not None:
+            best_manufacturer.hire(self)
+            self.employer = best_manufacturer
+
+    def quit_job(self):
+        if self.employer is not None:
+            self.employer.workers.remove(self)
+            self.employer.number_of_vacancies += 1
+            self.employer = None
 
     def get_satisfaction(self, seller: Seller, product: Products, amount: int = 1):
         """
@@ -610,10 +646,10 @@ class Buyer:
             to_train = [products]
 
         for product in to_train:
-            if len(self.memory_stf[product]) > 40:
+            if len(self.memory_stf[product]) > Market.buyer_memory_len_constant:
                 # Saving only last memories of products
-                self.memory[product] = self.memory[product][-40:]  # Price and quality memory.
-                self.memory_stf[product] = self.memory_stf[product][-40:]  # Satisfactions memory.
+                self.memory[product] = self.memory[product][-Market.buyer_memory_len_constant:]  # Price and quality memory.
+                self.memory_stf[product] = self.memory_stf[product][-Market.buyer_memory_len_constant:]  # Satisfactions memory.
 
             x = np.array(self.memory[product])
             y = np.array(self.memory_stf[product])
@@ -629,10 +665,10 @@ class Buyer:
         """
         if product not in self.memory_stf:
             return False
-        if len(self.memory_stf[product]) > 40:
+        if len(self.memory_stf[product]) > Market.buyer_memory_len_constant:
             # Saving only last memories of products
-            self.memory[product] = self.memory[product][-40:]  # Price and quality memory.
-            self.memory_stf[product] = self.memory_stf[product][-40:]  # Satisfactions memory.
+            self.memory[product] = self.memory[product][-Market.buyer_memory_len_constant:]  # Price and quality memory.
+            self.memory_stf[product] = self.memory_stf[product][-Market.buyer_memory_len_constant:]  # Satisfactions memory.
 
         x = np.array(self.memory[product])
         model = self.stf_brains[product]
@@ -748,8 +784,8 @@ class Buyer:
             return memory_available
             
         def newcomers_visit(products):
-            new_available = sum([[seller for seller in Market.newcomers_sellers if seller.amounts[product] > 0] for product in products.keys()], start=[])
-            #  print(new_available)
+            visited_all = sum([list(self.offers[item].keys()) for item in self.offers], start=[])
+            new_available = sum([[seller for seller in Market.newcomers_sellers if seller.amounts[product] > 0 and seller not in visited_all] for product in products.keys()], start=[])
             if not new_available:
                 return {}
             current = rd.choice(new_available)
@@ -837,7 +873,7 @@ class Buyer:
 
 
             # 8 is questionable but for now it will stay like this
-            if len(Market.newcomers_sellers) != 0 and rd.randint(0, 10) >= 8:
+            if len(set(Market.newcomers_sellers) & set(sum([list(self.offers[item].keys()) for item in self.offers], start=[]))) != len(Market.newcomers_sellers) and rd.randint(0, 10) >= 8:
                 if visit(list_of_products, newcomers_visit):
                     return True
 
@@ -993,7 +1029,7 @@ class Buyer:
         new_buyer = Buyer(plainness=self.plainness, salary=new_salary, needs=round(np.clip(new_salary/8, 0, 1), 2))
         for product in Market.products:
             new_buyer.fed_up[product] = 0
-            new_buyer.stf_brains[product] = SGDRegressor(max_iter=20)
+            new_buyer.stf_brains[product] = SGDRegressor(max_iter=Market.buyer_brain_constant)
         new_buyer.generation = self.generation + 1
         Market.new_buyers.append(new_buyer)
         #  print("NEW BUYER")
