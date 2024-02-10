@@ -914,7 +914,7 @@ class Buyer:
 
             # 8 is questionable but for now it will stay like this
             if len(set(Market.newcomers_sellers) & set(sum([list(self.offers[item].keys()) for item in self.offers], start=[]))) != len(Market.newcomers_sellers) and rd.randint(0, 10) >= 8:
-                if visit(list_of_products, newcomers_visit):
+                if visit(available, list_of_products, newcomers_visit):
                     return True
 
             st_tm2 = time.time()
