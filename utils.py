@@ -112,3 +112,27 @@ def log(metric1, metric2, metric3):
         f.write(f"BuyerTestEnergy: {metric3}\n")
 
         f.write("-" * 30 + "\n")  # Separator between logs
+
+
+def cluster_data(memory, memory_incomes, num_clusters=20):
+    import numpy as np
+    from sklearn.cluster import KMeans
+
+    x = np.array(memory)
+    y = np.array(memory_incomes)
+    kmeans = KMeans(n_clusters=num_clusters, n_init="auto")  # set the number of clusters to group
+    cluster_labels = kmeans.fit_predict(x)
+    x_grouped = []
+    y_grouped = []
+    for i in range(kmeans.n_clusters):
+        try:
+            x_cluster = x[cluster_labels == i]
+            y_cluster = y[cluster_labels == i]
+            mean_x = np.round(np.mean(x_cluster, axis=0), 3)
+            # bug: # TODO correct this here
+            mean_x[2] = int(mean_x[2])
+            x_grouped.append(mean_x)
+            y_grouped.append(np.round(np.mean(y_cluster), 3))
+        except ValueError:
+            continue
+    return x_grouped, y_grouped

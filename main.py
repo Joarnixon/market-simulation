@@ -1,15 +1,14 @@
 import random as rd
 import numpy as np
 import time
-from math import floor
+from math import floor, ceil
 from operator import itemgetter
 from random import shuffle
 from typing import Union
 import sklearn.exceptions
 from scipy.spatial import KDTree
-from sklearn.cluster import KMeans
 import warnings
-from sklearn.linear_model import LinearRegression, TheilSenRegressor, ARDRegression, SGDRegressor
+from sklearn.linear_model import LinearRegression, SGDRegressor
 import matplotlib.pyplot as plt
 from desummation import Desummation
 from utils import f_round
@@ -17,6 +16,7 @@ from utils import sellers_test
 from utils import assign_numbers
 from utils import buyers_test
 from utils import log
+from utils import cluster_data
 
 
 # Define the table headers
@@ -45,6 +45,20 @@ dsm.fit(requires)
 # TODO: Parameters in planning can be adjusted with bayes or rl method. Spending more cause satisfaction, but can't achieve anything more pleasurable without saving
 # TODO: when buyer ends up buying what he is not fully satisfied with *?* it will give other sellers loyalty
 # TODO: final desicion for buyer should be more complex
+# TODO: сейчас для производителя реализована сдельная оплата труда
+# TODO: certain quality production for manufacturer. Affects the amount of work required, skills and etc.
+# TODO: параметр - стаж
+# TODO: механики карьеры, отбор на работу и т.д
+# TODO: закупочные цены передавать в регуляцию вакансий
+
+
+# TODO: last problem - final desicion should be less strict. There was a bug and that's why population was growing almost everytime.
+# TODO: buy for now but loss of loyalty
+# TODO: buy if it's last on the list - want to end this.
+# TODO: buy if there is a lot of product of this type.
+
+# TODO: become manufacturer
+
 
 # noinspection PyShadowingNames
 class Market:
@@ -61,11 +75,12 @@ class Market:
     products = []
     manufacturer_names = ["OOORosselHoz"]
     product_names = ["cereal", "bread", "milk", "meat", "cake"]
-    product_calories = [550, 1430, 400, 1520, 1910]
-    product_bonuses = [0.5, 1, 1, 1.7, 2]
-    product_first_price = {"cereal": 0.2, "bread": 0.5, "milk": 0.8, "meat": 1, "cake": 1.5}
+    product_calories = [550, 1430, 400, 1820, 2105]
+    product_complexities = [0.25, 0.4, 0.5, 0.7, 1.2]
+    product_bonuses = [0.5, 1, 1, 1.7, 2.5]
+    product_first_price = {"cereal": 0.2, "bread": 0.5, "milk": 0.6, "meat": 1.5, "cake": 2}
     products_count = len(product_names)
-    sellers_count = 4
+    sellers_count = 10
     init_sellers_count = 4
     buyers_count = 80
     manufacturers_count = 1
@@ -78,11 +93,17 @@ class Market:
     average_inspecting_time = {'random': [], 'best': [], 'else': [], 'hunger_else': []}
     buyer_brain_constant = 10
     buyer_memory_len_constant = 20
+
     def __init__(self):
         for k in range(Market.products_count):
-            Market.products.append(Products(name=Market.product_names[k], calories=Market.product_calories[k], satisfaction_bonus=Market.product_bonuses[k]))
+            Market.products.append(Products(name=Market.product_names[k], calories=Market.product_calories[k], satisfaction_bonus=Market.product_bonuses[k], complexity=Market.product_complexities[k]))
         for n in range(Market.manufacturers_count):
-            Market.manufacturers.append(Manufacturer(Market.manufacturer_names[n]))
+            manuf_products = Market.products
+            total_compl = float(sum(1/np.array(Market.product_complexities)))
+            total_prices = sum(list(Market.product_first_price.values()))
+            vacancies = {product: ceil(Market.buyers_count / Market.product_complexities[i] / total_compl / Market.manufacturers_count) for i, product in enumerate(manuf_products)}
+            salaries = {product: total_prices / Market.products_count for product in manuf_products}
+            Market.manufacturers.append(Manufacturer(Market.manufacturer_names[n], number_of_vacancies=vacancies, salary=salaries, technology_param=0, products=manuf_products))
         for i in range(Market.sellers_count):
             Market.sellers.append(Seller())
         Market.inspecting_seller = Market.sellers[rd.randint(0, Market.sellers_count-1)]
@@ -92,7 +113,7 @@ class Market:
             salary = np.clip(salary, 2, 9)
             needs = round(salary/9, 2)
             needs = np.clip(needs, 0.05, 1)
-            Market.buyers.append(Buyer(plainness=plainness, salary=salary, needs=needs))
+            Market.buyers.append(Buyer(plainness=plainness, salary=salary))
         Market.inspecting_buyer = Market.buyers[rd.randint(0, Market.buyers_count-1)]
         for product in Market.products:
             Buyer.product_ask[product] = 0
@@ -114,6 +135,8 @@ class Market:
                 seller.local_ask[product] = []
             for buyer in Market.buyers:
                 buyer.loyalty[seller] = 5
+        for buyer in Market.buyers:
+            buyer.find_job()
                 
     @staticmethod
     def start():
@@ -125,16 +148,24 @@ class Market:
     def _iteration(n: int, verbose: int = 0):
         start_time = time.time()
         Market.day += 1
-        print(n, 'Buyers:', Market.buyers_count, 'Sellers:', Market.sellers_count)
+        print(n, 'Buyers:', Market.buyers_count, 'Sellers:', Market.sellers_count, 'Manufacturers', Market.manufacturers_count)
         shuffle(Market.buyers)
         shuffle(Market.sellers)
+        shuffle(Market.manufacturers)
+
+        for manufacturer in Market.manufacturers:
+            manufacturer.start()
+
         for seller in Market.sellers:
             seller_wealth[seller] += [seller.wealth]
             x_axis[seller] += [n]
             seller.start()
-
+        print('storage', list(Market.manufacturers[0].storage.values()))
+        print('price', sum(sum([seller.prices[product]/len(seller.prices) for product in seller.prices]) for seller in Market.sellers) / len(Market.sellers))
+        print(Market.manufacturers[0].technology_param)
         for buyer in Market.buyers:
             buyer.start()
+
         Market.average_inspecting_time['random'] += [np.mean(Market.inspecting_time['random'])]
         Market.average_inspecting_time['best'] += [np.mean(Market.inspecting_time['best'])]
         Market.average_inspecting_time['else'] += [np.mean(Market.inspecting_time['else'])]
@@ -143,6 +174,10 @@ class Market:
         Market.inspecting_time = {'random': [], 'best': [], 'else': [], 'hunger_else': []}
         for seller in Market.sellers:
             seller.summarize(n)
+
+        for manufacturer in Market.manufacturers:
+            manufacturer.summarize()
+
         def function_sequence():
             statistics_gather()
             check_sellers_bankrupt(verbose=verbose)
@@ -209,20 +244,23 @@ class Market:
 
         def statistics_gather():
             for product in Market.products:
-                bid[product] += [sum([seller.amounts[product] for seller in Market.sellers])]
+                bid[product] += [sum([seller.memory[product][-1][2] for seller in Market.sellers if product in seller.memory])]
                 demand[product] += [Buyer.product_ask[product]]
                 satisfied[product] += [Buyer.product_bought[product]]
                 ask[product] += [Buyer.product_ask[product] - Buyer.product_bought[product]]
-                if Buyer.product_prices[product]:
+                if Buyer.product_prices[product] or len(y_axis[product]) < 1:
                     # weighted price of product in the market.
-                    total_market_amount_product = sum(seller.amounts[product] for seller in Market.sellers)
-                    y_axis[product] += [sum(seller.amounts[product] * seller.prices[product] for seller in Market.sellers) / total_market_amount_product]
+                    total_market_amount_product = sum(seller.memory[product][-1][2] for seller in Market.sellers if product in seller.memory)
+                    if total_market_amount_product == 0:
+                        y_axis[product] += [0]
+                    else:
+                        y_axis[product] += [sum(seller.memory[product][-1][2] * seller.prices[product] for seller in Market.sellers if product in seller.memory) / total_market_amount_product]
                 else:
                     y_axis[product] += [y_axis[product][-1]]
                 Buyer.product_prices[product] = []
                 Buyer.product_bought[product] = 0
                 Buyer.product_ask[product] = 0
-                volatility_index[product] = np.clip(abs((bid[product][-1]-ask[product][-1]))//(Market.buyers_count//5), np.clip(Market.buyers_count//(10*Market.sellers_count), 1, 100), 1000)
+                volatility_index[product] = np.clip(abs((bid[product][-1]-ask[product][-1]))//(Market.buyers_count//5), np.clip(Market.buyers_count//(10*Market.sellers_count), 1, 2), 2)
 
             Market.buyers_money += [np.mean([buyer.wealth for buyer in Market.buyers])]
             Market.buyers_satisfaction += [np.mean([buyer.satisfaction for buyer in Market.buyers])]
@@ -313,38 +351,201 @@ class Market:
 
 
 class Products:
-    def __init__(self, name: str, calories: int, satisfaction_bonus: float):
+    def __init__(self, name: str, calories: int, satisfaction_bonus: float, complexity: float):
         self.name = name
         self.calories = calories
         self.satisfaction_bonus = satisfaction_bonus
+        self.manufacturing_complexity = complexity
 
 
 class Manufacturer:
-    def __init__(self, name: str, number_of_vacancies: int = None, working_hours: int = None, salary: float = None, technology_param: float = None):
+    def __init__(self, name: str, number_of_vacancies: dict, salary: dict, technology_param: float, products: list):
         self.name = name
-        self.number_of_vacancies = number_of_vacancies
-        self.working_hours = working_hours
-        self.salary = salary
+        self.budget = 500
+        self.daily_income_in = 0
+        self.daily_income_out = 0
+        self.days = 1
         self.technology_param = technology_param
-        self.workers = []
+        self.raw_material_buy = 0.75
+        self.products = products
+        self.number_of_vacancies = {product: number_of_vacancies[product] for product in products}
+        self.storage = {product: 0 for product in products}
+        self.workers = {product: [] for product in products}
+        self.num_workers = {product: 0 for product in products}
+        self.salary = {product: salary[product] for product in products}
+        self.memory_hr = {product: [] for product in products}
+        self.memory_hr['produced'] = []
+        self.memory_business = {product: [] for product in products}
+        self.memory_business['tech'] = []
+        self.memory_business['income_in'] = []
+        self.memory_income_in = []
+        self.memory_income_total_hr = []
+        self.memory_income_total_business = []
+        self.brains = {'hr': LinearRegression(), 'business': LinearRegression()}
+        self.hr_changing_params = len(self.salary)
+        self.business_changing_params = len(self.number_of_vacancies) + 1
+        self.daily_produced = 0
 
     def get_price(self, product: Products, quality: float):
-        return Market.product_first_price[product.name] * Manufacturer.technology(self, quality)
+        return Market.product_first_price[product.name] * self.technology(quality, self.technology_param)
 
-    def technology(self, x: float):
-        return 1 + (50**x) / 20
+    def get_price_out(self, product):
+        return 2.5 * Market.product_first_price[product.name]
 
-    def pay_salary(self):
-        for worker in self.workers:
-            worker.money += self.salary
+    def technology(self, x: float, technology_param: float = 0):
+        return 1 + (50 - 10 * technology_param)**x / 20
 
-    def hire(self, buyer):
-        if self.number_of_vacancies > 0:
-            self.workers.append(buyer)
-            self.number_of_vacancies -= 1
+    def pay_salary(self, worker, product, produced):
+        money = (1 + self.salary[product]) * produced / 2
+        worker.salary = money
+        self.budget -= money
 
-    def __str__(self):
-        return self.name
+    def hire(self, worker, resume=None, desired_vacancy=None):
+        def contract(person, job):
+            self.workers[job].append(person)
+            self.num_workers[job] += 1
+            person.employer = self
+            person.job = job
+            return True
+
+        if desired_vacancy is not None:
+            if self.number_of_vacancies[desired_vacancy] - self.num_workers[desired_vacancy] > 0:
+                return contract(worker, desired_vacancy)
+
+        vacancies = sorted(self.number_of_vacancies.items(), key=lambda d: d[1], reverse=True)
+
+        for vacancy, number in vacancies:
+            if number - self.num_workers[vacancy] > 0:
+                return contract(worker, vacancy)
+        return False
+
+    def fire(self, product=None, amount=None, person=None):
+        if person is None:
+            k = min(amount, self.num_workers[product])
+            for i in range(k):
+                worker = rd.choice(self.workers[product])
+                moved = self.hire(worker)
+                if not moved:
+                    worker.salary = 0
+                    worker.employer = None
+                else:
+                    self.workers[product].remove(worker)
+                    self.num_workers[product] -= 1
+        else:
+            self.workers[person.job].remove(person)
+            self.num_workers[person.job] -= 1
+            person.salary = 0
+            person.employer = None
+
+    def move_worker(self, person=None, desired_vacancy=None, resume=None):
+        moved = self.hire(person, resume=resume, desired_vacancy=desired_vacancy)
+        product = person.job
+        if not moved:
+            return False
+        self.workers[product].remove(person)
+        self.num_workers[product] -= 1
+        return True
+
+    def application(self, worker, resume=None, desired_vacancy=None):
+        return self.hire(worker, resume, desired_vacancy)
+
+    def make_production(self):
+        for product, workers in self.workers.items():
+            for worker in workers:
+                produced = (0.5 + worker.workaholic) * (worker.working_hours / 6) * (0.5 + worker.job_satisfied)**2 / product.manufacturing_complexity
+                self.storage[product] += produced
+                self.pay_salary(worker, product, produced)
+                self.budget -= Market.product_first_price[product.name] * self.raw_material_buy * produced
+                self.daily_produced += produced
+
+    def sell(self, product, amount, quality):
+        k = min(amount, self.storage[product])
+        self.storage[product] -= k
+        self.daily_income_in += self.get_price(product, quality) * k
+
+    def sell_out(self, proportion=0.2):
+        for product in self.storage:
+            k = self.storage[product] * proportion
+            self.daily_income_out += self.get_price_out(product) * k
+            self.storage[product] -= k
+
+    def estimate(self):
+        # Pick a random point or move with a gradient
+        changes = rd.randint(0, 10 + self.days // 10)
+        if changes >= (4 + self.days // 10):
+            change_value = rd.randint(0, 1)  # Change either salary or number of vacancies
+            if change_value == 0:  # Change salary
+                for product in self.salary:
+                    self.salary[product] = np.clip(self.salary[product] * (1 + rd.uniform(-0.1, 0.1)), 0, 100000)
+            elif change_value == 1:  # Change number of vacancies
+                for product in self.number_of_vacancies:
+                    self.number_of_vacancies[product] = max(0, self.number_of_vacancies[product] + rd.randint(-2, 2))
+            self.technology_param = np.clip(self.technology_param + rd.uniform(-0.05, 0.05), 0, 1)
+        else:
+            x_hr = np.array(list(self.memory_hr.values())).T
+            y_hr = np.array(self.memory_income_total_hr)[-len(x_hr):]
+            x_business = np.array(list(self.memory_business.values())).T
+            y_business = np.array(self.memory_income_total_business)[-len(x_business):]
+
+            adding_point_hr = x_hr[-1][:self.hr_changing_params]
+            adding_point_business = x_business[-1][:self.business_changing_params]
+            model_hr = self.brains['hr']  # Use HR brain for gradient move
+            model_business = self.brains['business']
+
+            if len(self.memory_income_total_hr) >= 60:
+                x_hr, y_hr = cluster_data(x_hr, y_hr, num_clusters=20)
+                for j, product in enumerate(self.memory_hr):
+                    self.memory_hr[product] = list(np.array(x_hr)[:, j])
+                self.memory_income_total_hr = y_hr
+            model_hr.fit(x_hr, y_hr)
+            slope = model_hr.coef_[:self.hr_changing_params]
+            z_adding = np.copysign(adding_point_hr * rd.randint(1, 3) / 40, np.round(slope, 2))
+            z_adding = z_adding * assign_numbers(slope)
+            for i, product in enumerate(self.salary):
+                self.salary[product] = np.clip(self.salary[product] + z_adding[i], 0, 100000)
+
+            if len(x_business) >= 60:
+                x_business, y_business = cluster_data(x_business, y_business, num_clusters=20)
+                for j, product in enumerate(self.memory_business):
+                    self.memory_business[product] = list(np.array(x_business)[:, j])
+                self.memory_income_total_business = y_business
+            model_business.fit(x_business, y_business)
+            slope = model_business.coef_[:self.business_changing_params]
+            z_adding = np.copysign(adding_point_business * rd.randint(1, 3) / 40, np.round(slope, 2))
+            z_adding = z_adding * assign_numbers(slope)
+            for i, product in enumerate(self.number_of_vacancies):
+                self.number_of_vacancies[product] = np.clip(self.number_of_vacancies[product] + f_round(z_adding[i]), 5, 100000)
+            self.technology_param = np.clip(self.technology_param + z_adding[-1], 0, 3)
+
+    def update_memory(self):
+        for product in self.products:
+            self.memory_hr[product] += [self.salary[product]]
+            self.memory_business[product] += [self.number_of_vacancies[product]]
+        self.memory_income_in += [self.daily_income_in]
+        self.memory_income_total_hr += [self.daily_income_in + self.daily_income_out]
+        self.memory_income_total_business += [self.daily_income_in + self.daily_income_out]
+        self.memory_business['tech'] += [self.technology_param]
+        self.memory_business['income_in'] += [self.daily_income_in]
+        self.memory_hr['produced'] += [self.daily_produced]
+        self.daily_income_in = 0
+        self.daily_income_out = 0
+        self.daily_produced = 0
+
+    def start(self):
+        self.make_production()
+        print('budget', self.budget)
+        print('workers', list(self.num_workers.values()))
+        print('salary', sum(list(self.salary.values()))/5)
+
+    def summarize(self):
+        self.sell_out()
+        self.budget += self.daily_income_in + self.daily_income_out
+        self.update_memory()
+        self.estimate()
+        for product in self.number_of_vacancies:
+            if self.number_of_vacancies[product] < self.num_workers[product]:
+                fired = self.num_workers[product] - self.number_of_vacancies[product]
+                self.fire(product, fired)
 
 
 class Seller:
@@ -359,6 +560,7 @@ class Seller:
         self.qualities = {}
         self.providers = {}
         self.local_ask = {}
+        self.available_products = []
         self.n_product_params = 3
         self.days = 0
         self.death = Market.ticks
@@ -371,22 +573,35 @@ class Seller:
         self.brain = LinearRegression()
 
     def start(self):
+        self.available_products = []
         for product in Market.products:
             offers = {}
             if product not in self.qualities:
                 self.initial_guess[product] = self.get_guess(product)
                 for manufactory in Market.manufacturers:
-                    offers[manufactory] = Manufacturer.get_price(manufactory, product, self.initial_guess[product]["quality"])
-                min_price = min(offers.items(), key=lambda d: d[1])
-                min_manufactory = min_price[0]
-                min_price = min_price[1]
+                    offers[manufactory] = manufactory.get_price(product, self.initial_guess[product]["quality"])
+                offers = sorted(offers.items(), key=lambda d: d[1])
+                spent = 0
+                required_amount = self.initial_guess[product]["amount"]
+                for manufactory, price in offers:
+                    k = min(int(manufactory.storage[product]), required_amount)
+                    manufactory.sell(product, k, self.initial_guess[product]["quality"])
+                    spent += manufactory.get_price(product, self.initial_guess[product]["quality"]) * k
+                    required_amount -= k
+                if spent == 0:
+                    self.amounts[product] = 0
+                    self.income[product] = 0
+                    self.local_ask[product] = 0
+                    self.prices[product] = Market.product_first_price[product.name]
+                    continue
+                self.available_products += [product]
+                min_price = spent / (self.initial_guess[product]["amount"] - required_amount)
+                self.amounts[product] = self.initial_guess[product]["amount"] - required_amount
                 self.overprices[product] = self.get_guess_price(min_price, product)
                 self.prices[product] = min_price + self.overprices[product]
                 self.qualities[product] = self.initial_guess[product]["quality"]
-                self.amounts[product] = self.initial_guess[product]["amount"]
 
-                self.providers[product] = {"manufactory": min_manufactory, "quality": self.qualities[product]}
-                self.income[product] = - self.amounts[product] * min_price
+                self.income[product] = -spent
                 self.memory[product] = [[self.qualities[product], self.overprices[product], self.amounts[product], self.amounts[product]]]
                 self.memory_incomes[product] = []
                 self.local_ask[product] = 0
@@ -394,16 +609,30 @@ class Seller:
                 self.forcheckY[product] = []
             else:
                 for manufactory in Market.manufacturers:
-                    offers[manufactory] = Manufacturer.get_price(manufactory, product, self.qualities[product])
-                min_price = min(offers.items(), key=lambda x: x[1])
-                min_manufactory = min_price[0]
-                min_price = min_price[1]
+                    offers[manufactory] = manufactory.get_price(product, self.qualities[product])
+                offers = sorted(offers.items(), key=lambda d: d[1])
+                spent = 0
+                required_amount = self.amounts[product]
+                for manufactory, price in offers:
+                    k = min(int(manufactory.storage[product]), required_amount)
+                    manufactory.sell(product, k, self.qualities[product])
+                    spent += price * k
+                    required_amount -= k
+                if spent == 0:
+                    self.amounts[product] = 0
+                    self.income[product] = 0
+                    self.local_ask[product] = 0
+                    self.prices[product] = Market.product_first_price[product.name]
+                    continue
+                self.available_products += [product]
+                self.amounts[product] = self.amounts[product] - required_amount
+                min_price = spent / self.amounts[product]
                 self.prices[product] = min_price + self.overprices[product]
-                self.providers[product] = {"manufactory": min_manufactory, "quality": self.qualities[product]}
-                self.income[product] = - self.amounts[product] * min_price
+                self.income[product] = -spent
                 self.memory[product] += [[self.qualities[product], self.overprices[product], self.amounts[product], self.local_ask[product]]]
                 self.forcheckX[product] += [[self.qualities[product], self.overprices[product], self.amounts[product]]]
                 self.local_ask[product] = 0
+                #print(self.amounts[product])
 
     def get_guess(self, product):
         if self.from_start:
@@ -424,77 +653,29 @@ class Seller:
         if self.from_start:
             return round(price * (rd.uniform(0.2, 0.2 + self.greed)), 2)
         else:
-            return (self.prices[product] - price) * (rd.uniform(0.2 + self.greed / 2, 1))
+            return float(np.clip((self.prices[product] - price) * (rd.uniform(0.2 + self.greed / 2, 1)), 0, 10000000))
 
     def estimate(self, product: Products, iteration):
         adding_point = self.memory[product][-1][:self.n_product_params]
-
+        x = np.array(self.memory[product])
+        y = np.array(self.memory_incomes[product])[-len(x):]
         if len(self.memory[product]) >= 60:
-            x = np.array(self.memory[product])
-            y = np.array(self.memory_incomes[product])
-            kmeans = KMeans(n_clusters=20, n_init="auto")  # set the number of clusters to group
-            cluster_labels = kmeans.fit_predict(x)
-            x_grouped = []
-            y_grouped = []
-            for i in range(kmeans.n_clusters):
-                try:
-                    x_cluster = x[cluster_labels == i]
-                    y_cluster = y[cluster_labels == i]
-                    mean_x = np.round(np.mean(x_cluster, axis=0), 3)
-                    # bug: # TODO correct this here
-                    mean_x[2] = int(mean_x[2])
-                    x_grouped.append(mean_x)
-                    y_grouped.append(np.round(np.mean(y_cluster), 3))
-                except ValueError:
-                    continue
-            x = x_grouped
-            y = y_grouped
-            self.memory[product] = x_grouped
-            self.memory_incomes[product] = y_grouped
-        else:
-            x = np.array(self.memory[product])
-            y = np.array(self.memory_incomes[product])
+            x, y = cluster_data(x, y, num_clusters=20)
+            self.memory[product] = x
+            self.memory_incomes[product] = y
 
         # Pick a random point with some help of knowing the global market info
         changes = rd.randint(0, 10 + self.days // 10)
         if changes >= (4 + self.days // 10):
-            change_value = rd.randint(0, 2)
-            change_direction = rd.randint(0, 1)
-            if change_direction == 1:
-                if change_value == 2:
-                    direction = 1
-                    if volatility_index[product] > np.clip(Market.buyers_count // (10 * Market.sellers_count), 1, 100):
-                        direction = np.clip(ask[product][-1] - bid[product][-1], -1, 1)
-                    if direction == -1:
-                        if adding_point[change_value] >= int(volatility_index[product]):
-                            adding_point[change_value] = adding_point[change_value] - int(volatility_index[product])
-                        else:
-                            adding_point[change_value] = 0
-                    else:
-                        adding_point[change_value] = adding_point[change_value] + int(volatility_index[product])
-                elif change_value == 0:
-                    adding_point[change_value] = np.clip(round(adding_point[change_value] * (1 + rd.randint(1, 2) / 20), 2), 0.05, 1)
-                else:
-                    adding_point[change_value] = round(adding_point[change_value] * (1 + rd.randint(1, 2) / 20), 2)
-
-            elif change_direction == 0:
-                if change_value == 2:
-                    direction = -1
-                    if volatility_index[product] > np.clip(Market.buyers_count // (10 * Market.sellers_count), 1, 100):
-                        direction = np.clip(ask[product][-1] - bid[product][-1], -1, 1)
-                    if adding_point[change_value] >= int(volatility_index[product]):
-                        adding_point[change_value] = adding_point[change_value] + int(volatility_index[product]) * direction
-                    elif direction == -1:
-                        adding_point[change_value] = 0
-                    else:
-                        adding_point[change_value] = adding_point[change_value] + int(volatility_index[product])
-                else:
-                    adding_point[change_value] = round(adding_point[change_value] * (1 + rd.randint(-2, -1) / 20), 2)
+            for i in range(self.n_product_params - 1):  # three parameters (quality, overprice, amount)
+                adding_point[i] = round(adding_point[i] * (1 + rd.uniform(-0.05, 0.05)), 2)
+            if adding_point[2] < 10:
+                adding_point[2] = f_round(adding_point[2] * (1 + rd.uniform(-0.2, 0.5)))
+            else:
+                adding_point[2] = f_round(adding_point[2] * (1 + rd.uniform(-0.05, 0.05)))
 
             if iteration == 5:
                 adding_point[2] = self.local_ask[product]
-            # if not self.from_start and self.days == 5:
-            #     adding_point[2] = int(ask[product][-1] * (0.3 + rd.uniform(-0.2, 0.2)))
             if not self.from_start and self.days == 12:
                 adding_point[2] = self.local_ask[product]
 
@@ -509,7 +690,7 @@ class Seller:
             # can be proven to be a local maximum direction
             # instead there used to be a greedy search for that maximum with model predictions
             slope = model.coef_[:self.n_product_params]
-            z_adding = np.copysign(adding_point * rd.randint(1, 2+1) / 20, np.round(slope, 1))
+            z_adding = np.copysign(adding_point * rd.randint(1, 2+1) / 40, np.round(slope, 1))
             z_adding = z_adding * assign_numbers(slope)
 
             if iteration == 5 or (not self.from_start and self.days == 12):
@@ -548,7 +729,7 @@ class Seller:
             self.local_ask[product] += amount
 
     def summarize(self, iterat):
-        for product in self.income:
+        for product in self.available_products:
             self.wealth = self.wealth + self.income[product]
             self.memory_incomes[product] += [self.income[product]]
             self.forcheckY[product] += [self.income[product]]
@@ -562,7 +743,7 @@ class Buyer:
     starvation_index = []
     product_bought = {}
 
-    def __init__(self, plainness: int, salary: int, needs: float):
+    def __init__(self, plainness: int, salary: int):
         self.memory = {}
         self.live = 1
         self.memory_stf = {}
@@ -573,12 +754,15 @@ class Buyer:
         self.stf_brains = {}
         self.estimated_stf = {}
         self.wealth = salary * 3
-        self.salary = salary
+        self.salary = 0
+        self.memory_salary = []
+        self.memory_spent = []
+        self.day_spent = 0
         self.satisfaction = 0
         self.starvation = 2000
         self.day_saturation = 0
-        self.needs = needs
-        self.consumption = np.random.poisson(1 + needs*5)*100
+        self.needs = 0.05
+        self.consumption = np.random.poisson(1 + self.needs*5)*100
         self.plainness = plainness
         self.loyalty = {}
         self.fed_up = {}
@@ -589,7 +773,10 @@ class Buyer:
         self.birth = 0
         self.generation = 0
         self.employer = None
-        self.workaholic_param = rd.uniform(0, 1)
+        self.workaholic = rd.uniform(0, 1)
+        self.working_hours = 8
+        self.job_satisfied = 0.5
+        self.job = None
 
     def become_seller(self):
         #  print(self.salary)
@@ -611,35 +798,36 @@ class Buyer:
         Market.new_sellers.append(new_seller)
         #  print("added")\
 
-    def choose_job(self, manufacturers):
-        best_manufacturer = None
-        best_score = float('-inf')
+    def find_job(self):
+        available_manufacturers = {}
 
-        for manufacturer in manufacturers:
-            # example
-            score = (manufacturer.working_hours - 8) * self.workaholic_param * manufacturer.salary
+        for manufacturer in Market.manufacturers:
+            best_production = None
+            best_score = 0
+            for product in manufacturer.products:
+                # example
+                # score = (manufacturer.working_hours - 8) * self.workaholic * manufacturer.salary
+                score = 1
 
-            if score > best_score and manufacturer.number_of_vacancies > 0:
-                best_score = score
-                best_manufacturer = manufacturer
-
-        if best_manufacturer is not None:
-            best_manufacturer.hire(self)
-            self.employer = best_manufacturer
+                if score > best_score and manufacturer.number_of_vacancies[product] - manufacturer.num_workers[product] > 0:
+                    best_score = score
+                    best_production = product
+            available_manufacturers[manufacturer] = [best_score, best_production]
+        available_manufacturers = sorted(available_manufacturers.items(), key=lambda d: d[1][0], reverse=True)
+        for manufacturer, params in available_manufacturers:
+            manufacturer.application(worker=self, resume=None, desired_vacancy=params[1])
 
     def quit_job(self):
         if self.employer is not None:
-            self.employer.workers.remove(self)
-            self.employer.number_of_vacancies += 1
-            self.employer = None
+            self.employer.fire(person=self)
 
     def get_satisfaction(self, seller: Seller, product: Products, amount: int = 1):
         """
         A secret for buyer function that it will try to interpolate for himself.
         """
-        return amount * round((self.salary - seller.prices[product]) * (
+        return amount * round((sum(self.memory_salary[-2:])/2 - seller.prices[product]) * (
                     1 + 1.25 * (seller.qualities[product] - self.needs) * np.sign(
-                self.salary - seller.prices[product])) ** 2 * product.satisfaction_bonus, 3)
+                sum(self.memory_salary[-2:])/2 - seller.prices[product])) ** 2 * product.satisfaction_bonus, 3)
 
     def get_fed_up_bonus(self, product):
         mean_fed = np.mean(list(self.fed_up.values()))
@@ -675,6 +863,8 @@ class Buyer:
         It is made to preserve diverse and experience-based choices for buyer.
         """
         if product not in self.memory_stf:
+            self.estimated[product] = [0, 1]
+            self.estimated_stf[product] = 0
             return False
         if len(self.memory_stf[product]) > Market.buyer_memory_len_constant:
             # Saving only last memories of products
@@ -698,7 +888,7 @@ class Buyer:
         self.estimated_stf[product] = self.get_satisfaction(seller=temporary_seller, product=product)
 
     def remember_seller(self, seller: Seller):
-        for item in seller.amounts:
+        for item in seller.qualities:
             if item in self.offers:
                 self.offers[item][seller] = {"cost": seller.prices[item], "quality": seller.qualities[item]}
                 self.offers_stf[item][seller] = self.get_satisfaction(seller=seller, product=item)
@@ -772,15 +962,10 @@ class Buyer:
                 else:
                     return {}
 
-            bought = self.buy(seller=current, product=products.keys(), amount=products.values())
-
-            for product in products.keys():
-                satisfactions[current].update({product: self.get_satisfaction(seller=current, product=product) - 0.95 * self.estimated_stf[product]})
-
-            self.remember_seller(seller=current)
+            bought = self.buy(seller=current, product=products.keys(), amount=products.values(), satisfactions=satisfactions)
             return bought
 
-        def final_decision(seller: Seller, product: Products, availables, amount: int):
+        def final_decision(seller: Seller, product: Products, availables, amount: int, satisfactions: dict):
             if rd.randint(0, 120) <= self.loyalty[seller]:
                 threshold = 1 - (self.plainness + self.loyalty[seller]) / 1500
             else:
@@ -793,30 +978,30 @@ class Buyer:
             if amount > 0:
                 self.product_found[product] = 1
                 if satisfactions[seller][product] > self.estimated_stf[product] * threshold or len(availables) <= 1:
-                    bought = self.buy(seller=seller, product=product, amount=amount)
+                    bought = self.buy(seller=seller, product=product, amount=amount, satisfactions=satisfactions)
                     return bought
             return {product: 0}
 
         def get_memory_available(products):
-            else_available_all = []
-            else_available = []
-            product_available = []
+            else_available_all = {}
+            else_available = {}
+            product_available = {}
             for product in available:
                 if product in products:
-                    product_available += available[product]
-            product_available = set(product_available)
+                    product_available[product] = available[product]
 
             for product in self.offers:
                 if product in products:
-                    else_available_all += list(self.offers[product].keys())
-            else_available_all = set(else_available_all)
+                    else_available_all[product] = list(self.offers[product].keys())
 
-            for sel in else_available_all:
-                if sel in product_available and sel not in list(self.best_offers.values()):
-                    else_available += [sel]
-
-            memory_available = list(set(else_available))
-            return memory_available
+            for product in else_available_all:
+                for sel in else_available_all[product]:
+                    if sel in product_available[product] and sel not in list(self.best_offers.values()):
+                        if product not in else_available:
+                            else_available[product] = [sel]
+                        else:
+                            else_available[product] += [sel]
+            return else_available
             
         def newcomers_visit(products):
             visited_all = sum([list(self.offers[item].keys()) for item in self.offers], start=[])
@@ -833,8 +1018,10 @@ class Buyer:
                     #  Хотя satisfaction назначается всеми только возможными продавцами в самом начале.
                     #  Новый появиться не может во время хода покупателей.
                     #  Соответственно и не ясно откуда это берется. Идей нет.
-                    satisfactions[current].update({product: self.get_satisfaction(seller=current, product=product) - 0.95 * self.estimated_stf[product]})
-                    bought.update(final_decision(seller=current, product=product, availables=available[product], amount=amounts))
+                    if amounts == 0:
+                        continue
+                    satisfactions[current].update({product: self.get_satisfaction(seller=current, product=product)})
+                    bought.update(final_decision(seller=current, product=product, availables=available[product], amount=amounts, satisfactions=satisfactions))
                 except KeyError:
                     return {}
             return bought
@@ -850,9 +1037,10 @@ class Buyer:
             bought = {}
             for product, amount in products.items():
                 amounts = min(amount, current.amounts[product], floor(self.wealth / current.prices[product]))
-                satisfactions[current].update(
-                    {product: self.get_satisfaction(seller=current, product=product) - 0.95 * self.estimated_stf[product]})
-                bought.update(final_decision(seller=current, product=product, availables=available[product], amount=amounts))
+                if amounts == 0:
+                    continue
+                satisfactions[current].update({product: self.get_satisfaction(seller=current, product=product)})
+                bought.update(final_decision(seller=current, product=product, availables=available[product], amount=amounts, satisfactions=satisfactions))
             return bought
 
         def default_visit_else(products):
@@ -861,16 +1049,16 @@ class Buyer:
             if len(memory_available) == 0:
                 return {}
             
-            loyalties = [self.loyalty[seller] for seller in memory_available]
-            new_current = rd.choices(memory_available, loyalties)[0]
+            loyalties = sum([[self.loyalty[seller] for seller in memory_available[product]] for product in memory_available], start=[])
+            new_current = rd.choices(sum([memory_available[product] for product in memory_available], start=[]), loyalties)[0]
             self.remember_seller(seller=new_current)
             bought = {}
             for product, amount in products.items():
                 amounts = min(amount, new_current.amounts[product], floor(self.wealth / new_current.prices[product]))
-                satisfactions[new_current].update(
-                    {product: self.get_satisfaction(seller=new_current, product=product) - 0.95 * self.estimated_stf[product]})
-                bought.update(final_decision(seller=new_current, product=product, availables=available[product], amount=amounts))
-
+                if amounts == 0:
+                    continue
+                satisfactions[new_current].update({product: self.get_satisfaction(seller=new_current, product=product)})
+                bought.update(final_decision(seller=new_current, product=product, availables=available[product], amount=amounts, satisfactions=satisfactions))
             return bought
 
         def precise_visit_else(products):
@@ -880,15 +1068,19 @@ class Buyer:
             
             bought = {}
             for product, amount in products.items():
+                if product not in memory_available:
+                    bought.update({product: 0})
+                    continue
+
                 tree = KDTree(
-                    [list(self.offers[product][seller].values()) for seller in list(memory_available)])
+                    [list(self.offers[product][seller].values()) for seller in memory_available[product]])
                 index = tree.query([self.estimated[product][0], self.estimated[product][1]])[1]
-                new_current = list(memory_available)[index]
+                new_current = memory_available[product][index]
                 amounts = min(amount, new_current.amounts[product], floor(self.wealth/new_current.prices[product]))
-                self.remember_seller(seller=new_current)
-                satisfactions[new_current].update(
-                    {product: self.get_satisfaction(seller=new_current, product=product) - 0.95 * self.estimated_stf[product]})
-                bought.update(final_decision(seller=new_current, product=product, availables=available[product], amount=amounts))
+                if amounts == 0:
+                    continue
+                satisfactions[new_current].update({product: self.get_satisfaction(seller=new_current, product=product)})
+                bought.update(final_decision(seller=new_current, product=product, availables=available[product], amount=amounts, satisfactions=satisfactions))
             return bought
 
         def visit(availables, products, visit_func):
@@ -901,7 +1093,6 @@ class Buyer:
                 if product not in new_available:
                     del availables[product]
             return outcome
-
 
         def logic():
             # If someday there will be some new product, then with some chance it will trigger buyer to get it.
@@ -949,7 +1140,7 @@ class Buyer:
         self.update_loyalty(satisfactions)
         return outcome
 
-    def buy(self, seller: Seller, product: Union[dict, Products], amount: Union[dict, int]):
+    def buy(self, seller: Seller, product: Union[dict, Products], amount: Union[dict, int], satisfactions: dict):
         if isinstance(amount, int):
             plan = {product: amount}
         else:
@@ -957,7 +1148,8 @@ class Buyer:
         bought = {}
         for product, amount in plan.items():
             amounts = min(amount, seller.amounts[product], floor(self.wealth / seller.prices[product]))
-            
+            if amounts == 0:
+                continue
             if product not in self.fed_up:
                 self.fed_up[product] = amounts
             else:
@@ -965,16 +1157,17 @@ class Buyer:
 
             cost = seller.prices[product]
             quality = seller.qualities[product]
-            stsf = self.get_satisfaction(seller, product, amount=amounts)
+            stsf = self.get_satisfaction(seller, product)
 
             spend = cost * amounts
-            satisfied = stsf
+            satisfied = stsf * amounts
             self.day_saturation += product.calories * amounts
 
             Buyer.product_bought[product] += amounts
             Buyer.product_prices[product] += [cost]
 
             self.wealth = self.wealth - spend
+            self.day_spent += spend
             self.satisfaction = self.satisfaction + satisfied
             seller.sell(product=product, buyer=self, amount=amounts)
             bought[product] = amounts
@@ -997,6 +1190,8 @@ class Buyer:
                         if rd.randint(0, 110) > self.loyalty[seller]:
                             self.best_offers[product] = {"seller": seller, "satisfaction": stsf, "price": float(seller.prices[product]), "quality": float(seller.qualities[product])}
                             self.loyalty[seller] = np.clip(self.loyalty[seller] - 3, 5, 100)  # Always expect for seller to become better
+            satisfactions[seller].update({product: self.get_satisfaction(seller=seller, product=product)})
+            self.remember_seller(seller=seller)
         return bought
 
     def planning(self, exclude_products: list = None):
@@ -1012,7 +1207,7 @@ class Buyer:
             max_prod_call = np.argmax(np.array(C) / np.array(A))
             require_buyer[1] = max(B) * round((2200 / C[np.argmax(B)]))
             require_buyer[0] = np.clip((starvation_factor ** 2 - 1/2) * (2200 // C[max_prod_call]) * A[max_prod_call], 0, self.wealth) * 0
-            require_buyer[2] = (2200 - self.day_saturation) * starvation_factor
+            require_buyer[2] = (2400 - self.day_saturation) * starvation_factor
             require_buyer[3] = 2 * (1 + starvation_factor) / 2
             E = np.vstack((A, B, C, D))
             dsm.basis = [E[:, k] for k in range(len(E[0]))]
@@ -1032,21 +1227,37 @@ class Buyer:
             else:
                 for product in do_something_plan:
                     Buyer.product_ask[product] += 1
+                    self.estimate_best_offer(product)
                 return do_something_plan
+
+    def job_satisfaction(self):
+        if self.workaholic > 0.5:
+            self.job_satisfied += np.clip(sum(self.memory_salary[-3:])/3 - 0.95 * sum(self.memory_spent[-3:])/3 , -0.1, 0.1)
+        else:
+            self.job_satisfied += np.clip(sum(self.memory_salary[-3:])/3 - sum(self.memory_spent[-3:]) / 3, -0.1, 0.1)
+        self.job_satisfied = np.clip(self.job_satisfied, 0, 1)
 
     def start(self):
         self.starvation -= (2000 - self.day_saturation)
         self.day_saturation = 0
         self.live += 1
+        if self.employer is None:
+            self.find_job()
         self.wealth += self.salary
+        self.memory_salary += [self.salary]
         self.satisfaction -= 0.5 * (2 + self.needs)
+        self.day_spent = 0
         plan = self.planning()
         self.think(plan)
         self.ambition += rd.randint(-1, 1) * 5
+        self.memory_spent += [self.day_spent]
+        self.job_satisfaction()
         if self.ambition < 0:
             self.ambition = 0
         if self.live % 3 == 0:
             self.train_stf_brains()
+        self.needs = self.needs + np.clip(round(sum(self.memory_salary[-2:])/2 - sum(self.memory_spent[-2:])/2, 2), -0.1, 0.1)
+        self.needs = np.clip(self.needs, 0.05, 1)
         Buyer.starvation_index += [self.starvation]
         if len(self.estimated) == Market.products_count:
             if self.wealth >= 50 * (2/3+self.needs)**4:
@@ -1054,9 +1265,11 @@ class Buyer:
                 if self.ambition >= 50 * (1.8 - self.needs):
                     if (sum([demand[product][-1] for product in Market.products])*(1+round(rd.uniform(-0.2, 0.15), 3)) > sum([bid[product][-1] for product in Market.products])*(1+round(rd.uniform(-0.15, 0.1), 3))) or (sum([ask[product][-1] for product in Market.products]) > sum([demand[product][-1] for product in Market.products])//8) or self.satisfaction < -50:
                         self.become_seller()
-                        self.wealth = self.salary * 3
+                        self.wealth = sum(self.memory_salary[-5:])/5 * 3
                         self.ambition = 0
         if self.starvation < -20000:
+            if self.employer is not None:
+                self.employer.fire(person=self)
             Market.buyers.remove(self)
             Market.buyers_count -= 1
             #  print("BUYER ELIMINATED")
@@ -1065,15 +1278,15 @@ class Buyer:
         self.birth += 1
         if self.birth >= self.birth_threshold:
             if self.starvation >= 7000 * (1 + self.needs):
-                if self.wealth >= 3 * self.salary * (1 + self.needs):
+                if self.wealth >= 3 * sum(self.memory_salary[-5:])/5 * (1 + self.needs):
                     self.birth_new()
 
     def birth_new(self):
-        self.wealth -= 2 * self.salary * (1 + self.needs)
+        self.wealth -= 2 * sum(self.memory_salary[-5:])/5 * (1 + self.needs)
         self.starvation = 4000
         self.birth_threshold = 0
-        new_salary = self.inherit_salary(Market.initial_salary, self.salary)
-        new_buyer = Buyer(plainness=self.plainness, salary=new_salary, needs=round(np.clip(new_salary/8, 0, 1), 2))
+        new_salary = self.inherit_salary(Market.initial_salary, sum(self.memory_salary[-5:])/5)
+        new_buyer = Buyer(plainness=self.plainness, salary=new_salary)
         for product in Market.products:
             new_buyer.fed_up[product] = 0
             new_buyer.stf_brains[product] = SGDRegressor(max_iter=Market.buyer_brain_constant)
