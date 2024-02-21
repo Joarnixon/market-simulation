@@ -56,6 +56,7 @@ dsm.fit(requires)
 # TODO: buy for now but loss of loyalty
 # TODO: buy if it's last on the list - want to end this.
 # TODO: buy if there is a lot of product of this type.
+# TODO: удельная производительность для hr, мначе больше приоритета тем где больше людей
 
 # TODO: become manufacturer
 
@@ -66,6 +67,7 @@ class Market:
     sellers = []
     new_sellers = []
     new_buyers = []
+    new_manufacturers = []
     buyers_count_list = []
     buyers_money = []
     buyers_starvation = []
@@ -93,16 +95,16 @@ class Market:
     average_inspecting_time = {'random': [], 'best': [], 'else': [], 'hunger_else': []}
     buyer_brain_constant = 10
     buyer_memory_len_constant = 20
+    total_complexity = float(sum(1 / np.array(product_complexities)))
+    total_prices = sum(list(product_first_price.values()))
 
     def __init__(self):
         for k in range(Market.products_count):
             Market.products.append(Products(name=Market.product_names[k], calories=Market.product_calories[k], satisfaction_bonus=Market.product_bonuses[k], complexity=Market.product_complexities[k]))
         for n in range(Market.manufacturers_count):
             manuf_products = Market.products
-            total_compl = float(sum(1/np.array(Market.product_complexities)))
-            total_prices = sum(list(Market.product_first_price.values()))
-            vacancies = {product: ceil(Market.buyers_count / Market.product_complexities[i] / total_compl / Market.manufacturers_count) for i, product in enumerate(manuf_products)}
-            salaries = {product: total_prices / Market.products_count for product in manuf_products}
+            vacancies = {product: ceil(Market.buyers_count / Market.product_complexities[i] / Market.total_complexity / Market.manufacturers_count) for i, product in enumerate(manuf_products)}
+            salaries = {product: Market.total_prices / Market.products_count for product in manuf_products}
             Market.manufacturers.append(Manufacturer(Market.manufacturer_names[n], number_of_vacancies=vacancies, salary=salaries, technology_param=0, products=manuf_products))
         for i in range(Market.sellers_count):
             Market.sellers.append(Seller())
@@ -160,9 +162,9 @@ class Market:
             seller_wealth[seller] += [seller.wealth]
             x_axis[seller] += [n]
             seller.start()
-        print('storage', list(Market.manufacturers[0].storage.values()))
-        print('price', sum(sum([seller.prices[product]/len(seller.prices) for product in seller.prices]) for seller in Market.sellers) / len(Market.sellers))
-        print(Market.manufacturers[0].technology_param)
+        #print('storage', list(Market.manufacturers[0].storage.values()))
+        #print('price', sum(sum([seller.prices[product]/len(seller.prices) for product in seller.prices]) for seller in Market.sellers) / len(Market.sellers))
+        #print(Market.manufacturers[0].technology_param)
         for buyer in Market.buyers:
             buyer.start()
 
@@ -183,6 +185,7 @@ class Market:
             check_sellers_bankrupt(verbose=verbose)
             handle_new_sellers(verbose=verbose)
             handle_new_buyers(verbose=verbose)
+            handle_new_manufacturers(verbose=verbose)
 
         def check_sellers_bankrupt(verbose: int = 0):
             for seller in Market.sellers:
@@ -241,6 +244,15 @@ class Market:
                     new_buyer.loyalty[seller] = 5
                 if verbose > 0:
                     print('New buyer')
+
+        def handle_new_manufacturers(verbose: int = 0):
+            for new_manufacturer in list(Market.new_manufacturers):
+                Market.manufacturers.append(new_manufacturer)
+                Market.manufacturers_count += 1
+                Market.new_manufacturers.remove(new_manufacturer)
+                if verbose > 0:
+                    print('New manufactory')
+
 
         def statistics_gather():
             for product in Market.products:
@@ -365,6 +377,7 @@ class Manufacturer:
         self.daily_income_in = 0
         self.daily_income_out = 0
         self.days = 1
+        self.from_start=True
         self.technology_param = technology_param
         self.raw_material_buy = 0.75
         self.products = products
@@ -402,6 +415,8 @@ class Manufacturer:
 
     def hire(self, worker, resume=None, desired_vacancy=None):
         def contract(person, job):
+            if person.employer is not None and person.employer != self:
+                person.employer.fire(person=person)
             self.workers[job].append(person)
             self.num_workers[job] += 1
             person.employer = self
@@ -533,9 +548,10 @@ class Manufacturer:
 
     def start(self):
         self.make_production()
-        print('budget', self.budget)
-        print('workers', list(self.num_workers.values()))
-        print('salary', sum(list(self.salary.values()))/5)
+        print(self.name, list(self.num_workers.values()))
+        #print('budget', self.budget)
+        #print('workers', list(self.num_workers.values()))
+        #print('salary', sum(list(self.salary.values()))/5)
 
     def summarize(self):
         self.sell_out()
@@ -567,6 +583,7 @@ class Seller:
         self.amounts = {}
         self.greed = rd.uniform(0.2, 0.5)
         self.wealth = 100
+        self.ambition = 20
         self.income = {}
         self.initial_guess = {}
         self.guess = {}
@@ -574,6 +591,8 @@ class Seller:
 
     def start(self):
         self.available_products = []
+        self.ambition = np.clip(self.ambition + rd.choice([-10, 10]), 0, 100)
+        self.become_manufacturer()
         for product in Market.products:
             offers = {}
             if product not in self.qualities:
@@ -633,6 +652,24 @@ class Seller:
                 self.forcheckX[product] += [[self.qualities[product], self.overprices[product], self.amounts[product]]]
                 self.local_ask[product] = 0
                 #print(self.amounts[product])
+
+    def become_manufacturer(self):
+        if self.wealth >= 500 * (1 + self.greed):
+            if self.ambition >= 70:
+                if sum(sum(ask[product][-5:])/5 for product in ask) / len(ask) / Market.buyers_count > 0.5 or sum([buyer.job_satisfied for buyer in rd.sample(Market.buyers, Market.buyers_count // 3)]) / (Market.buyers_count // 3) < 0.5:
+                    manuf_products = Market.products
+                    vacancies = {product: ceil(Market.buyers_count / Market.product_complexities[i] / Market.total_complexity / Market.manufacturers_count) for i, product in enumerate(manuf_products)}
+                    salaries = {product: max(m.salary[product] for m in Market.manufacturers) * (1.3 - self.greed) for product in manuf_products}
+                    Market.new_manufacturers.append(Manufacturer(
+                        name=''.join([rd.choice(['a', 'b', 'c'])*rd.randint(0, 2) for i in range(4)]),
+                        number_of_vacancies=vacancies,
+                        salary=salaries,
+                        technology_param=0,
+                        products=manuf_products
+                        )
+                    )
+                    self.wealth -= 500 * (1 + self.greed)
+                    self.ambition = 0
 
     def get_guess(self, product):
         if self.from_start:
@@ -777,6 +814,8 @@ class Buyer:
         self.working_hours = 8
         self.job_satisfied = 0.5
         self.job = None
+        self.employer_days_worked = 0
+        self.jobs_experience = {}
 
     def become_seller(self):
         #  print(self.salary)
@@ -798,21 +837,22 @@ class Buyer:
         Market.new_sellers.append(new_seller)
         #  print("added")\
 
-    def find_job(self):
+    def find_job(self, changing=False):
         available_manufacturers = {}
-
-        for manufacturer in Market.manufacturers:
+        for manufacturer in [manufacturer for manufacturer in Market.manufacturers if manufacturer != self.employer]:
             best_production = None
-            best_score = 0
+            best_score = 0 if not changing else self.score_manufactury(self.employer, self.job)
             for product in manufacturer.products:
                 # example
                 # score = (manufacturer.working_hours - 8) * self.workaholic * manufacturer.salary
-                score = 1
-
+                score = self.score_manufactury(manufacturer, product)
                 if score > best_score and manufacturer.number_of_vacancies[product] - manufacturer.num_workers[product] > 0:
                     best_score = score
                     best_production = product
-            available_manufacturers[manufacturer] = [best_score, best_production]
+            if best_production is not None:
+                available_manufacturers[manufacturer] = [best_score, best_production]
+        if len(available_manufacturers) == 0:
+            return
         available_manufacturers = sorted(available_manufacturers.items(), key=lambda d: d[1][0], reverse=True)
         for manufacturer, params in available_manufacturers:
             manufacturer.application(worker=self, resume=None, desired_vacancy=params[1])
@@ -820,6 +860,10 @@ class Buyer:
     def quit_job(self):
         if self.employer is not None:
             self.employer.fire(person=self)
+
+    # TODO: Rewrite
+    def score_manufactury(self, manufactory, job):
+        return 1
 
     def get_satisfaction(self, seller: Seller, product: Products, amount: int = 1):
         """
@@ -1243,6 +1287,8 @@ class Buyer:
         self.live += 1
         if self.employer is None:
             self.find_job()
+        elif rd.randint(0, 10) >= 7:
+            self.find_job(changing=True)
         self.wealth += self.salary
         self.memory_salary += [self.salary]
         self.satisfaction -= 0.5 * (2 + self.needs)
