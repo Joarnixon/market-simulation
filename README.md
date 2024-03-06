@@ -1,4 +1,14 @@
-# Currently a raw project made for fun.
+Version 0.1.0 released!
+Simulation can be counted as complete. 
+Full economic cycle: manufacturer-seller-buyer is done.
+No magic like money from the nothing or other simplifications.
+And simulation is stable!
+
+
+All releases and news will be published in my [DevLog](https://joarnixon.hashnode.dev/)
+
+
+## Currently a raw project made for fun.
 
 ## Maybe not just for fun, it actually boosts my knowledge in machine learning, requires proving math theorems for better performance, and is very scalable to AI and algorithms application. Also, a good experience with git branches.
 
