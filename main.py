@@ -1,7 +1,7 @@
 import random as rd
 import numpy as np
 import time
-from math import floor, ceil
+from math import floor, ceil, exp
 from operator import itemgetter
 from random import shuffle
 from typing import Union
@@ -45,21 +45,17 @@ dsm.fit(requires)
 # TODO: Parameters in planning can be adjusted with bayes or rl method. Spending more cause satisfaction, but can't achieve anything more pleasurable without saving
 # TODO: when buyer ends up buying what he is not fully satisfied with *?* it will give other sellers loyalty
 # TODO: final desicion for buyer should be more complex
-# TODO: сейчас для производителя реализована сдельная оплата труда
 # TODO: certain quality production for manufacturer. Affects the amount of work required, skills and etc.
 # TODO: параметр - стаж
 # TODO: механики карьеры, отбор на работу и т.д
-# TODO: закупочные цены передавать в регуляцию вакансий
+# TODO: storage for sellers
+# TODO: limit of vacancies for manufactory, instead regulate amount of product sold out
 
 
 # TODO: last problem - final desicion should be less strict. There was a bug and that's why population was growing almost everytime.
 # TODO: buy for now but loss of loyalty
 # TODO: buy if it's last on the list - want to end this.
 # TODO: buy if there is a lot of product of this type.
-# TODO: удельная производительность для hr, мначе больше приоритета тем где больше людей
-
-# TODO: become manufacturer
-
 
 # noinspection PyShadowingNames
 class Market:
@@ -75,19 +71,20 @@ class Market:
     buyers = []
     manufacturers = []
     products = []
+    unemployed = 0
     manufacturer_names = ["OOORosselHoz1", "OOORosselHoz2"]
-    product_names = ["cereal", "bread", "milk", "meat", "cake"]
-    product_calories = [550, 1430, 400, 1820, 2105]
+    product_names = ["cereal", "bread", "milk", "meat", "pie"]
+    product_calories = [550, 1430, 400, 1820, 2700]
     product_complexities = [0.3, 0.5, 0.4, 0.7, 1]
     product_bonuses = [0.5, 1, 1, 1.7, 2.5]
-    product_first_price = {"cereal": 0.1, "bread": 0.3, "milk": 0.2, "meat": 0.5, "cake": 1}
+    product_first_price = {"cereal": 0.1, "bread": 0.3, "milk": 0.2, "meat": 0.5, "pie": 1}
     products_count = len(product_names)
-    sellers_count = 10
-    init_sellers_count = 4
+    sellers_count = 15
+    init_sellers_count = 15
     buyers_count = 80
     manufacturers_count = 2
     initial_salary = 4
-    ticks = 300
+    ticks = 1000
     newcomers_sellers = {}
     inspecting_buyer = None
     inspecting_seller = None
@@ -110,15 +107,17 @@ class Market:
             salaries = {product: (Market.manufacturer_salary_up_constant + Market.manufacturer_salary_low_constant)/2 for product in manuf_products}
             Market.manufacturers.append(Manufacturer(Market.manufacturer_names[n], number_of_vacancies=vacancies, salary=salaries, technology_param=0, products=manuf_products))
         for i in range(Market.sellers_count):
-            Market.sellers.append(Seller())
+            init_seller = Seller()
+            init_seller.wealth *= 2
+            Market.sellers.append(init_seller)
         Market.inspecting_seller = Market.sellers[rd.randint(0, Market.sellers_count-1)]
         for j in range(Market.buyers_count):
             plainness = rd.randint(0, 100)
             salary = np.random.poisson(Market.initial_salary)
             salary = np.clip(salary, 2, 9)
-            needs = round(salary/9, 2)
-            needs = np.clip(needs, 0.05, 1)
-            Market.buyers.append(Buyer(plainness=plainness, salary=salary))
+            init_buyer = Buyer(plainness=plainness, salary=salary)
+            init_buyer.birth = rd.randint(0, 40)
+            Market.buyers.append(init_buyer)
         Market.inspecting_buyer = Market.buyers[rd.randint(0, Market.buyers_count-1)]
         for product in Market.products:
             Buyer.product_ask[product] = 0
@@ -153,7 +152,7 @@ class Market:
     def _iteration(n: int, verbose: int = 0):
         start_time = time.time()
         Market.day += 1
-        print(n, 'Buyers:', Market.buyers_count, 'Sellers:', Market.sellers_count, 'Manufacturers', Market.manufacturers_count)
+        print(n, 'Buyers:', Market.buyers_count, 'Sellers:', Market.sellers_count, 'Manufacturers', Market.manufacturers_count, 'Unemployment rate', Market.unemployed)
         shuffle(Market.buyers)
         shuffle(Market.sellers)
         shuffle(Market.manufacturers)
@@ -282,6 +281,8 @@ class Market:
             Market.buyers_count_list += [Market.buyers_count]
             Market.buyers_starvation += [np.mean(Buyer.starvation_index)]
             Buyer.starvation_index = []
+            Market.unemployed = 0
+            Market.unemployed = sum([buyer.employer is None for buyer in Market.buyers])
             time_axis.append(time.time()-start_time)
 
         function_sequence()
@@ -371,6 +372,7 @@ class Products:
         self.calories = calories
         self.satisfaction_bonus = satisfaction_bonus
         self.manufacturing_complexity = complexity
+        self.complexity = complexity
 
 
 class Manufacturer:
@@ -396,7 +398,7 @@ class Manufacturer:
         self.memory_hr['produced'] = []
         self.memory_business = {product: [] for product in products}
         self.memory_business['tech'] = []
-        self.memory_business['income_in'] = []
+        self.memory_business['unemployed'] = []
         self.memory_income_in = []
         self.memory_income_out = []
         self.memory_income = []
@@ -420,12 +422,22 @@ class Manufacturer:
         if self.days == 1:
             money = produced * self.budget / self.num_workers[product] / self.daily_produced[product]
         else:
-            c = self.memory_income[-1] / max(self.daily_income_before.values())
+            try:
+                c = self.memory_income[-1] / max(self.daily_income_before.values())
+            except ZeroDivisionError:
+                c = 0
+                print(self.workers)
+                print(self.num_workers)
+                print(self.name)
+                print(self.salary)
+                print(self.payed)
+                print(self.daily_produced)
+                print(self.number_of_vacancies)
             if sum(self.salary.values()) > c:
                 salary_scale = c * (self.salary[product]) / sum([self.salary[product] for product in self.salary if self.daily_produced[product] != 0])
             else:
                 salary_scale = self.salary[product]
-            money = salary_scale * produced * self.wage_rate[product]
+            money = (2/3) * salary_scale * produced * self.wage_rate[product]
 
         money = round(money, 2)
         worker.salary = money
@@ -503,7 +515,10 @@ class Manufacturer:
                     self.salary[product] = np.clip(self.salary[product] * (1 + rd.uniform(-0.1, 0.1)), Market.manufacturer_salary_low_constant, Market.manufacturer_salary_up_constant)
             elif change_value == 1:  # Change number of vacancies
                 for product in self.number_of_vacancies:
-                    self.number_of_vacancies[product] = max(5, self.number_of_vacancies[product] + rd.randint(-2, 2))
+                    if Market.unemployed > 0:
+                        self.number_of_vacancies[product] = max(5, self.number_of_vacancies[product] + rd.randint(1, 3))
+                    else:
+                        self.number_of_vacancies[product] = max(5, self.number_of_vacancies[product] + rd.randint(-1, 1))
             self.technology_param = np.clip(self.technology_param + rd.uniform(-0.05, 0.05), 0, 1)
         else:
             x_hr = np.array(list(self.memory_hr.values())).T
@@ -551,7 +566,7 @@ class Manufacturer:
         self.memory_income_total_business += [self.memory_income_in[-1] + self.memory_income_out[-1]]
         self.memory_income += [self.memory_income_in[-1] + self.memory_income_out[-1]]
         self.memory_business['tech'] += [self.technology_param]
-        self.memory_business['income_in'] += [sum(self.daily_income_in.values())]
+        self.memory_business['unemployed'] += [Market.unemployed]
         self.memory_hr['produced'] += [sum(self.daily_produced.values())]
         self.daily_income_before = {product: self.daily_income_in[product] + self.daily_income_out[product] for product in self.daily_income_in}
         self.wage_rate.update({product: self.daily_income_before[product] / self.daily_produced[product] for product in self.daily_produced if self.daily_produced[product] != 0})
@@ -564,11 +579,12 @@ class Manufacturer:
         for product, workers in self.workers.items():
             for worker in workers:
                 worker.work(employer=self)
-        print(self.name, self.budget)
-        # print('budget', self.budget)
-        # #print('workers', list(self.num_workers.values()))
+        # print(self.name)
+        # print('workers', list(self.num_workers.values()))
         # print('salary', list(self.salary.values()))
-        # print('payed', list(self.payed.values()))
+        # print('enemployed', Market.unemployed)
+        # #print('payed', list(self.payed.values()))
+        # print('------------------')
 
     def summarize(self):
         self.sell_out()
@@ -701,7 +717,7 @@ class Seller:
                 return {"quality": round(rd.uniform(0.2, 0.4), 2), "amount": 10}
             if product.name == "meat":
                 return {"quality": round(rd.uniform(0.2, 0.4), 2), "amount": 5}
-            if product.name == "cake":
+            if product.name == "pie":
                 return {"quality": round(rd.uniform(0.2, 0.4), 2), "amount": 2}
         else:
             return self.guess[product]
@@ -826,11 +842,11 @@ class Buyer:
         self.product_found = {}
         self.plan = {}
         self.ambition = 0
-        self.birth_threshold = 35 + rd.randint(-5, 30)
+        self.birth_threshold = 25 + rd.randint(-10, 15)
         self.birth = 0
         self.generation = 0
         self.employer = None
-        self.workaholic = rd.uniform(0, 1)
+        self.workaholic = rd.uniform(0.1, 1)
         self.working_hours = 8
         self.job_satisfied = 0.5
         self.job = None
@@ -861,7 +877,7 @@ class Buyer:
         available_manufacturers = {}
         for manufacturer in [manufacturer for manufacturer in Market.manufacturers if manufacturer != self.employer]:
             best_production = None
-            best_score = 0 if not changing else self.score_manufactury(self.employer, self.job)
+            best_score = -10000000 if not changing else self.score_manufactury(self.employer, self.job)
             for product in manufacturer.products:
                 # example
                 # score = (manufacturer.working_hours - 8) * self.workaholic * manufacturer.salary
@@ -886,7 +902,17 @@ class Buyer:
 
     # TODO: Rewrite
     def score_manufactury(self, manufactory, job):
-        return 1
+        if self.employer != manufactory and self.employer is not None:
+            a = (0.6 - self.job_satisfied) * 1000
+            b = (manufactory.wage_rate[job] / job.complexity - self.employer.wage_rate[self.job] / self.job.complexity) * 1000
+            c = (manufactory.salary[job] - self.employer.salary[self.job]) * 50
+            d = (50 - self.plainness) * 4
+        else:
+            a = manufactory.wage_rate[job] / job.complexity * 500
+            b = manufactory.salary[job] * 10
+            c = (self.job_satisfied - 1) * 1000
+            d = 0
+        return a + b + c + d
 
     def get_satisfaction(self, seller: Seller, product: Products, amount: int = 1):
         """
@@ -1307,9 +1333,9 @@ class Buyer:
 
     def job_satisfaction(self):
         if self.workaholic > 0.5:
-            self.job_satisfied += np.clip(sum(self.memory_salary[-3:])/3 - 0.95 * sum(self.memory_spent[-3:])/3 , -0.1, 0.1)
+            self.job_satisfied += np.clip(sum(self.memory_salary[-3:])/3 - 1.5 * sum(self.memory_spent[-3:])/3 , -0.1, 0.1)
         else:
-            self.job_satisfied += np.clip(sum(self.memory_salary[-3:])/3 - sum(self.memory_spent[-3:]) / 3, -0.1, 0.1)
+            self.job_satisfied += np.clip(sum(self.memory_salary[-3:])/3 - 1.2 * sum(self.memory_spent[-3:]) / 3, -0.1, 0.1)
         self.job_satisfied = np.clip(self.job_satisfied, 0, 1)
 
     def start(self):
@@ -1361,7 +1387,7 @@ class Buyer:
     def birth_new(self):
         self.wealth -= 2 * sum(self.memory_salary[-5:])/5 * (1 + self.needs)
         self.starvation = 4000
-        self.birth_threshold = 0
+        self.birth = 0
         new_salary = self.inherit_salary(Market.initial_salary, sum(self.memory_salary[-5:])/5)
         new_buyer = Buyer(plainness=self.plainness, salary=new_salary)
         for product in Market.products:

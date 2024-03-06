@@ -54,6 +54,9 @@ def sellers_test(market_demands: dict, market_bought: dict, population: list) ->
 
 
 def buyers_test(initial_salary: int, distribution: dict) -> list:
+    """
+    Deprecated since manufacturer update.
+    """
     from main import Buyer
     from numpy.random import poisson
     from numpy import mean, std
