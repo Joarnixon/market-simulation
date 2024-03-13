@@ -11,6 +11,7 @@ from objects.manufacturer import Manufacturer
 from objects.products import Products
 from objects.seller import Seller
 from objects.buyer import Buyer
+from objects.person import Person
 from settings.constants import *
 
 

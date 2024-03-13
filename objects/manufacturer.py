@@ -56,19 +56,12 @@ class Manufacturer:
             try:
                 c = self.memory_income[-1] / max(self.daily_income_before.values())
             except ZeroDivisionError:
-                c = 0
-                print(self.workers)
-                print(self.num_workers)
-                print(self.name)
-                print(self.salary)
-                print(self.payed)
-                print(self.daily_produced)
-                print(self.number_of_vacancies)
+                c = 1
             if sum(self.salary.values()) > c:
                 salary_scale = c * (self.salary[product]) / sum([self.salary[product] for product in self.salary if self.daily_produced[product] != 0])
             else:
                 salary_scale = self.salary[product]
-            money = (2/3) * salary_scale * produced * self.wage_rate[product]
+            money = (3/4) * salary_scale * produced * self.wage_rate[product]
 
         money = round(money, 2)
         worker.salary = money
@@ -205,7 +198,7 @@ class Manufacturer:
         self.daily_income_out = {product: 0 for product in self.products}
         self.daily_produced = {product: 0 for product in self.products}
 
-    def start(self):
+    def start(self, market_ref=None, ask=None, demand=None, bid=None):
         self.payed = {product: 0 for product in self.products}
         for product, workers in self.workers.items():
             for worker in workers:

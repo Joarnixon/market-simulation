@@ -32,7 +32,7 @@ class Seller:
         self.guess = {} if not guess else guess
         self.brain = LinearRegression()
 
-    def start(self, market_ref, ask):
+    def start(self, market_ref, ask, demand=None, bid=None):
         self.available_products = []
         self.ambition = np.clip(self.ambition + rd.choice([-10, 10]), 0, 100)
         self.become_manufacturer(market_ref, ask)

@@ -104,13 +104,12 @@ class Buyer:
     def work(self, employer):
         employer.make_production(self, self.job, self.working_hours)
 
-    # TODO: Rewrite
     def score_manufactury(self, manufactory, job):
         if self.employer != manufactory and self.employer is not None:
             a = (0.6 - self.job_satisfied) * 1000
             b = (manufactory.wage_rate[job] / job.complexity - self.employer.wage_rate[
                 self.job] / self.job.complexity) * 1000
-            c = (manufactory.salary[job] - self.employer.salary[self.job]) * 50
+            c = (manufactory.salary[job] / sum(manufactory.salary.values()) - self.employer.salary[self.job] / sum(self.employer.salary.values())) * 5000
             d = (50 - self.plainness) * 4
         else:
             a = manufactory.wage_rate[job] / job.complexity * 500
@@ -577,7 +576,7 @@ class Buyer:
                                           -0.1, 0.1)
         self.job_satisfied = np.clip(self.job_satisfied, 0, 1)
 
-    def start(self, market_ref, demand, ask, bid):
+    def start(self, market_ref, ask, demand, bid):
         self.starvation -= (2000 - self.day_saturation)
         self.day_saturation = 0
         self.live += 1
