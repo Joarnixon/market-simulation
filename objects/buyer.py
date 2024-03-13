@@ -19,7 +19,9 @@ class Buyer:
     starvation_index = []
     product_bought = {}
 
-    def __init__(self, plainness: int, salary: int):
+    def __init__(self, inventory, person):
+        self.as_person = person
+        self.inventory = inventory
         self.memory = {}
         self.live = 1
         self.memory_stf = {}
@@ -29,7 +31,6 @@ class Buyer:
         self.estimated = {}
         self.stf_brains = {}
         self.estimated_stf = {}
-        self.wealth = salary * 3
         self.salary = 0
         self.memory_salary = []
         self.memory_spent = []
@@ -41,7 +42,6 @@ class Buyer:
         self.day_saturation = 0
         self.needs = 0.05
         self.consumption = np.random.poisson(1 + self.needs * 5) * 100
-        self.plainness = plainness
         self.loyalty = {}
         self.fed_up = {}
         self.product_found = {}
