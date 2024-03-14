@@ -1,6 +1,7 @@
 from objects.buyer import Buyer
 from objects.seller import Seller
 from objects.manufacturer import Manufacturer
+from objects.worker import Worker, ManufactureWorker
 from dataclasses import dataclass, field
 from functools import cache
 
@@ -65,21 +66,33 @@ class Person(BasePerson):
         self.buyer = Buyer(**buyer_data) if buyer_data else None
         self.seller = Seller(**seller_data) if seller_data else None
         self.manufacturer = Manufacturer(**manufacturer_data) if manufacturer_data else None
+        self.jobs = []
 
     def start(self, ask, demand, bid):
+        if len(self.jobs) == 0 and self.manufacturer is None:
+            self.find_new_job()
         for role in self.get_available_roles():
             role.start(self.market_ref, ask, demand, bid)
 
     @cache
     def get_available_roles(self):
-        roles = {}
+        roles = []
         if self.manufacturer is not None:
-            roles |= {self.manufacturer}
+            roles += [self.manufacturer]
+        else:
+            for job in self.jobs:
+                roles += [job]
         if self.seller is not None:
-            roles |= {self.seller}
+            roles += [self.seller]
         if self.buyer is not None:
-            roles |= {self.buyer}
+            roles += [self.buyer]
         return roles
+
+    def find_new_job(self):
+        base_worker = ManufactureWorker({'as_person': self, 'working_hours': 8, 'job_satisfied': 0.5})
+        found_job = base_worker.find_job(self.market_ref)
+        self.jobs += found_job
+        del base_worker
 
     def delete_cache(self):
         self.get_available_roles.cache_clear()

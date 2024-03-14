@@ -1,28 +1,34 @@
 from dataclasses import dataclass
-from objects.products import Products
 from typing import Any
 import random as rd
+import numpy as np
 
 
 @dataclass
 class Worker:
     as_person: Any
-    employer: Any
-    working_hours: int
-    job_satisfied: float
+    working_hours: int = 8
+    job_satisfied: float = 0.5
 
 
-class ManufactoryWorker(Worker):
-    def __init__(self, job: Products):
-        self.product: Products = job
+class ManufactureWorker(Worker):
+    def __init__(self, **worker_data):
+        super().__init__(**worker_data)
+        self.product = None
+        self.employer = None
+        self.salary: float = 0
+        self.memory_salary: list = []
+        self.memory_spent: list = self.as_person.memory_spent
+
+    def work(self):
+        self.employer.make_production(self, self.product, self.working_hours)
 
     def find_job(self, market_ref, changing=False):
         available_manufacturers = {}
-        for manufacturer in [manufacturer for manufacturer in market_ref.manufacturers if
-                             manufacturer != self.employer]:
+        for manufacturer in [manufacturer for manufacturer in market_ref.manufacturers]:
             best_production = None
             best_score = -10000000 if not changing else self.score_manufacture(self.employer, self.product)
-            for product in manufacturer.products:
+            for product in [product for product in manufacturer.products if manufacturer != self.employer or product != self.product]:
                 # example
                 # score = (manufacturer.working_hours - 8) * self.workaholic * manufacturer.salary
                 score = self.score_manufacture(manufacturer, product)
@@ -33,14 +39,38 @@ class ManufactoryWorker(Worker):
             if best_production is not None:
                 available_manufacturers[manufacturer] = [best_score, best_production]
         if len(available_manufacturers) == 0:
-            return
+            return []
         available_manufacturers = sorted(available_manufacturers.items(), key=lambda d: d[1][0], reverse=True)
         for manufacturer, params in available_manufacturers:
-            manufacturer.application(worker=self, resume=None, desired_vacancy=params[1])
+            vacancy = manufacturer.application(worker=self, resume=None, desired_vacancy=params[1])
+            if len(vacancy) != 0:
+                return vacancy
+        return []
 
     def quit_job(self):
-        if self.employer is not None:
-            self.employer.fire(person=self)
+        self.as_person.jobs.remove(self)
+        del self
+
+    def change_job(self, changing):
+        self.as_person.jobs.remove(self)
+        self.as_person.jobs.append(changing)
+        del self
+
+    def get_base_data(self):
+        return {
+            'as_person': self.as_person,
+            'working_hours': self.working_hours,
+            'job_satisfied': self.job_satisfied,
+        }
+
+    def load_data(self, data):
+        for key, value in data.items():
+            setattr(self, key, value)
+
+    def get_memory_data(self):
+        return {
+            'memory_salary': self.memory_salary,
+        }
 
     def score_manufacture(self, manufactory, job):
         if self.employer != manufactory and self.employer is not None:
@@ -56,49 +86,65 @@ class ManufactoryWorker(Worker):
             d = 0
         return a + b + c + d
 
-
-class BreadMaker(ManufactoryWorker):
-    def __init__(self, worker_data):
-        super().__init__(**worker_data)
+    def job_satisfaction(self):
+        if self.as_person.workaholic > 0.5:
+            self.job_satisfied += np.clip(sum(self.memory_salary[-3:]) / 3 - 1.5 * sum(self.memory_spent[-3:]) / 3,
+                                          -0.1, 0.1)
+        else:
+            self.job_satisfied += np.clip(sum(self.memory_salary[-3:]) / 3 - 1.2 * sum(self.memory_spent[-3:]) / 3,
+                                          -0.1, 0.1)
+        self.job_satisfied = np.clip(self.job_satisfied, 0, 1)
 
     def wants_to_work(self):
         return rd.uniform(self.job_satisfied, 1) > 0.1 or self.as_person.starvation < -2000
 
-    def work(self):
-        if self.wants_to_work():
-            self.employer.make_production(self, self.product, self.working_hours)
+    def get_payed(self):
+        if self.salary > 0:
+            self.memory_salary += [self.salary]
+            self.as_person.inventory.money += self.salary
+            self.salary = 0
+
+    def start(self):
+        self.work()
+        self.get_payed()
+        if rd.randint(0, 10) >= 8:
+            found = self.find_job(changing=True, market_ref=self.as_person.market_ref)
+            if found:
+                self.as_person.jobs += found
+                self.quit_job()
 
 
-class CerealMaker(ManufactoryWorker):
+class BreadMaker(ManufactureWorker):
     def __init__(self, worker_data):
         super().__init__(**worker_data)
 
-    def work(self):
-        self.employer.make_production(self, self.product, self.working_hours)
 
-
-class MeatMaker(ManufactoryWorker):
+class CerealMaker(ManufactureWorker):
     def __init__(self, worker_data):
         super().__init__(**worker_data)
 
-    def work(self):
-        self.employer.make_production(self, self.product, self.working_hours)
 
-
-class MilkMaker(ManufactoryWorker):
+class MeatMaker(ManufactureWorker):
     def __init__(self, worker_data):
         super().__init__(**worker_data)
 
-    def work(self):
-        self.employer.make_production(self, self.product, self.working_hours)
 
-
-class PieMaker(ManufactoryWorker):
+class MilkMaker(ManufactureWorker):
     def __init__(self, worker_data):
         super().__init__(**worker_data)
 
-    def work(self):
-        self.employer.make_production(self, self.product, self.working_hours)
+
+class PieMaker(ManufactureWorker):
+    def __init__(self, worker_data):
+        super().__init__(**worker_data)
+
+
+def assignClass(job):
+    assignments = {'cereal': CerealMaker, 'bread': BreadMaker, 'milk': MilkMaker, 'meat': MeatMaker, 'pie': PieMaker}
+    if type(job) is str:
+        return assignments[job]
+    else:
+        return assignments[job.name]
 
 
 # example
@@ -113,3 +159,4 @@ class Guardian(Worker):
     def __init__(self, worker_data):
         super().__init__(**worker_data)
         self.strength = 0.5
+

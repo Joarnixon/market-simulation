@@ -2,7 +2,9 @@ from sklearn.linear_model import LinearRegression
 import random as rd
 import numpy as np
 from objects.products import Products
+from objects.worker import Worker, assignClass, ManufactureWorker, CerealMaker, BreadMaker, MilkMaker, MeatMaker, PieMaker
 from settings.constants import *
+from typing import Union
 from other.utils import f_round, assign_numbers, cluster_data
 
 
@@ -49,7 +51,7 @@ class Manufacturer:
     def technology(self, x: float, technology_param: float = 0):
         return 1 + (50 - 10 * technology_param)**x / 20
 
-    def pay_salary(self, worker, product, produced):
+    def pay_salary(self, worker: ManufactureWorker, product, produced):
         if self.days == 1:
             money = produced * self.budget / self.num_workers[product] / self.daily_produced[product]
         else:
@@ -68,15 +70,20 @@ class Manufacturer:
         self.payed[product] += money
         self.budget -= money
 
-    def hire(self, worker, resume=None, desired_vacancy=None):
-        def contract(person, job):
-            if person.employer is not None and person.employer != self:
-                person.employer.fire(person=person)
-            self.workers[job].append(person)
+    def hire(self, worker: ManufactureWorker, resume=None, desired_vacancy=None):
+        def contract(person: ManufactureWorker, job):
+            specific_worker = assignClass(job)(worker_data=person.get_base_data())
+            specific_worker.employer = self
+            specific_worker.product = job
+            specific_worker.load_data(person.get_memory_data())
+            self.workers[job].append(specific_worker)
             self.num_workers[job] += 1
-            person.employer = self
-            person.job = job
-            return True
+            if person.employer is not None:
+                # TODO: this is highly bad but this causes lots of trouble and is time consuming for now
+                # TODO: this whole system with fire, hire is such a pain lmao
+                person.employer.workers[person.product].remove(person)
+                person.employer.num_workers[person.product] -= 1
+            return [specific_worker]
 
         if desired_vacancy is not None:
             if self.number_of_vacancies[desired_vacancy] - self.num_workers[desired_vacancy] > 0:
@@ -87,32 +94,28 @@ class Manufacturer:
         for vacancy, number in vacancies:
             if number - self.num_workers[vacancy] > 0:
                 return contract(worker, vacancy)
-        return False
+        return []
 
-    def fire(self, product=None, amount=None, person=None):
+    def fire(self, product=None, amount=None, person: ManufactureWorker = None):
         if person is None:
             k = min(amount, self.num_workers[product])
             for i in range(k):
-                worker = rd.choice(self.workers[product])
+                worker: ManufactureWorker = rd.choice(self.workers[product])
                 moved = self.hire(worker)
                 if not moved:
-                    worker.salary = 0
-                    worker.job = None
-                    worker.employer = None
-                self.workers[product].remove(worker)
-                self.num_workers[product] -= 1
+                    self.fire(person=worker)
+                else:
+                    worker.change_job(moved[0])
         else:
-            self.workers[person.job].remove(person)
-            self.num_workers[person.job] -= 1
-            person.salary = 0
-            person.job = None
-            person.employer = None
+            self.workers[person.product].remove(person)
+            self.num_workers[person.product] -= 1
+            person.quit_job()
 
-    def application(self, worker, resume=None, desired_vacancy=None):
+    def application(self, worker: ManufactureWorker, resume=None, desired_vacancy=None):
         return self.hire(worker, resume, desired_vacancy)
 
-    def make_production(self, worker, product, hours):
-        produced = (1 + worker.workaholic) * (hours / 4) * (1 + worker.job_satisfied) / product.manufacturing_complexity
+    def make_production(self, worker: ManufactureWorker, product, hours):
+        produced = (1 + worker.as_person.workaholic) * (hours / 4) * (1 + worker.job_satisfied) / product.manufacturing_complexity
         self.storage[product] += produced
         self.daily_income_in[product] -= PRODUCT_FIRST_PRICE[product.name] * self.raw_material_buy * produced
         self.daily_produced[product] += produced

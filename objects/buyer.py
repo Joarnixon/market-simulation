@@ -76,48 +76,6 @@ class Buyer:
             'from_start': False
         })
 
-    def find_job(self, market_ref, changing=False):
-        available_manufacturers = {}
-        for manufacturer in [manufacturer for manufacturer in market_ref.manufacturers if manufacturer != self.employer]:
-            best_production = None
-            best_score = -10000000 if not changing else self.score_manufactury(self.employer, self.job)
-            for product in manufacturer.products:
-                # example
-                # score = (manufacturer.working_hours - 8) * self.workaholic * manufacturer.salary
-                score = self.score_manufactury(manufacturer, product)
-                if score > best_score and manufacturer.number_of_vacancies[product] - manufacturer.num_workers[
-                    product] > 0:
-                    best_score = score
-                    best_production = product
-            if best_production is not None:
-                available_manufacturers[manufacturer] = [best_score, best_production]
-        if len(available_manufacturers) == 0:
-            return
-        available_manufacturers = sorted(available_manufacturers.items(), key=lambda d: d[1][0], reverse=True)
-        for manufacturer, params in available_manufacturers:
-            manufacturer.application(worker=self, resume=None, desired_vacancy=params[1])
-
-    def quit_job(self):
-        if self.employer is not None:
-            self.employer.fire(person=self)
-
-    def work(self, employer):
-        employer.make_production(self, self.job, self.working_hours)
-
-    def score_manufactury(self, manufactory, job):
-        if self.employer != manufactory and self.employer is not None:
-            a = (0.6 - self.job_satisfied) * 1000
-            b = (manufactory.wage_rate[job] / job.complexity - self.employer.wage_rate[
-                self.job] / self.job.complexity) * 1000
-            c = (manufactory.salary[job] / sum(manufactory.salary.values()) - self.employer.salary[self.job] / sum(self.employer.salary.values())) * 5000
-            d = (50 - self.plainness) * 4
-        else:
-            a = manufactory.wage_rate[job] / job.complexity * 500
-            b = manufactory.salary[job] * 10
-            c = (self.job_satisfied - 1) * 1000
-            d = 0
-        return a + b + c + d
-
     def get_satisfaction(self, seller: Seller, product: Products, amount: int = 1):
         """
         A secret for buyer function that it will try to interpolate for himself.
@@ -567,23 +525,10 @@ class Buyer:
                     self.estimate_best_offer(product)
                 return do_something_plan
 
-    def job_satisfaction(self):
-        if self.workaholic > 0.5:
-            self.job_satisfied += np.clip(sum(self.memory_salary[-3:]) / 3 - 1.5 * sum(self.memory_spent[-3:]) / 3,
-                                          -0.1, 0.1)
-        else:
-            self.job_satisfied += np.clip(sum(self.memory_salary[-3:]) / 3 - 1.2 * sum(self.memory_spent[-3:]) / 3,
-                                          -0.1, 0.1)
-        self.job_satisfied = np.clip(self.job_satisfied, 0, 1)
-
     def start(self, market_ref, ask, demand, bid):
         self.starvation -= (2000 - self.day_saturation)
         self.day_saturation = 0
         self.live += 1
-        if self.employer is None:
-            self.find_job(market_ref)
-        elif rd.randint(0, 10) >= 7:
-            self.find_job(changing=True, market_ref=market_ref)
         self.wealth += self.salary
         self.memory_salary += [self.salary]
         self.satisfaction -= 0.5 * (2 + self.needs)
