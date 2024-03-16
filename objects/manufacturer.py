@@ -9,13 +9,16 @@ from other.utils import f_round, assign_numbers, cluster_data
 
 
 class BaseManufacturer:
-    def __init__(self, name: str, products: list[Products], as_person):
+    def __init__(self, name: str, products: list[Products], as_person, technology_param):
         self.name: str = name
         self.as_person = as_person
         self.products: list[Products] = products
+        self.technology_param = technology_param
         self.days: int = 1
         self.from_start: bool = True
         self.storage: dict[Products, float] = {product: 0 for product in products}
+        self.first_cost: dict[Products, float] = {product: 0 for product in products}
+        self.raw_material_storage: dict[Products, float] = {product: 0 for product in products}
         self.workers: dict[Products, list] = {product: [] for product in products}
         self.num_workers: dict[Products, int] = {product: 0 for product in products}
         self.daily_produced: dict[Products, float] = {product: 0 for product in products}
@@ -35,11 +38,47 @@ class BaseManufacturer:
     def budget(self, value):
         self.as_person.inventory.money = value
 
+    def technology(self, x: float, a_const=50, b_const=10, c_const=20):
+        return 1 + (a_const - b_const * self.technology_param)**x / c_const
+
+    def get_price(self, product: Products, quality: float):
+        return PRODUCT_FIRST_PRICE[product.name] * self.technology(quality)
+
+    def hire(self, worker: ManufactureWorker, job, resume=None, desired_vacancy=None):
+        specific_worker = assignClass(job)(worker_data=worker.get_base_data())
+        specific_worker.employer = self
+        specific_worker.product = job
+        specific_worker.load_data(worker.get_memory_data())
+        self.workers[job].append(specific_worker)
+        self.num_workers[job] += 1
+        if worker.employer is not None:
+            # TODO: this is highly bad but this causes lots of trouble and is time consuming for now
+            # TODO: this whole system with fire, hire is such a pain lmao
+            worker.employer.workers[worker.product].remove(worker)
+            worker.employer.num_workers[worker.product] -= 1
+        return [specific_worker]
+
+    def fire(self, person):
+        self.workers[person.product].remove(person)
+        self.num_workers[person.product] -= 1
+        person.quit_job()
+
+    def make_production(self, worker: ManufactureWorker, product, hours):
+        produced = (1 + worker.as_person.workaholic) * (hours / 4) * (1 + worker.job_satisfied) / product.manufacturing_complexity
+        self.storage[product] += produced
+        #self.daily_income_in[product] -= PRODUCT_FIRST_PRICE[product.name] * self.raw_material_buy * produced
+        self.daily_produced[product] += produced
+        #self.pay_salary(worker, product, produced)
+
+    def sell(self, product, amount, quality):
+        k = min(amount, self.storage[product])
+        self.storage[product] -= k
+        #self.daily_income_in[product] += self.get_price(product, quality) * k
+
 
 class Manufacturer(BaseManufacturer):
     def __init__(self, name: str, products: list[Products], as_person, number_of_vacancies: dict, salary: dict, technology_param: float):
-        super().__init__(name=name, as_person=as_person, products=products)
-        self.technology_param = technology_param
+        super().__init__(name=name, as_person=as_person, products=products, technology_param=technology_param)
         self.raw_material_buy = RAW_MATERIAL_BUY
         self.number_of_vacancies = {product: number_of_vacancies[product] for product in products}
         self.salary = {product: salary[product] for product in products}
@@ -56,14 +95,8 @@ class Manufacturer(BaseManufacturer):
         self.business_changing_params = len(self.number_of_vacancies) + 1
         self.payed = {product: 0 for product in self.products}
 
-    def get_price(self, product: Products, quality: float):
-        return PRODUCT_FIRST_PRICE[product.name] * self.technology(quality, self.technology_param)
-
     def get_price_out(self, product):
         return 2.5 * PRODUCT_FIRST_PRICE[product.name]
-
-    def technology(self, x: float, technology_param: float = 0):
-        return 1 + (50 - 10 * technology_param)**x / 20
 
     def pay_salary(self, worker: ManufactureWorker, product, produced):
         if self.days == 1:
@@ -84,30 +117,19 @@ class Manufacturer(BaseManufacturer):
         self.payed[product] += money
         self.budget -= money
 
-    def hire(self, worker: ManufactureWorker, resume=None, desired_vacancy=None):
-        def contract(person: ManufactureWorker, job):
-            specific_worker = assignClass(job)(worker_data=person.get_base_data())
-            specific_worker.employer = self
-            specific_worker.product = job
-            specific_worker.load_data(person.get_memory_data())
-            self.workers[job].append(specific_worker)
-            self.num_workers[job] += 1
-            if person.employer is not None:
-                # TODO: this is highly bad but this causes lots of trouble and is time consuming for now
-                # TODO: this whole system with fire, hire is such a pain lmao
-                person.employer.workers[person.product].remove(person)
-                person.employer.num_workers[person.product] -= 1
-            return [specific_worker]
+    def hire(self, worker: ManufactureWorker, job=None, resume=None, desired_vacancy=None):
+        if job is not None:
+            return super().hire(worker, job)
 
         if desired_vacancy is not None:
             if self.number_of_vacancies[desired_vacancy] - self.num_workers[desired_vacancy] > 0:
-                return contract(worker, desired_vacancy)
+                return super().hire(worker, desired_vacancy)
 
         vacancies = sorted(self.number_of_vacancies.items(), key=lambda d: d[1], reverse=True)
 
         for vacancy, number in vacancies:
             if number - self.num_workers[vacancy] > 0:
-                return contract(worker, vacancy)
+                return super().hire(worker, vacancy)
         return []
 
     def fire(self, product=None, amount=None, person: ManufactureWorker = None):
@@ -117,13 +139,11 @@ class Manufacturer(BaseManufacturer):
                 worker: ManufactureWorker = rd.choice(self.workers[product])
                 moved = self.hire(worker)
                 if not moved:
-                    self.fire(person=worker)
+                    super().fire(person=worker)
                 else:
                     worker.change_job(moved[0])
         else:
-            self.workers[person.product].remove(person)
-            self.num_workers[person.product] -= 1
-            person.quit_job()
+            super().fire(person=person)
 
     def application(self, worker: ManufactureWorker, resume=None, desired_vacancy=None):
         return self.hire(worker, resume, desired_vacancy)

@@ -42,7 +42,8 @@ seller_wealth = {}
 # TODO: параметр - стаж
 # TODO: механики карьеры, отбор на работу и т.д
 # TODO: storage for sellers
-# TODO: limit of vacancies for manufactory, instead regulate amount of product sold out
+# TODO: limit of vacancies for manufactory, instead regulate amount of product sold
+# TODO: seller may sell 0.5 product for a person and it will count as 1
 
 
 # TODO: last problem - final desicion should be less strict. There was a bug and that's why population was growing almost everytime.
