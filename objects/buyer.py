@@ -529,15 +529,12 @@ class Buyer:
         self.starvation -= (2000 - self.day_saturation)
         self.day_saturation = 0
         self.live += 1
-        self.wealth += self.salary
-        self.memory_salary += [self.salary]
         self.satisfaction -= 0.5 * (2 + self.needs)
         self.day_spent = 0
         plan = self.planning(market_ref)
         self.think(plans=plan, market_ref=market_ref)
         self.ambition += rd.randint(-1, 1) * 5
         self.memory_spent += [self.day_spent]
-        self.job_satisfaction()
         if self.ambition < 0:
             self.ambition = 0
         if self.live % 3 == 0:
@@ -578,7 +575,7 @@ class Buyer:
         self.starvation = 4000
         self.birth = 0
         new_salary = self.inherit_salary(INITIAL_SALARY, sum(self.memory_salary[-5:]) / 5)
-        new_buyer = Buyer(plainness=self.plainness, salary=new_salary)
+        new_buyer = Buyer()
         for product in market_ref.products:
             new_buyer.fed_up[product] = 0
             new_buyer.stf_brains[product] = SGDRegressor(max_iter=BUYER_BRAIN_CONSTANT)

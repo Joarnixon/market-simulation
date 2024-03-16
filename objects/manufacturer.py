@@ -217,7 +217,6 @@ class Manufacturer:
         self.sell_out()
         self.update_memory(unemployed)
         self.budget += self.memory_income_in[-1] + self.memory_income_out[-1]
-        #print('income:', self.memory_income_in[-1] + self.memory_income_out[-1])
         self.estimate(unemployed)
         for product in self.number_of_vacancies:
             if self.number_of_vacancies[product] < self.num_workers[product]:

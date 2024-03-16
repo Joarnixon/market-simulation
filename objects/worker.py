@@ -23,6 +23,14 @@ class ManufactureWorker(Worker):
     def work(self):
         self.employer.make_production(self, self.product, self.working_hours)
 
+    @property
+    def budget(self):
+        return self.as_person.inventory.money
+
+    @budget.setter
+    def budget(self, value):
+        self.as_person.inventory.money = value
+
     def find_job(self, market_ref, changing=False):
         available_manufacturers = {}
         for manufacturer in [manufacturer for manufacturer in market_ref.manufacturers]:
@@ -49,6 +57,8 @@ class ManufactureWorker(Worker):
 
     def quit_job(self):
         self.as_person.jobs.remove(self)
+        if self in self.employer.workers[self.product]:
+            self.employer.fire(person=self)
         del self
 
     def change_job(self, changing):
@@ -101,7 +111,7 @@ class ManufactureWorker(Worker):
     def get_payed(self):
         if self.salary > 0:
             self.memory_salary += [self.salary]
-            self.as_person.inventory.money += self.salary
+            self.budget += self.salary
             self.salary = 0
 
     def start(self):
@@ -112,6 +122,8 @@ class ManufactureWorker(Worker):
             if found:
                 self.as_person.jobs += found
                 self.quit_job()
+        self.job_satisfaction()
+
 
 
 class BreadMaker(ManufactureWorker):
