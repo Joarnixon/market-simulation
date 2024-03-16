@@ -8,36 +8,50 @@ from typing import Union
 from other.utils import f_round, assign_numbers, cluster_data
 
 
-class Manufacturer:
-    def __init__(self, name: str, number_of_vacancies: dict, salary: dict, technology_param: float, products: list):
-        self.name = name
-        self.budget = 1000
-        self.days = 1
-        self.from_start = True
+class BaseManufacturer:
+    def __init__(self, name: str, products: list[Products], as_person):
+        self.name: str = name
+        self.as_person = as_person
+        self.products: list[Products] = products
+        self.days: int = 1
+        self.from_start: bool = True
+        self.storage: dict[Products, float] = {product: 0 for product in products}
+        self.workers: dict[Products, list] = {product: [] for product in products}
+        self.num_workers: dict[Products, int] = {product: 0 for product in products}
+        self.daily_produced: dict[Products, float] = {product: 0 for product in products}
+        self.daily_income: dict[Products, float] = {product: 0 for product in products}
+        self.daily_income_before: dict[Products, float] = {product: 0 for product in products}
+        self.wage_rate: dict[Products, float] = {product: 0 for product in products}
+        self.memory_hr: dict[Union[Products, str], list] = {product: [] for product in products}
+        self.memory_business: dict[Union[Products, str], list] = {product: [] for product in products}
+        self.memory_income: list = []
+        self.brains = {'hr': LinearRegression(), 'business': LinearRegression()}
+
+    @property
+    def budget(self):
+        return self.as_person.inventory.money
+
+    @budget.setter
+    def budget(self, value):
+        self.as_person.inventory.money = value
+
+
+class Manufacturer(BaseManufacturer):
+    def __init__(self, name: str, products: list[Products], as_person, number_of_vacancies: dict, salary: dict, technology_param: float):
+        super().__init__(name=name, as_person=as_person, products=products)
         self.technology_param = technology_param
-        self.raw_material_buy = 0.75
-        self.products = products
+        self.raw_material_buy = RAW_MATERIAL_BUY
         self.number_of_vacancies = {product: number_of_vacancies[product] for product in products}
-        self.storage = {product: 0 for product in products}
-        self.workers = {product: [] for product in products}
-        self.num_workers = {product: 0 for product in products}
         self.salary = {product: salary[product] for product in products}
-        self.daily_produced = {product: 0 for product in products}
         self.daily_income_in = {product: 0 for product in products}
         self.daily_income_out = {product: 0 for product in products}
-        self.daily_income_before = {product: 0 for product in products}
-        self.wage_rate = {product: 0 for product in products}
-        self.memory_hr = {product: [] for product in products}
         self.memory_hr['produced'] = []
-        self.memory_business = {product: [] for product in products}
         self.memory_business['tech'] = []
         self.memory_business['unemployed'] = []
         self.memory_income_in = []
         self.memory_income_out = []
-        self.memory_income = []
         self.memory_income_total_hr = []
         self.memory_income_total_business = []
-        self.brains = {'hr': LinearRegression(), 'business': LinearRegression()}
         self.hr_changing_params = len(self.salary)
         self.business_changing_params = len(self.number_of_vacancies) + 1
         self.payed = {product: 0 for product in self.products}
