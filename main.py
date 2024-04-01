@@ -132,7 +132,11 @@ class Market:
                 buyer.loyalty[seller] = 5
         for buyer in Market.buyers:
             buyer.find_job(market_ref=Market)
-                
+
+    @staticmethod
+    def find_biggest_seller(product):
+        return max([seller.local_ask[product][-1] for seller in Market.sellers])
+
     @staticmethod
     def start():
         for k in range(Market.ticks):
@@ -203,7 +207,7 @@ class Market:
                         del buyer.best_offers[product]
 
         def handle_new_sellers(verbose: int = 0):
-            for new_seller in list(Market.new_sellers):
+            for new_seller, person in list(Market.new_sellers):
                 the_seller = Seller(**new_seller)
                 x_axis[the_seller] = []
                 seller_wealth[the_seller] = []
@@ -215,6 +219,7 @@ class Market:
                     the_seller.local_ask[product] = 0
                 for buyer in Market.buyers:
                     buyer.loyalty[the_seller] = 5
+                person.seller = the_seller
                 if verbose > 0:
                     print('New seller')
 
