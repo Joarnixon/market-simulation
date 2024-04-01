@@ -24,6 +24,10 @@ class ManufactureWorker(Worker):
         self.employer.make_production(self, self.product, self.working_hours)
 
     @property
+    def workaholic(self):
+        return self.as_person.workaholic
+
+    @property
     def budget(self):
         return self.as_person.inventory.money
 
@@ -97,7 +101,7 @@ class ManufactureWorker(Worker):
         return a + b + c + d
 
     def job_satisfaction(self):
-        if self.as_person.workaholic > 0.5:
+        if self.workaholic > 0.5:
             self.job_satisfied += np.clip(sum(self.memory_salary[-3:]) / 3 - 1.5 * sum(self.memory_spent[-3:]) / 3,
                                           -0.1, 0.1)
         else:

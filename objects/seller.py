@@ -177,6 +177,8 @@ class Seller(BaseSeller):
                 self.local_ask[product] = 0
                 #print(self.amounts[product])
 
+
+    # TODO: надо доделать этот метод
     def become_manufacturer(self, market_ref, ask):
         if self.wealth >= 500 * (1 + self.greed):
             if self.ambition >= 70:

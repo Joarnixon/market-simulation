@@ -93,7 +93,7 @@ class BaseManufacturer:
         self.budget -= money
 
     def make_production(self, worker: ManufactureWorker, product, hours):
-        produced = (1 + worker.as_person.workaholic) * (hours / 4) * (1 + worker.job_satisfied) / product.manufacturing_complexity
+        produced = (1 + worker.workaholic) * (hours / 4) * (1 + worker.job_satisfied) / product.manufacturing_complexity
         self.storage[product] += produced
         self.daily_produced[product] += produced
         self.pay_salary(worker, product, produced)

@@ -2,9 +2,10 @@ from objects.buyer import Buyer
 from objects.seller import Seller
 from objects.manufacturer import Manufacturer
 from objects.worker import Worker, ManufactureWorker
+from settings.constants import REQUIRES, AGING
 from dataclasses import dataclass, field
 from functools import cache
-
+import numpy as np
 import random as rd
 from typing import Any
 
@@ -29,8 +30,26 @@ def set_birth() -> int:
     return rd.randint(0, 40)
 
 
+def set_inventory() -> object:
+    return Inventory()
+
+
 def set_birth_threshold() -> int:
     return 25 + rd.randint(-10, 15)
+
+
+# TODO: update this somehow through buyer
+
+def set_memory_salary() -> list:
+    return []
+
+
+def set_jobs() -> list:
+    return []
+
+
+def set_memory_spent() -> list:
+    return []
 
 
 class Inventory:
@@ -41,14 +60,19 @@ class Inventory:
 @dataclass
 class BasePerson:
     name: str
-    employer: Any = None
+    market_ref: Any
     day_saturation: int = 0
+    day_spent: int = 0
     needs: float = 0.05
     starvation: int = 2000
     satisfaction: float = 0
     alive: int = 1
     ambition: int = 0
     generation: int = 0
+    jobs: list = field(default_factory=set_jobs)
+    memory_spent: list = field(default_factory=set_memory_spent)
+    memory_salary: list = field(default_factory=set_memory_salary)
+    inventory: Inventory = field(default_factory=set_inventory)
     birth_threshold: int = field(default_factory=set_birth_threshold)
     birth: int = field(default_factory=set_birth)
     age: int = field(default_factory=set_age)
@@ -56,31 +80,106 @@ class BasePerson:
     workaholic: float = field(default_factory=set_workaholic)
     greed: float = field(default_factory=set_greed)
 
+    @property
+    def budget(self):
+        return self.inventory.money
+
+    @budget.setter
+    def budget(self, value):
+        self.inventory.money = value
+
     def update_ambition(self):
         self.ambition = max(0, self.ambition + rd.randint(-1, 1) * 5)
+
+    def update_needs(self):
+        self.needs = self.needs + np.clip(round(sum(self.memory_salary[-2:]) / 2 - sum(self.memory_spent[-2:]) / 2, 2),
+                                          -0.1, 0.1)
+        self.needs = np.clip(self.needs, 0.05, 1)
 
     def update_satisfaction(self):
         self.satisfaction -= 0.5 * (2 + self.needs)
 
-    def update_day_saturation(self):
+    def update_day_values(self):
         self.day_saturation = 0
+        self.day_spent = 0
+        self.starvation -= REQUIRES[2]
+        self.birth += 1
+        self.age += AGING
+
+    def birth_new(self):
+        if self.birth >= self.birth_threshold:
+            if self.starvation >= 7000 * (1 + self.needs):
+                if self.budget >= 3 * sum(self.memory_salary[-5:]) / 5 * (1 + self.needs):
+                    self.budget -= 2 * sum(self.memory_salary[-5:]) / 5 * (1 + self.needs)
+                    self.starvation = 4000
+                    self.birth = 0
+                    # TODO: add starting money from parent
+                    new_person = Person()
+                    new_person.generation = self.generation + 1
+                    self.market_ref.new_buyers.append(new_person)
+                    #  print("NEW BUYER")
+
+    def try_become_seller(self, ask, demand, bid, best_offers, estimated):
+        if self.budget >= 50 * (2 / 3 + self.needs) ** 4:
+            if self.ambition >= 50 * (1.8 - self.needs):
+                if ((sum([demand[product][-1] for product in self.market_ref.products]) * (
+                        1 + round(rd.uniform(-0.2, 0.15), 3)) > sum(
+                    [bid[product][-1] for product in self.market_ref.products]) * (
+                            1 + round(rd.uniform(-0.15, 0.1), 3))) or (
+                        sum([ask[product][-1] for product in self.market_ref.products]) > sum(
+                    [demand[product][-1] for product in self.market_ref.products]) // 8)
+                        or self.satisfaction < -50):
+                    self.budget = sum(self.memory_salary[-5:]) / 5 * 3
+                    self.ambition = 0
+                    guess = {}
+                    prices = {}
+                    for product in self.market_ref.products:
+                        if product not in best_offers and product not in estimated:
+                            quality = self.market_ref.find_biggest_seller(product).qualities[product]
+                            price = self.market_ref.find_biggest_seller(product).prices[product] * 0.5
+                        elif product not in best_offers:
+                            quality = estimated[product][1]
+                            price = estimated[product][0]
+                        else:
+                            quality = best_offers[product]['quality']
+                            price = best_offers[product]['price']
+                        guess[product] = {"quality": quality, "amount": int(ask[product][-1] * 0.2)}
+                        prices[product] = price
+                    self.market_ref.new_sellers.append([{
+                        'guess': guess,
+                        'prices': prices,
+                        'from_start': False
+                    }, self])
+
+    def check_death(self):
+        if self.starvation < -20000:
+            for job in list(self.jobs):
+                job.quit_job()
+            self.market_ref.buyers.remove(self)
+            self.market_ref.buyers_count -= 1
+            #  print("BUYER ELIMINATED")
+            del self
+            return False
 
 
 class Person(BasePerson):
-    def __init__(self, default_data, market_reference, buyer_data=None, seller_data=None, manufacturer_data=None, inventory_data=None):
+    def __init__(self, default_data, buyer_data=None, seller_data=None, manufacturer_data=None):
         super().__init__(**default_data)
-        self.market_ref = market_reference
-        self.inventory = Inventory(**inventory_data) if inventory_data else None
         self.buyer = Buyer(**buyer_data) if buyer_data else None
         self.seller = Seller(**seller_data) if seller_data else None
         self.manufacturer = Manufacturer(**manufacturer_data) if manufacturer_data else None
-        self.jobs = []
 
     def start(self, ask, demand, bid):
+        self.update_day_values()
         if len(self.jobs) == 0 and self.manufacturer is None:
             self.find_new_job()
         for role in self.get_available_roles():
             role.start(self.market_ref, ask, demand, bid)
+        self.update_ambition()
+        self.update_satisfaction()
+        self.check_death()
+        if self.seller is None:
+            self.try_become_seller(ask, demand, bid, self.buyer.best_offers, self.buyer.estimated)
 
     @cache
     def get_available_roles(self):
@@ -104,5 +203,3 @@ class Person(BasePerson):
 
     def delete_cache(self):
         self.get_available_roles.cache_clear()
-
-

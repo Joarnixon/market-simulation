@@ -1,4 +1,5 @@
 import random as rd
+from functools import cache
 import numpy as np
 from math import floor
 from operator import itemgetter
@@ -14,70 +15,116 @@ from other.desummation import Desummation
 
 
 class BaseBuyer:
-    print('hello world')
+    def __init__(self, inventory, person):
+        self.as_person = person
+        self.inventory = inventory
 
-class Buyer:
+    @property
+    def ambition(self):
+        return self.as_person.ambition
+
+    @property
+    def budget(self):
+        return self.as_person.inventory.money
+
+    @budget.setter
+    def budget(self, value):
+        self.as_person.inventory.money = value
+
+    @property
+    def plainness(self):
+        return self.as_person.plainness
+
+    @property
+    def day_saturation(self):
+        return self.as_person.day_saturation
+
+    @property
+    def starvation(self):
+        return self.as_person.starvation
+
+    @day_saturation.setter
+    def day_saturation(self, value):
+        self.as_person.day_saturation = value
+
+    @property
+    @cache
+    def market_ref(self):
+        return self.as_person.market_ref
+
+    @property
+    def day_spent(self):
+        return self.as_person.day_spent
+
+    @day_spent.setter
+    def day_spent(self, value):
+        self.as_person.day_spent = value
+
+    def buy(self, seller: Seller, product: Union[dict, Products], amount: Union[dict, int], satisfactions: dict):
+        if isinstance(amount, int):
+            plan = {product: amount}
+        else:
+            plan = dict(zip(product, amount))
+        bought = {}
+        for product, amount in plan.items():
+            amounts = min(amount, seller.amounts[product], floor(self.budget / seller.prices[product]))
+            if amounts == 0:
+                continue
+
+            # TODO: add to "eat" method
+            # if product not in self.fed_up:
+            #     self.fed_up[product] = amounts
+            # else:
+            #     self.fed_up[product] += amounts
+
+            cost = seller.prices[product]
+            quality = seller.qualities[product]
+
+            # TODO: do this better
+            stsf = self.get_satisfaction(seller, product)
+
+            spend = cost * amounts
+            satisfied = stsf * amounts
+            self.day_saturation += product.calories * amounts
+
+            Buyer.product_bought[product] += amounts
+            Buyer.product_prices[product] += [cost]
+
+            self.budget = self.budget - spend
+            self.day_spent += spend
+            # TODO: to eat method
+                self.satisfaction = self.satisfaction + satisfied
+            seller.sell(product=product, buyer=self, amount=amounts)
+            bought[product] = amounts
+        return bought
+
+
+class Buyer(BaseBuyer):
     product_prices = {}
     product_ask = {}
     starvation_index = []
     product_bought = {}
 
     def __init__(self, inventory, person):
-        self.as_person = person
-        self.inventory = inventory
+        super().__init__(inventory, person)
         self.memory = {}
-        self.live = 1
         self.memory_stf = {}
         self.best_offers = {}
         self.offers = {}
         self.offers_stf = {}
         self.estimated = {}
-        self.stf_brains = {}
         self.estimated_stf = {}
-        self.salary = 0
         self.memory_salary = []
         self.memory_spent = []
         self.dsm = Desummation()
         self.dsm.fit(REQUIRES)
-        self.day_spent = 0
-        self.satisfaction = 0
-        self.starvation = 2000
-        self.day_saturation = 0
-        self.needs = 0.05
-        self.consumption = np.random.poisson(1 + self.needs * 5) * 100
         self.loyalty = {}
-        self.fed_up = {}
+        self.stf_brains = {product: SGDRegressor(max_iter=BUYER_BRAIN_CONSTANT) for product in self.market_ref.products}
+        self.fed_up = {product: 0 for product in self.market_ref.products}
         self.product_found = {}
         self.plan = {}
-        self.ambition = 0
-        self.birth_threshold = 25 + rd.randint(-10, 15)
-        self.birth = 0
-        self.generation = 0
-        self.employer = None
-        self.workaholic = rd.uniform(0.1, 1)
-        self.working_hours = 8
-        self.job_satisfied = 0.5
-        self.job = None
-        self.employer_days_worked = 0
-        self.jobs_experience = {}
-
-    def become_seller(self, market_ref, ask):
-        guess = {}
-        prices = {}
-        for product in market_ref.products:
-            if product not in self.best_offers:
-                quality = self.estimated[product][1]
-                price = self.estimated[product][0]
-            else:
-                quality = self.best_offers[product]['quality']
-                price = self.best_offers[product]['price']
-            guess[product] = {"quality": quality, "amount": int(ask[product][-1] * 0.2)}
-            prices[product] = price
-        market_ref.new_sellers.append({
-            'guess': guess,
-            'prices': prices,
-            'from_start': False
-        })
+        # self.employer_days_worked = 0
+        # self.jobs_experience = {}
 
     def get_satisfaction(self, seller: Seller, product: Products, amount: int = 1):
         """
@@ -165,6 +212,42 @@ class Buyer:
                     self.loyalty[seller] = int(
                         np.clip(self.loyalty[seller] + sum(np.copysign(weights, list(satisfactions[seller].values()))),
                                 5, 100))
+
+    def update_memory_product_seller(self, product, seller, amounts):
+        cost = seller.prices[product]
+        quality = seller.qualities[product]
+        Buyer.product_bought[product] += amounts
+        Buyer.product_prices[product] += [cost]
+
+        # TODO: do this better
+        stsf = self.get_satisfaction(seller, product)
+
+        if product not in self.memory:
+            self.memory_stf[product] = [stsf]
+            self.memory[product] = [[cost, quality]]
+            self.estimate_best_offer(product)
+        else:
+            self.memory[product] += [[cost, quality]]
+            self.memory_stf[product] += [stsf]
+
+        if product not in self.best_offers:
+            self.best_offers[product] = {"seller": seller, "satisfaction": stsf,
+                                         "price": float(seller.prices[product]),
+                                         "quality": float(seller.qualities[product])}
+        else:
+            if stsf >= self.best_offers[product]["satisfaction"]:
+                self.best_offers[product] = {"seller": seller, "satisfaction": stsf,
+                                             "price": float(seller.prices[product]),
+                                             "quality": float(seller.qualities[product])}
+            else:
+                if seller == self.best_offers[product]["seller"]:
+                    if rd.randint(0, 110) > self.loyalty[seller]:
+                        self.best_offers[product] = {"seller": seller, "satisfaction": stsf,
+                                                     "price": float(seller.prices[product]),
+                                                     "quality": float(seller.qualities[product])}
+                        self.loyalty[seller] = np.clip(self.loyalty[seller] - 3, 5,
+                                                       100)  # Always expect for seller to become better
+        self.remember_seller(seller=seller)
 
     def think(self, plans: dict, market_ref):
         satisfactions = {seller: {} for seller in set(market_ref.sellers).union(set(market_ref.newcomers_sellers))}
@@ -428,64 +511,10 @@ class Buyer:
         return outcome
 
     def buy(self, seller: Seller, product: Union[dict, Products], amount: Union[dict, int], satisfactions: dict):
-        if isinstance(amount, int):
-            plan = {product: amount}
-        else:
-            plan = dict(zip(product, amount))
-        bought = {}
-        for product, amount in plan.items():
-            amounts = min(amount, seller.amounts[product], floor(self.wealth / seller.prices[product]))
-            if amounts == 0:
-                continue
-            if product not in self.fed_up:
-                self.fed_up[product] = amounts
-            else:
-                self.fed_up[product] += amounts
-
-            cost = seller.prices[product]
-            quality = seller.qualities[product]
-            stsf = self.get_satisfaction(seller, product)
-
-            spend = cost * amounts
-            satisfied = stsf * amounts
-            self.day_saturation += product.calories * amounts
-
-            Buyer.product_bought[product] += amounts
-            Buyer.product_prices[product] += [cost]
-
-            self.wealth = self.wealth - spend
-            self.day_spent += spend
-            self.satisfaction = self.satisfaction + satisfied
-            seller.sell(product=product, buyer=self, amount=amounts)
-            bought[product] = amounts
-
-            if product not in self.memory:
-                self.memory_stf[product] = [stsf]
-                self.memory[product] = [[cost, quality]]
-                self.estimate_best_offer(product)
-            else:
-                self.memory[product] += [[cost, quality]]
-                self.memory_stf[product] += [stsf]
-
-            if product not in self.best_offers:
-                self.best_offers[product] = {"seller": seller, "satisfaction": stsf,
-                                             "price": float(seller.prices[product]),
-                                             "quality": float(seller.qualities[product])}
-            else:
-                if stsf >= self.best_offers[product]["satisfaction"]:
-                    self.best_offers[product] = {"seller": seller, "satisfaction": stsf,
-                                                 "price": float(seller.prices[product]),
-                                                 "quality": float(seller.qualities[product])}
-                else:
-                    if seller == self.best_offers[product]["seller"]:
-                        if rd.randint(0, 110) > self.loyalty[seller]:
-                            self.best_offers[product] = {"seller": seller, "satisfaction": stsf,
-                                                         "price": float(seller.prices[product]),
-                                                         "quality": float(seller.qualities[product])}
-                            self.loyalty[seller] = np.clip(self.loyalty[seller] - 3, 5,
-                                                           100)  # Always expect for seller to become better
-            satisfactions[seller].update({product: self.get_satisfaction(seller=seller, product=product)})
-            self.remember_seller(seller=seller)
+        bought = super().buy(seller, product, amount, satisfactions)
+        self.update_memory_product_seller(product, seller, stsf, cost, quality)
+        satisfactions[seller].update({product: self.get_satisfaction(seller=seller, product=product)})
+        self.remember_seller(seller=seller)
         return bought
 
     def planning(self, market_ref, exclude_products: list = None):
@@ -529,57 +558,12 @@ class Buyer:
                 return do_something_plan
 
     def start(self, market_ref, ask, demand, bid):
-        self.starvation -= (2000 - self.day_saturation)
-        self.live += 1
-        self.day_spent = 0
         plan = self.planning(market_ref)
         self.think(plans=plan, market_ref=market_ref)
         self.memory_spent += [self.day_spent]
         if self.live % 3 == 0:
             self.train_stf_brains()
-        self.needs = self.needs + np.clip(round(sum(self.memory_salary[-2:]) / 2 - sum(self.memory_spent[-2:]) / 2, 2),
-                                          -0.1, 0.1)
-        self.needs = np.clip(self.needs, 0.05, 1)
         Buyer.starvation_index += [self.starvation]
-        if len(self.estimated) == market_ref.products_count:
-            if self.wealth >= 50 * (2 / 3 + self.needs) ** 4:
-                #  print(self.loyalty)
-                if self.ambition >= 50 * (1.8 - self.needs):
-                    if (sum([demand[product][-1] for product in market_ref.products]) * (
-                            1 + round(rd.uniform(-0.2, 0.15), 3)) > sum(
-                            [bid[product][-1] for product in market_ref.products]) * (
-                                1 + round(rd.uniform(-0.15, 0.1), 3))) or (
-                            sum([ask[product][-1] for product in market_ref.products]) > sum(
-                            [demand[product][-1] for product in market_ref.products]) // 8) or self.satisfaction < -50:
-                        self.become_seller(market_ref, ask)
-                        self.wealth = sum(self.memory_salary[-5:]) / 5 * 3
-                        self.ambition = 0
-        if self.starvation < -20000:
-            if self.employer is not None:
-                self.employer.fire(person=self)
-            market_ref.buyers.remove(self)
-            market_ref.buyers_count -= 1
-            #  print("BUYER ELIMINATED")
-            del self
-            return False
-        self.birth += 1
-        if self.birth >= self.birth_threshold:
-            if self.starvation >= 7000 * (1 + self.needs):
-                if self.wealth >= 3 * sum(self.memory_salary[-5:]) / 5 * (1 + self.needs):
-                    self.birth_new(market_ref)
-
-    def birth_new(self, market_ref):
-        self.wealth -= 2 * sum(self.memory_salary[-5:]) / 5 * (1 + self.needs)
-        self.starvation = 4000
-        self.birth = 0
-        new_salary = self.inherit_salary(INITIAL_SALARY, sum(self.memory_salary[-5:]) / 5)
-        new_buyer = Buyer()
-        for product in market_ref.products:
-            new_buyer.fed_up[product] = 0
-            new_buyer.stf_brains[product] = SGDRegressor(max_iter=BUYER_BRAIN_CONSTANT)
-        new_buyer.generation = self.generation + 1
-        market_ref.new_buyers.append(new_buyer)
-        #  print("NEW BUYER")
 
     @staticmethod
     def inherit_salary(initial_salary, previous_salary):
