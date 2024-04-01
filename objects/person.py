@@ -55,7 +55,15 @@ class BasePerson:
     plainness: int = field(default_factory=set_plainness)
     workaholic: float = field(default_factory=set_workaholic)
     greed: float = field(default_factory=set_greed)
-    # and other parameters
+
+    def update_ambition(self):
+        self.ambition = max(0, self.ambition + rd.randint(-1, 1) * 5)
+
+    def update_satisfaction(self):
+        self.satisfaction -= 0.5 * (2 + self.needs)
+
+    def update_day_saturation(self):
+        self.day_saturation = 0
 
 
 class Person(BasePerson):

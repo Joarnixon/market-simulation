@@ -7,30 +7,115 @@ from objects.products import Products
 from settings.constants import *
 
 
-class Seller:
-    def __init__(self, guess=None, prices=None, from_start=True):
+class BaseSeller:
+    def __init__(self, as_person, guess=None, prices=None, from_start=True):
         self.from_start = from_start
-        self.forcheckX = {}
-        self.forcheckY = {}
+        self.as_person = as_person
         self.memory = {}
         self.memory_incomes = {}
         self.prices = {} if not prices else prices
         self.overprices = {}
         self.qualities = {}
-        self.providers = {}
         self.local_ask = {}
         self.available_products = []
         self.n_product_params = 3
         self.days = 0
-        self.death = TICKS
         self.amounts = {}
-        self.greed = rd.uniform(0.2, 0.5)
-        self.wealth = 100
-        self.ambition = 20
         self.income = {}
         self.initial_guess = {}
         self.guess = {} if not guess else guess
         self.brain = LinearRegression()
+
+    @property
+    def greed(self):
+        return self.as_person.greed
+
+    @property
+    def budget(self):
+        return self.as_person.inventory.money
+
+    @budget.setter
+    def budget(self, value):
+        self.as_person.inventory.money = value
+
+    def estimate(self, product: Products, iteration, volatility_index):
+        adding_point = self.memory[product][-1][:self.n_product_params]
+        x = np.array(self.memory[product])
+        y = np.array(self.memory_incomes[product])[-len(x):]
+        if len(self.memory[product]) >= 60:
+            x, y = cluster_data(x, y, num_clusters=20)
+            self.memory[product] = x
+            self.memory_incomes[product] = y
+
+        # Pick a random point with some help of knowing the global market info
+        changes = rd.randint(0, 10 + self.days // 10)
+        if changes >= (4 + self.days // 10):
+            for i in range(self.n_product_params - 1):  # three parameters (quality, overprice, amount)
+                adding_point[i] = round(adding_point[i] * (1 + rd.uniform(-0.05, 0.05)), 2)
+            if adding_point[2] < 10:
+                adding_point[2] = f_round(adding_point[2] * (1 + rd.uniform(-0.2, 0.5)))
+            else:
+                adding_point[2] = f_round(adding_point[2] * (1 + rd.uniform(-0.05, 0.05)))
+
+            if iteration == 5:
+                adding_point[2] = self.local_ask[product]
+            if not self.from_start and self.days == 12:
+                adding_point[2] = self.local_ask[product]
+
+            self.qualities[product] = float(np.clip(adding_point[0], 0.05, 1))  # quality)
+            self.overprices[product] = float(np.clip(adding_point[1], 0, 10000000))  # overprice
+            self.amounts[product] = int(np.clip(adding_point[2], 3, 10000000))
+        else:
+            model = self.brain
+            model.fit(x, y)
+            adding_point = np.array(adding_point)
+            # can be proven to be a local maximum direction
+            # instead there used to be a greedy search for that maximum with model predictions
+            slope = model.coef_[:self.n_product_params]
+            z_adding = np.copysign(adding_point * rd.randint(1, 2+1) / 40, np.round(slope, 1))
+            z_adding = z_adding * assign_numbers(slope)
+
+            if iteration == 5 or (not self.from_start and self.days == 12):
+                adding_point[2] = self.local_ask[product]
+                z_adding[2] = 0
+            else:
+                z_adding[2] = np.copysign(volatility_index[product], z_adding[2])
+
+            z_adding[2] = round(z_adding[2])
+            adding_point = adding_point + z_adding
+            adding_point[0] = np.clip(adding_point[0], 0.05, 1)  # quality
+            adding_point[1] = np.clip(adding_point[1], 0, 10000000)  # overprice
+            adding_point[2] = np.clip(adding_point[2], 3, 10000000)  # amount
+
+            self.qualities[product] = float(adding_point[0])
+            self.overprices[product] = float(adding_point[1])
+            self.amounts[product] = int(adding_point[2])
+
+    def get_guess_price(self, price, product):
+        if self.from_start:
+            return round(price * (rd.uniform(0.2, 0.2 + self.greed)), 2)
+        else:
+            return float(np.clip((self.prices[product] - price) * (rd.uniform(0.2 + self.greed / 2, 1)), 0, 10000000))
+
+    def sell(self, product: Union[dict, Products], buyer, amount: Union[dict, int]):
+        if isinstance(amount, int):
+            asks = {product: amount}
+        else:
+            asks = dict(zip(product, amount))
+        for product, amount in asks.items():
+            amount = min(amount, self.amounts[product])
+            self.income[product] += self.prices[product] * amount
+            self.amounts[product] -= amount
+            self.local_ask[product] += amount
+
+        # TODO: buyer.recieve(product, amount)
+
+
+class Seller(BaseSeller):
+    def __init__(self, as_person, guess=None, prices=None, from_start=True):
+        super().__init__(as_person=as_person, guess=guess, prices=prices, from_start=from_start)
+        self.providers = {}
+        self.ambition = 20
 
     def start(self, market_ref, ask, demand=None, bid=None):
         self.available_products = []
@@ -66,8 +151,6 @@ class Seller:
                 self.memory[product] = [[self.qualities[product], self.overprices[product], self.amounts[product], self.amounts[product]]]
                 self.memory_incomes[product] = []
                 self.local_ask[product] = 0
-                self.forcheckX[product] = [[self.qualities[product], self.overprices[product], self.amounts[product]]]
-                self.forcheckY[product] = []
             else:
                 for manufactory in market_ref.manufacturers:
                     offers[manufactory] = manufactory.get_price(product, self.qualities[product])
@@ -91,7 +174,6 @@ class Seller:
                 self.prices[product] = min_price + self.overprices[product]
                 self.income[product] = -spent
                 self.memory[product] += [[self.qualities[product], self.overprices[product], self.amounts[product], self.local_ask[product]]]
-                self.forcheckX[product] += [[self.qualities[product], self.overprices[product], self.amounts[product]]]
                 self.local_ask[product] = 0
                 #print(self.amounts[product])
 
@@ -129,89 +211,10 @@ class Seller:
         else:
             return self.guess[product]
 
-    def get_guess_price(self, price, product):
-        if self.from_start:
-            return round(price * (rd.uniform(0.2, 0.2 + self.greed)), 2)
-        else:
-            return float(np.clip((self.prices[product] - price) * (rd.uniform(0.2 + self.greed / 2, 1)), 0, 10000000))
-
-    def estimate(self, product: Products, iteration, volatility_index):
-        adding_point = self.memory[product][-1][:self.n_product_params]
-        x = np.array(self.memory[product])
-        y = np.array(self.memory_incomes[product])[-len(x):]
-        if len(self.memory[product]) >= 60:
-            x, y = cluster_data(x, y, num_clusters=20)
-            self.memory[product] = x
-            self.memory_incomes[product] = y
-
-        # Pick a random point with some help of knowing the global market info
-        changes = rd.randint(0, 10 + self.days // 10)
-        if changes >= (4 + self.days // 10):
-            for i in range(self.n_product_params - 1):  # three parameters (quality, overprice, amount)
-                adding_point[i] = round(adding_point[i] * (1 + rd.uniform(-0.05, 0.05)), 2)
-            if adding_point[2] < 10:
-                adding_point[2] = f_round(adding_point[2] * (1 + rd.uniform(-0.2, 0.5)))
-            else:
-                adding_point[2] = f_round(adding_point[2] * (1 + rd.uniform(-0.05, 0.05)))
-
-            if iteration == 5:
-                adding_point[2] = self.local_ask[product]
-            if not self.from_start and self.days == 12:
-                adding_point[2] = self.local_ask[product]
-
-            self.qualities[product] = float(np.clip(adding_point[0], 0.05, 1))  # quality)
-            self.overprices[product] = float(np.clip(adding_point[1], 0, 10000000))  # overprice
-            self.amounts[product] = int(np.clip(adding_point[2], 3, 10000000))
-            # np.vstack((x, adding_point))
-        else:
-            model = self.brain
-            model.fit(x, y)
-            adding_point = np.array(adding_point)
-            # can be proven to be a local maximum direction
-            # instead there used to be a greedy search for that maximum with model predictions
-            slope = model.coef_[:self.n_product_params]
-            z_adding = np.copysign(adding_point * rd.randint(1, 2+1) / 40, np.round(slope, 1))
-            z_adding = z_adding * assign_numbers(slope)
-
-            if iteration == 5 or (not self.from_start and self.days == 12):
-                adding_point[2] = self.local_ask[product]
-                z_adding[2] = 0
-            else:
-                z_adding[2] = np.copysign(volatility_index[product], z_adding[2])
-
-
-            # if not self.from_start and self.days == 5:
-            #     adding_point[2] = int(ask[product][-1] * (0.3 + rd.uniform(-0.2, 0.2)))
-            #     z_adding[2] = 0
-
-            z_adding[2] = round(z_adding[2])
-            adding_point = adding_point + z_adding
-            adding_point[0] = np.clip(adding_point[0], 0.05, 1)  # quality
-            adding_point[1] = np.clip(adding_point[1], 0, 10000000)  # overprice
-            adding_point[2] = np.clip(adding_point[2], 3, 10000000)  # amount
-
-            self.qualities[product] = float(adding_point[0])
-            self.overprices[product] = float(adding_point[1])
-            self.amounts[product] = int(adding_point[2])
-            # np.vstack((x, adding_point))
-
-    def sell(self, product: Union[dict, Products], buyer, amount: Union[dict, int]):
-        if isinstance(amount, int):
-            asks = {product: amount}
-        else:
-            print(product, amount, type(amount))
-            asks = dict(zip(product, amount))
-
-        for product, amount in asks.items():
-            amount = min(amount, self.amounts[product])
-            self.income[product] += self.prices[product] * amount
-            self.amounts[product] -= amount
-            self.local_ask[product] += amount
 
     def summarize(self, iterat, volatility_index):
         for product in self.available_products:
             self.wealth = self.wealth + self.income[product]
             self.memory_incomes[product] += [self.income[product]]
-            self.forcheckY[product] += [self.income[product]]
             self.estimate(product, iterat, volatility_index)
         self.days += 1

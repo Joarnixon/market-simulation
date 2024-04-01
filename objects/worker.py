@@ -12,7 +12,7 @@ class Worker:
 
 
 class ManufactureWorker(Worker):
-    def __init__(self, **worker_data):
+    def __init__(self, worker_data):
         super().__init__(**worker_data)
         self.product = None
         self.employer = None
@@ -123,7 +123,6 @@ class ManufactureWorker(Worker):
                 self.as_person.jobs += found
                 self.quit_job()
         self.job_satisfaction()
-
 
 
 class BreadMaker(ManufactureWorker):

@@ -13,6 +13,9 @@ from other.utils import f_round, assign_numbers
 from other.desummation import Desummation
 
 
+class BaseBuyer:
+    print('hello world')
+
 class Buyer:
     product_prices = {}
     product_ask = {}
@@ -527,16 +530,11 @@ class Buyer:
 
     def start(self, market_ref, ask, demand, bid):
         self.starvation -= (2000 - self.day_saturation)
-        self.day_saturation = 0
         self.live += 1
-        self.satisfaction -= 0.5 * (2 + self.needs)
         self.day_spent = 0
         plan = self.planning(market_ref)
         self.think(plans=plan, market_ref=market_ref)
-        self.ambition += rd.randint(-1, 1) * 5
         self.memory_spent += [self.day_spent]
-        if self.ambition < 0:
-            self.ambition = 0
         if self.live % 3 == 0:
             self.train_stf_brains()
         self.needs = self.needs + np.clip(round(sum(self.memory_salary[-2:]) / 2 - sum(self.memory_spent[-2:]) / 2, 2),
