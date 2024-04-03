@@ -20,6 +20,12 @@ class ManufactureWorker(Worker):
         self.memory_salary: list = []
         self.memory_spent: list = self.as_person.memory_spent
 
+    def __del__(self):
+        if self in self.as_person.jobs:
+            self.as_person.jobs.remove(self)
+        if self in self.employer.workers[self.product]:
+            self.employer.fire(person=self)
+
     def work(self):
         self.employer.make_production(self, self.product, self.working_hours)
 
@@ -58,12 +64,6 @@ class ManufactureWorker(Worker):
             if len(vacancy) != 0:
                 return vacancy
         return []
-
-    def quit_job(self):
-        self.as_person.jobs.remove(self)
-        if self in self.employer.workers[self.product]:
-            self.employer.fire(person=self)
-        del self
 
     def change_job(self, changing):
         self.as_person.jobs.remove(self)
@@ -125,7 +125,8 @@ class ManufactureWorker(Worker):
             found = self.find_job(changing=True, market_ref=self.as_person.market_ref)
             if found:
                 self.as_person.jobs += found
-                self.quit_job()
+                del self
+                return
         self.job_satisfaction()
 
 

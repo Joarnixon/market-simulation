@@ -19,9 +19,12 @@ class BaseBuyer:
         self.as_person = person
         self.inventory = inventory
 
-    @property
-    def ambition(self):
-        return self.as_person.ambition
+    def __del__(self):
+        self.market_ref.buyers.remove(self)
+        self.market_ref.buyers_count -= 1
+
+    def __getattr__(self, name):
+        return getattr(self.as_person, name)
 
     @property
     def budget(self):
@@ -32,25 +35,12 @@ class BaseBuyer:
         self.as_person.inventory.money = value
 
     @property
-    def plainness(self):
-        return self.as_person.plainness
-
-    @property
     def day_saturation(self):
         return self.as_person.day_saturation
-
-    @property
-    def starvation(self):
-        return self.as_person.starvation
 
     @day_saturation.setter
     def day_saturation(self, value):
         self.as_person.day_saturation = value
-
-    @property
-    @cache
-    def market_ref(self):
-        return self.as_person.market_ref
 
     @property
     def day_spent(self):
@@ -60,6 +50,24 @@ class BaseBuyer:
     def day_spent(self, value):
         self.as_person.day_spent = value
 
+    @property
+    @cache
+    def market_ref(self):
+        return self.as_person.market_ref
+
+    def get_food_satisfaction(self, price: float, quality: float,  product: Products, amount: int = 1):
+        """
+        A secret for buyer function that it will try to interpolate for himself.
+        """
+        return amount * round((sum(self.memory_salary[-2:]) / 2 - price) * (
+                1 + 1.25 * (quality - self.needs) * np.sign(
+            sum(self.memory_salary[-2:]) / 2 - price)) ** 2 * product.satisfaction_bonus, 3)
+
+    def get_fed_up_bonus(self, product):
+        mean_fed = np.mean(list(self.fed_up.values()))
+        max_fed = np.max(list(self.fed_up.values()))
+        return 1 + (self.fed_up[product] - mean_fed) / (max_fed - mean_fed) / 2
+
     def buy(self, seller: Seller, product: Union[dict, Products], amount: Union[dict, int], satisfactions: dict):
         if isinstance(amount, int):
             plan = {product: amount}
@@ -67,35 +75,30 @@ class BaseBuyer:
             plan = dict(zip(product, amount))
         bought = {}
         for product, amount in plan.items():
-            amounts = min(amount, seller.amounts[product], floor(self.budget / seller.prices[product]))
-            if amounts == 0:
+            amounts = int(min(amount, seller.amounts[product], floor(self.budget / seller.prices[product])))
+            if amounts < 1:
                 continue
 
-            # TODO: add to "eat" method
-            # if product not in self.fed_up:
-            #     self.fed_up[product] = amounts
-            # else:
-            #     self.fed_up[product] += amounts
-
+            seller.sell(product=product, buyer=self, amount=amounts)
+            # TODO: this should be done better somehow
             cost = seller.prices[product]
             quality = seller.qualities[product]
-
-            # TODO: do this better
-            stsf = self.get_satisfaction(seller, product)
+            stsf = self.get_food_satisfaction(cost, quality, product)
 
             spend = cost * amounts
             satisfied = stsf * amounts
-            self.day_saturation += product.calories * amounts
 
+            # stats
             Buyer.product_bought[product] += amounts
             Buyer.product_prices[product] += [cost]
 
             self.budget = self.budget - spend
             self.day_spent += spend
-            # TODO: to eat method
-                self.satisfaction = self.satisfaction + satisfied
-            seller.sell(product=product, buyer=self, amount=amounts)
+            self.satisfaction += satisfied
+
             bought[product] = amounts
+
+        self.inventory.add(bought)
         return bought
 
 
@@ -109,35 +112,20 @@ class Buyer(BaseBuyer):
         super().__init__(inventory, person)
         self.memory = {}
         self.memory_stf = {}
-        self.best_offers = {}
         self.offers = {}
         self.offers_stf = {}
+        self.best_offers = {}
         self.estimated = {}
         self.estimated_stf = {}
-        self.memory_salary = []
-        self.memory_spent = []
         self.dsm = Desummation()
         self.dsm.fit(REQUIRES)
         self.loyalty = {}
         self.stf_brains = {product: SGDRegressor(max_iter=BUYER_BRAIN_CONSTANT) for product in self.market_ref.products}
-        self.fed_up = {product: 0 for product in self.market_ref.products}
         self.product_found = {}
         self.plan = {}
+        self.day_calories_bought = 0
         # self.employer_days_worked = 0
         # self.jobs_experience = {}
-
-    def get_satisfaction(self, seller: Seller, product: Products, amount: int = 1):
-        """
-        A secret for buyer function that it will try to interpolate for himself.
-        """
-        return amount * round((sum(self.memory_salary[-2:]) / 2 - seller.prices[product]) * (
-                1 + 1.25 * (seller.qualities[product] - self.needs) * np.sign(
-            sum(self.memory_salary[-2:]) / 2 - seller.prices[product])) ** 2 * product.satisfaction_bonus, 3)
-
-    def get_fed_up_bonus(self, product):
-        mean_fed = np.mean(list(self.fed_up.values()))
-        max_fed = np.max(list(self.fed_up.values()))
-        return 1 + (self.fed_up[product] - mean_fed) / (max_fed - mean_fed) / 2
 
     def estimate_satisfaction(self, product: Products, price: float, quality: float):
         model = self.stf_brains[product]
@@ -189,11 +177,9 @@ class Buyer(BaseBuyer):
             estimations = model.predict(x)
 
         max_satisfaction_index = np.argmax(estimations)
-        temporary_seller = Seller()
-        temporary_seller.prices[product] = x[max_satisfaction_index][0]
-        temporary_seller.qualities[product] = x[max_satisfaction_index][1]
+        price, quality = x[max_satisfaction_index]
         self.estimated[product] = x[max_satisfaction_index]
-        self.estimated_stf[product] = self.get_satisfaction(seller=temporary_seller, product=product)
+        self.estimated_stf[product] = self.get_food_satisfaction(price, quality, product)
 
     def remember_seller(self, seller: Seller):
         for item in seller.qualities:
@@ -213,14 +199,12 @@ class Buyer(BaseBuyer):
                         np.clip(self.loyalty[seller] + sum(np.copysign(weights, list(satisfactions[seller].values()))),
                                 5, 100))
 
-    def update_memory_product_seller(self, product, seller, amounts):
+    def update_memory_product_seller(self, product, seller):
         cost = seller.prices[product]
         quality = seller.qualities[product]
-        Buyer.product_bought[product] += amounts
-        Buyer.product_prices[product] += [cost]
 
         # TODO: do this better
-        stsf = self.get_satisfaction(seller, product)
+        stsf = self.get_satisfaction(cost, quality, product)
 
         if product not in self.memory:
             self.memory_stf[product] = [stsf]
@@ -365,7 +349,7 @@ class Buyer(BaseBuyer):
             self.remember_seller(seller=current)
             bought = {}
             for product, amount in products.items():
-                amounts = min(amount, current.amounts[product], floor(self.wealth / current.prices[product]))
+                amounts = min(amount, current.amounts[product], floor(self.budget / current.prices[product]))
                 try:
                     # TODO: Bug: Каким-то образом новый продавец оказывается тут в списке.
                     #  Хотя satisfaction назначается всеми только возможными продавцами в самом начале.
@@ -394,7 +378,7 @@ class Buyer(BaseBuyer):
             bought = {}
             for product, amount in products.items():
                 try:
-                    amounts = min(amount, current.amounts[product], floor(self.wealth / current.prices[product]))
+                    amounts = min(amount, current.amounts[product], floor(self.budget / current.prices[product]))
                 except OverflowError:
                     amounts = 0
                 if amounts == 0:
@@ -419,7 +403,7 @@ class Buyer(BaseBuyer):
             self.remember_seller(seller=new_current)
             bought = {}
             for product, amount in products.items():
-                amounts = min(amount, new_current.amounts[product], floor(self.wealth / new_current.prices[product]))
+                amounts = min(amount, new_current.amounts[product], floor(self.budget / new_current.prices[product]))
                 if amounts == 0:
                     continue
                 satisfactions[new_current].update({product: self.get_satisfaction(seller=new_current, product=product)})
@@ -445,7 +429,7 @@ class Buyer(BaseBuyer):
                 new_current = memory_available[product][index]
                 try:
                     amounts = min(amount, new_current.amounts[product],
-                                  floor(self.wealth / new_current.prices[product]))
+                                  floor(self.budget / new_current.prices[product]))
                 except OverflowError:
                     amounts = 0
                     print(new_current.prices)
@@ -501,7 +485,7 @@ class Buyer(BaseBuyer):
             if visited == 3:
                 return True
 
-            if self.starvation + self.day_saturation < 0:
+            if self.starvation + self.day_calories_bought < 0:
                 visit(available, list_of_products, lambda p: random_visit(p, initial=False))
             else:
                 visit(available, list_of_products, default_visit_else)
@@ -512,9 +496,9 @@ class Buyer(BaseBuyer):
 
     def buy(self, seller: Seller, product: Union[dict, Products], amount: Union[dict, int], satisfactions: dict):
         bought = super().buy(seller, product, amount, satisfactions)
-        self.update_memory_product_seller(product, seller, stsf, cost, quality)
+        self.day_calories_bought += sum(bought[product] * product.calories for product in bought)
+        self.update_memory_product_seller(product, seller)
         satisfactions[seller].update({product: self.get_satisfaction(seller=seller, product=product)})
-        self.remember_seller(seller=seller)
         return bought
 
     def planning(self, market_ref, exclude_products: list = None):
@@ -528,12 +512,12 @@ class Buyer(BaseBuyer):
             C = [product.calories for product in planning_products]  # калории
             D = [self.product_found[product] for product in planning_products]  # был ли в прошлый раз найден.
             require_buyer = REQUIRES
-            starvation_factor = np.clip((1 + (-self.starvation + self.day_saturation) / 4000), 1, 3)
+            starvation_factor = np.clip((1 + (-self.starvation + self.day_calories_bought) / 4000), 1, 3)
             max_prod_call = np.argmax(np.array(C) / np.array(A))
             require_buyer[1] = max(B) * round((2200 / C[np.argmax(B)]))
             require_buyer[0] = np.clip((starvation_factor ** 2 - 1 / 2) * (2200 // C[max_prod_call]) * A[max_prod_call],
-                                       0, self.wealth) * 0
-            require_buyer[2] = (2400 - self.day_saturation) * starvation_factor
+                                       0, self.budget) * 0
+            require_buyer[2] = (2400 - self.day_calories_bought) * starvation_factor
             require_buyer[3] = 2 * (1 + starvation_factor) / 2
             E = np.vstack((A, B, C, D))
             self.dsm.basis = [E[:, k] for k in range(len(E[0]))]
@@ -564,6 +548,7 @@ class Buyer(BaseBuyer):
         if self.live % 3 == 0:
             self.train_stf_brains()
         Buyer.starvation_index += [self.starvation]
+        self.day_calories_bought = 0
 
     @staticmethod
     def inherit_salary(initial_salary, previous_salary):

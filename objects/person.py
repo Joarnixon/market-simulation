@@ -1,7 +1,9 @@
+from copy import copy
 from objects.buyer import Buyer
 from objects.seller import Seller
 from objects.manufacturer import Manufacturer
 from objects.worker import Worker, ManufactureWorker
+from objects.products import Products
 from settings.constants import REQUIRES, AGING
 from dataclasses import dataclass, field
 from functools import cache
@@ -34,6 +36,10 @@ def set_inventory() -> object:
     return Inventory()
 
 
+def set_fed_up() -> dict:
+    return {}
+
+
 def set_birth_threshold() -> int:
     return 25 + rd.randint(-10, 15)
 
@@ -55,6 +61,37 @@ def set_memory_spent() -> list:
 class Inventory:
     def __init__(self, money=0):
         self.money = money
+        self.food = {}
+        self.items = {}
+
+    def add(self, other):
+        for key, value in other.items():
+            if isinstance(key, Products):
+                if key in self.food:
+                    self.food[key] += value
+                else:
+                    self.food[key] = value
+
+    def get(self, other):
+        resources = {}
+        for key, value in other.items():
+            if isinstance(key, Products):
+                if key in self.food:
+                    value = min(self.food[key], value)
+                    self.food[key] -= value
+                    resources[key] = value
+        return resources
+
+    def empty_food(self):
+        self.food = {}
+
+    def get_all_food(self):
+        resources = copy(self.food)
+        self.empty_food()
+        return resources
+
+    def empty_items(self):
+        self.items = {}
 
 
 @dataclass
@@ -69,6 +106,7 @@ class BasePerson:
     alive: int = 1
     ambition: int = 0
     generation: int = 0
+    fed_up: dict = field(default_factory=set_fed_up)
     jobs: list = field(default_factory=set_jobs)
     memory_spent: list = field(default_factory=set_memory_spent)
     memory_salary: list = field(default_factory=set_memory_salary)
@@ -79,6 +117,10 @@ class BasePerson:
     plainness: int = field(default_factory=set_plainness)
     workaholic: float = field(default_factory=set_workaholic)
     greed: float = field(default_factory=set_greed)
+
+    def __del__(self):
+        self.market_ref.persons.remove(self)
+        self.market_ref.persons_count -= 1
 
     @property
     def budget(self):
@@ -106,6 +148,15 @@ class BasePerson:
         self.birth += 1
         self.age += AGING
 
+    def consume_food(self, other):
+        for food, amount in other:
+            self.starvation += food.calories * amount
+            self.day_saturation += food.calories * amount
+            if food not in self.fed_up:
+                self.fed_up[food] = amount
+            else:
+                self.fed_up[food] += amount
+
     def birth_new(self):
         if self.birth >= self.birth_threshold:
             if self.starvation >= 7000 * (1 + self.needs):
@@ -113,7 +164,7 @@ class BasePerson:
                     self.budget -= 2 * sum(self.memory_salary[-5:]) / 5 * (1 + self.needs)
                     self.starvation = 4000
                     self.birth = 0
-                    # TODO: add starting money from parent
+                    # TODO: add starting money from parent (optionally)
                     new_person = Person()
                     new_person.generation = self.generation + 1
                     self.market_ref.new_buyers.append(new_person)
@@ -151,16 +202,6 @@ class BasePerson:
                         'from_start': False
                     }, self])
 
-    def check_death(self):
-        if self.starvation < -20000:
-            for job in list(self.jobs):
-                job.quit_job()
-            self.market_ref.buyers.remove(self)
-            self.market_ref.buyers_count -= 1
-            #  print("BUYER ELIMINATED")
-            del self
-            return False
-
 
 class Person(BasePerson):
     def __init__(self, default_data, buyer_data=None, seller_data=None, manufacturer_data=None):
@@ -175,6 +216,7 @@ class Person(BasePerson):
             self.find_new_job()
         for role in self.get_available_roles():
             role.start(self.market_ref, ask, demand, bid)
+        self.consume_food(self.inventory.get_all_food())
         self.update_ambition()
         self.update_satisfaction()
         self.check_death()
@@ -194,6 +236,13 @@ class Person(BasePerson):
         if self.buyer is not None:
             roles += [self.buyer]
         return roles
+
+    def check_death(self):
+        if self.starvation < -20000:
+            for role in self.get_available_roles():
+                del role
+            del self
+            return
 
     def find_new_job(self):
         base_worker = ManufactureWorker({'as_person': self, 'working_hours': 8, 'job_satisfied': 0.5})

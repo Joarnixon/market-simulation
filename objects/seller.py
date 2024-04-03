@@ -1,4 +1,5 @@
 import random as rd
+from functools import cache
 import numpy as np
 from sklearn.linear_model import LinearRegression
 from typing import Union
@@ -26,6 +27,10 @@ class BaseSeller:
         self.guess = {} if not guess else guess
         self.brain = LinearRegression()
 
+    def __del__(self):
+        self.market_ref.sellers.remove(self)
+        self.market_ref.sellers_count -= 1
+
     @property
     def greed(self):
         return self.as_person.greed
@@ -37,6 +42,11 @@ class BaseSeller:
     @budget.setter
     def budget(self, value):
         self.as_person.inventory.money = value
+
+    @property
+    @cache
+    def market_ref(self):
+        return self.as_person.market_ref
 
     def estimate(self, product: Products, iteration, volatility_index):
         adding_point = self.memory[product][-1][:self.n_product_params]
@@ -177,10 +187,9 @@ class Seller(BaseSeller):
                 self.local_ask[product] = 0
                 #print(self.amounts[product])
 
-
     # TODO: надо доделать этот метод
     def become_manufacturer(self, market_ref, ask):
-        if self.wealth >= 500 * (1 + self.greed):
+        if self.budget >= 500 * (1 + self.greed):
             if self.ambition >= 70:
                 if sum(sum(ask[product][-5:])/5 for product in ask) / len(ask) / market_ref.buyers_count > 0.5 or sum([buyer.job_satisfied for buyer in rd.sample(market_ref.buyers, market_ref.buyers_count // 3)]) / (market_ref.buyers_count // 3) < 0.5:
                     manuf_products = market_ref.products
@@ -195,7 +204,7 @@ class Seller(BaseSeller):
                         'technology_param': 0,
                         'products': manuf_products
                     })
-                    self.wealth -= 500 * (1 + self.greed)
+                    self.budget -= 500 * (1 + self.greed)
                     self.ambition = 0
 
     def get_guess(self, product):
@@ -213,10 +222,9 @@ class Seller(BaseSeller):
         else:
             return self.guess[product]
 
-
     def summarize(self, iterat, volatility_index):
         for product in self.available_products:
-            self.wealth = self.wealth + self.income[product]
+            self.budget += self.income[product]
             self.memory_incomes[product] += [self.income[product]]
             self.estimate(product, iterat, volatility_index)
         self.days += 1

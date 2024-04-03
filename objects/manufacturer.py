@@ -1,8 +1,9 @@
+from functools import cache
 from sklearn.linear_model import LinearRegression
 import random as rd
 import numpy as np
 from objects.products import Products
-from objects.worker import Worker, assignClass, ManufactureWorker, CerealMaker, BreadMaker, MilkMaker, MeatMaker, PieMaker
+from objects.worker import assignClass, ManufactureWorker
 from settings.constants import *
 from typing import Union
 from other.utils import f_round, assign_numbers, cluster_data
@@ -36,6 +37,10 @@ class BaseManufacturer:
         self.memory_income_total_hr: list = []
         self.brains = {'salary': LinearRegression(), 'technology_param': LinearRegression()}
 
+    def __del__(self):
+        self.market_ref.manufacturers.remove(self)
+        self.market_ref.manufacturers_count -= 1
+
     @property
     def budget(self):
         return self.as_person.inventory.money
@@ -43,6 +48,11 @@ class BaseManufacturer:
     @budget.setter
     def budget(self, value):
         self.as_person.inventory.money = value
+
+    @property
+    @cache
+    def market_ref(self):
+        return self.as_person.market_ref
 
     def technology(self, x: float, a_const=50, b_const=10, c_const=20):
         return 1 + (a_const - b_const * self.technology_param)**x / c_const
@@ -67,7 +77,7 @@ class BaseManufacturer:
     def fire(self, person):
         self.workers[person.product].remove(person)
         self.num_workers[person.product] -= 1
-        person.quit_job()
+        del person
 
     def pay_salary(self, worker: ManufactureWorker, product, produced):
         if self.days == 1:

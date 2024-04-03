@@ -64,6 +64,7 @@ class Market:
     buyers_satisfaction = []
     buyers = []
     manufacturers = []
+    persons = []
     products = []
     unemployed = 0
     manufacturer_names = MANUFACTURER_NAMES
@@ -73,6 +74,7 @@ class Market:
     product_bonuses = PRODUCT_BONUSES
     product_first_price = PRODUCT_FIRST_PRICE
     products_count = PRODUCTS_COUNT
+    persons_count = PERSONS_COUNT
     sellers_count = SELLERS_COUNT
     init_sellers_count = SELLERS_COUNT
     buyers_count = BUYERS_COUNT
