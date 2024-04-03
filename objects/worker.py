@@ -17,8 +17,6 @@ class ManufactureWorker(Worker):
         self.product = None
         self.employer = None
         self.salary: float = 0
-        self.memory_salary: list = []
-        self.memory_spent: list = self.as_person.memory_spent
 
     def __del__(self):
         if self in self.as_person.jobs:
@@ -26,8 +24,21 @@ class ManufactureWorker(Worker):
         if self in self.employer.workers[self.product]:
             self.employer.fire(person=self)
 
-    def work(self):
-        self.employer.make_production(self, self.product, self.working_hours)
+    @property
+    def memory_spent(self):
+        return self.as_person.memory_spent
+
+    @property
+    def memory_salary(self):
+        return self.as_person.memory_salary
+
+    @property
+    def day_salary(self):
+        return self.as_person.day_salary
+
+    @day_salary.setter
+    def day_salary(self, value):
+        self.as_person.day_salary = value
 
     @property
     def workaholic(self):
@@ -40,6 +51,9 @@ class ManufactureWorker(Worker):
     @budget.setter
     def budget(self, value):
         self.as_person.inventory.money = value
+
+    def work(self):
+        self.employer.make_production(self, self.product, self.working_hours)
 
     def find_job(self, market_ref, changing=False):
         available_manufacturers = {}
@@ -81,9 +95,9 @@ class ManufactureWorker(Worker):
         for key, value in data.items():
             setattr(self, key, value)
 
+    # TODO: empty?
     def get_memory_data(self):
         return {
-            'memory_salary': self.memory_salary,
         }
 
     def score_manufacture(self, manufactory, job):
@@ -114,7 +128,7 @@ class ManufactureWorker(Worker):
 
     def get_payed(self):
         if self.salary > 0:
-            self.memory_salary += [self.salary]
+            self.day_salary += self.salary
             self.budget += self.salary
             self.salary = 0
 

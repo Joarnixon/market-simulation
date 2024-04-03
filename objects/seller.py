@@ -130,7 +130,8 @@ class Seller(BaseSeller):
     def start(self, market_ref, ask, demand=None, bid=None):
         self.available_products = []
         self.ambition = np.clip(self.ambition + rd.choice([-10, 10]), 0, 100)
-        self.become_manufacturer(market_ref, ask)
+        # TODO: don't forget
+        # self.become_manufacturer(market_ref, ask)
         for product in market_ref.products:
             offers = {}
             if product not in self.qualities:
@@ -186,26 +187,6 @@ class Seller(BaseSeller):
                 self.memory[product] += [[self.qualities[product], self.overprices[product], self.amounts[product], self.local_ask[product]]]
                 self.local_ask[product] = 0
                 #print(self.amounts[product])
-
-    # TODO: надо доделать этот метод
-    def become_manufacturer(self, market_ref, ask):
-        if self.budget >= 500 * (1 + self.greed):
-            if self.ambition >= 70:
-                if sum(sum(ask[product][-5:])/5 for product in ask) / len(ask) / market_ref.buyers_count > 0.5 or sum([buyer.job_satisfied for buyer in rd.sample(market_ref.buyers, market_ref.buyers_count // 3)]) / (market_ref.buyers_count // 3) < 0.5:
-                    manuf_products = market_ref.products
-                    #vacancies = {product: ceil(Market.buyers_count / Market.product_complexities[i] / Market.total_complexity / Market.manufacturers_count) for i, product in enumerate(manuf_products)}
-                    vacancies = {product: 10 for product in manuf_products}
-                    #salaries = {product: max(m.salary[product] for m in Market.manufacturers) * (1.3 - self.greed) for product in manuf_products}
-                    salaries = {product: (MANUFACTURER_SALARY_UP_CONSTANT + MANUFACTURER_SALARY_LOW_CONSTANT)/2 for product in manuf_products}
-                    market_ref.new_manufacturers.append({
-                        'name': ''.join([rd.choice(['a', 'b', 'c'])*rd.randint(0, 2) for i in range(4)]),
-                        'number_of_vacancies': vacancies,
-                        'salary': salaries,
-                        'technology_param': 0,
-                        'products': manuf_products
-                    })
-                    self.budget -= 500 * (1 + self.greed)
-                    self.ambition = 0
 
     def get_guess(self, product):
         if self.from_start:

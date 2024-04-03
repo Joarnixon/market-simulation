@@ -51,6 +51,14 @@ class BaseBuyer:
         self.as_person.day_spent = value
 
     @property
+    def day_satisfaction(self):
+        return self.as_person.day_satisfaction
+
+    @day_satisfaction.setter
+    def day_satisfaction(self, value):
+        self.as_person.day_satisfaction = value
+
+    @property
     @cache
     def market_ref(self):
         return self.as_person.market_ref
@@ -93,7 +101,7 @@ class BaseBuyer:
             Buyer.product_prices[product] += [cost]
 
             self.budget = self.budget - spend
-            self.day_spent += spend
+            self.spent += spend
             self.satisfaction += satisfied
 
             bought[product] = amounts
@@ -124,6 +132,8 @@ class Buyer(BaseBuyer):
         self.product_found = {}
         self.plan = {}
         self.day_calories_bought = 0
+        self.spent = 0
+        self.satisfaction = 0
         # self.employer_days_worked = 0
         # self.jobs_experience = {}
 
@@ -541,14 +551,23 @@ class Buyer(BaseBuyer):
                     self.estimate_best_offer(product)
                 return do_something_plan
 
-    def start(self, market_ref, ask, demand, bid):
+    def start(self, market_ref):
+
         plan = self.planning(market_ref)
         self.think(plans=plan, market_ref=market_ref)
-        self.memory_spent += [self.day_spent]
+
+        self.day_spent += self.spent
+        self.day_satisfaction += self.satisfaction
+
         if self.live % 3 == 0:
             self.train_stf_brains()
+
+        # TODO: ?
         Buyer.starvation_index += [self.starvation]
+
         self.day_calories_bought = 0
+        self.satisfaction = 0
+        self.spent = 0
 
     @staticmethod
     def inherit_salary(initial_salary, previous_salary):

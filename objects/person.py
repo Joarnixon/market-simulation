@@ -2,9 +2,9 @@ from copy import copy
 from objects.buyer import Buyer
 from objects.seller import Seller
 from objects.manufacturer import Manufacturer
-from objects.worker import Worker, ManufactureWorker
+from objects.worker import ManufactureWorker
 from objects.products import Products
-from settings.constants import REQUIRES, AGING
+from settings.constants import REQUIRES, AGING, MANUFACTURER_SALARY_UP_CONSTANT, MANUFACTURER_SALARY_LOW_CONSTANT
 from dataclasses import dataclass, field
 from functools import cache
 import numpy as np
@@ -100,6 +100,8 @@ class BasePerson:
     market_ref: Any
     day_saturation: int = 0
     day_spent: int = 0
+    day_salary: int = 0
+    day_satisfaction: int = 0
     needs: float = 0.05
     starvation: int = 2000
     satisfaction: float = 0
@@ -142,8 +144,11 @@ class BasePerson:
         self.satisfaction -= 0.5 * (2 + self.needs)
 
     def update_day_values(self):
+        # TODO: not updating right now
         self.day_saturation = 0
+        self.day_satisfaction = 0
         self.day_spent = 0
+        self.day_salary = 0
         self.starvation -= REQUIRES[2]
         self.birth += 1
         self.age += AGING
@@ -157,6 +162,7 @@ class BasePerson:
             else:
                 self.fed_up[food] += amount
 
+    # TODO: remake the mistake
     def birth_new(self):
         if self.birth >= self.birth_threshold:
             if self.starvation >= 7000 * (1 + self.needs):
@@ -202,6 +208,26 @@ class BasePerson:
                         'from_start': False
                     }, self])
 
+    # TODO: надо доделать этот метод
+    def try_become_manufacturer(self, market_ref, ask):
+        if self.budget >= 500 * (1 + self.greed):
+            if self.ambition >= 70:
+                if sum(sum(ask[product][-5:])/5 for product in ask) / len(ask) / market_ref.buyers_count > 0.5 or sum([buyer.job_satisfied for buyer in rd.sample(market_ref.buyers, market_ref.buyers_count // 3)]) / (market_ref.buyers_count // 3) < 0.5:
+                    manuf_products = market_ref.products
+                    #vacancies = {product: ceil(Market.buyers_count / Market.product_complexities[i] / Market.total_complexity / Market.manufacturers_count) for i, product in enumerate(manuf_products)}
+                    vacancies = {product: 10 for product in manuf_products}
+                    #salaries = {product: max(m.salary[product] for m in Market.manufacturers) * (1.3 - self.greed) for product in manuf_products}
+                    salaries = {product: (MANUFACTURER_SALARY_UP_CONSTANT + MANUFACTURER_SALARY_LOW_CONSTANT)/2 for product in manuf_products}
+                    market_ref.new_manufacturers.append({
+                        'name': ''.join([rd.choice(['a', 'b', 'c'])*rd.randint(0, 2) for i in range(4)]),
+                        'number_of_vacancies': vacancies,
+                        'salary': salaries,
+                        'technology_param': 0,
+                        'products': manuf_products
+                    })
+                    self.budget -= 500 * (1 + self.greed)
+                    self.ambition = 0
+
 
 class Person(BasePerson):
     def __init__(self, default_data, buyer_data=None, seller_data=None, manufacturer_data=None):
@@ -239,7 +265,7 @@ class Person(BasePerson):
 
     def check_death(self):
         if self.starvation < -20000:
-            for role in self.get_available_roles():
+            for role in list(self.get_available_roles()):
                 del role
             del self
             return
