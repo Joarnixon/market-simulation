@@ -67,6 +67,7 @@ class BaseBuyer:
         """
         A secret for buyer function that it will try to interpolate for himself.
         """
+        # TODO: change to suit manufacturer
         return amount * round((sum(self.memory_salary[-2:]) / 2 - price) * (
                 1 + 1.25 * (quality - self.needs) * np.sign(
             sum(self.memory_salary[-2:]) / 2 - price)) ** 2 * product.satisfaction_bonus, 3)
@@ -116,8 +117,9 @@ class Buyer(BaseBuyer):
     starvation_index = []
     product_bought = {}
 
-    def __init__(self, inventory, person):
-        super().__init__(inventory, person)
+    def __init__(self, inventory, as_person):
+        super().__init__(inventory, as_person)
+        self.as_person.buyer = self
         self.memory = {}
         self.memory_stf = {}
         self.offers = {}

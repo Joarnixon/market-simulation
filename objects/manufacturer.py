@@ -10,9 +10,8 @@ from other.utils import f_round, assign_numbers, cluster_data
 
 
 # TODO: technology param skipped
-
 class BaseManufacturer:
-    def __init__(self, name: str, products: list[Products], as_person, technology_param, salary):
+    def __init__(self, as_person, name: str, products: list[Products], technology_param: float, salary: dict):
         self.name: str = name
         self.as_person = as_person
         self.products: list[Products] = products
@@ -207,8 +206,9 @@ class BaseManufacturer:
 
 class Manufacturer(BaseManufacturer):
 
-    def __init__(self, name: str, products: list[Products], as_person, number_of_vacancies: dict, salary: dict, technology_param: float):
+    def __init__(self, as_person, name: str, products: list[Products], number_of_vacancies: dict, salary: dict, technology_param: float):
         super().__init__(name=name, as_person=as_person, products=products, technology_param=technology_param, salary=salary)
+        self.as_person.manufacturer = self
         self.raw_material_buy = RAW_MATERIAL_BUY
         self.number_of_vacancies = {product: number_of_vacancies[product] for product in products}
         self.daily_income_in = {product: 0 for product in products}

@@ -5,6 +5,7 @@ from objects.manufacturer import Manufacturer
 from objects.worker import ManufactureWorker
 from objects.products import Products
 from settings.constants import REQUIRES, AGING, MANUFACTURER_SALARY_UP_CONSTANT, MANUFACTURER_SALARY_LOW_CONSTANT
+from other.utils import generate_name
 from dataclasses import dataclass, field
 from functools import cache
 import numpy as np
@@ -162,19 +163,26 @@ class BasePerson:
             else:
                 self.fed_up[food] += amount
 
-    # TODO: remake the mistake
-    def birth_new(self):
+    def try_birth_new(self):
         if self.birth >= self.birth_threshold:
             if self.starvation >= 7000 * (1 + self.needs):
                 if self.budget >= 3 * sum(self.memory_salary[-5:]) / 5 * (1 + self.needs):
-                    self.budget -= 2 * sum(self.memory_salary[-5:]) / 5 * (1 + self.needs)
-                    self.starvation = 4000
-                    self.birth = 0
-                    # TODO: add starting money from parent (optionally)
-                    new_person = Person()
-                    new_person.generation = self.generation + 1
-                    self.market_ref.new_buyers.append(new_person)
-                    #  print("NEW BUYER")
+                    self.birth_new()
+
+    # TODO: remake the mistake
+    def birth_new(self):
+        self.budget -= 2 * sum(self.memory_salary[-5:]) / 5 * (1 + self.needs)
+        self.starvation = 4000
+        self.birth = 0
+        # TODO: add starting money from parent (optionally)
+        self.market_ref.new_persons.append({
+            'name': generate_name(),
+            'market_ref': self.market_ref,
+            'generation': self.generation + 1,
+            'workaholic': self.workaholic,
+            'greed': self.greed,
+            'plainness': self.plainness
+        })
 
     def try_become_seller(self, ask, demand, bid, best_offers, estimated):
         if self.budget >= 50 * (2 / 3 + self.needs) ** 4:
@@ -186,55 +194,72 @@ class BasePerson:
                         sum([ask[product][-1] for product in self.market_ref.products]) > sum(
                     [demand[product][-1] for product in self.market_ref.products]) // 8)
                         or self.satisfaction < -50):
-                    self.budget = sum(self.memory_salary[-5:]) / 5 * 3
-                    self.ambition = 0
-                    guess = {}
-                    prices = {}
-                    for product in self.market_ref.products:
-                        if product not in best_offers and product not in estimated:
-                            quality = self.market_ref.find_biggest_seller(product).qualities[product]
-                            price = self.market_ref.find_biggest_seller(product).prices[product] * 0.5
-                        elif product not in best_offers:
-                            quality = estimated[product][1]
-                            price = estimated[product][0]
-                        else:
-                            quality = best_offers[product]['quality']
-                            price = best_offers[product]['price']
-                        guess[product] = {"quality": quality, "amount": int(ask[product][-1] * 0.2)}
-                        prices[product] = price
-                    self.market_ref.new_sellers.append([{
-                        'guess': guess,
-                        'prices': prices,
-                        'from_start': False
-                    }, self])
+                    self.become_seller(best_offers, estimated, ask)
+
+    def become_seller(self, best_offers, estimated, ask):
+        self.budget = sum(self.memory_salary[-5:]) / 5 * 3
+        self.ambition = 0
+        guess = {}
+        prices = {}
+        for product in self.market_ref.products:
+            if product not in best_offers and product not in estimated:
+                biggest_seller = self.market_ref.find_biggest_seller(product)
+                if biggest_seller is not None:
+                    quality = biggest_seller.qualities[product]
+                    price = biggest_seller.prices[product] * 0.5
+                else:
+                    quality = 0.5
+                    price = self.market_ref.product_first_price[product] / 5
+            elif product not in best_offers:
+                quality = estimated[product][1]
+                price = estimated[product][0]
+            else:
+                quality = best_offers[product]['quality']
+                price = best_offers[product]['price']
+            guess[product] = {"quality": quality, "amount": int(ask[product][-1] * 0.2)}
+            prices[product] = price
+        self.market_ref.new_sellers.append({
+            'as_person': self,
+            'guess': guess,
+            'prices': prices,
+            'from_start': False
+        })
 
     # TODO: надо доделать этот метод
-    def try_become_manufacturer(self, market_ref, ask):
+    def try_become_manufacturer(self, ask):
         if self.budget >= 500 * (1 + self.greed):
             if self.ambition >= 70:
-                if sum(sum(ask[product][-5:])/5 for product in ask) / len(ask) / market_ref.buyers_count > 0.5 or sum([buyer.job_satisfied for buyer in rd.sample(market_ref.buyers, market_ref.buyers_count // 3)]) / (market_ref.buyers_count // 3) < 0.5:
-                    manuf_products = market_ref.products
-                    #vacancies = {product: ceil(Market.buyers_count / Market.product_complexities[i] / Market.total_complexity / Market.manufacturers_count) for i, product in enumerate(manuf_products)}
-                    vacancies = {product: 10 for product in manuf_products}
-                    #salaries = {product: max(m.salary[product] for m in Market.manufacturers) * (1.3 - self.greed) for product in manuf_products}
-                    salaries = {product: (MANUFACTURER_SALARY_UP_CONSTANT + MANUFACTURER_SALARY_LOW_CONSTANT)/2 for product in manuf_products}
-                    market_ref.new_manufacturers.append({
-                        'name': ''.join([rd.choice(['a', 'b', 'c'])*rd.randint(0, 2) for i in range(4)]),
-                        'number_of_vacancies': vacancies,
-                        'salary': salaries,
-                        'technology_param': 0,
-                        'products': manuf_products
-                    })
-                    self.budget -= 500 * (1 + self.greed)
-                    self.ambition = 0
+                if (sum(sum(ask[product][-5:])/5 for product in ask) / len(ask) / self.market_ref.buyers_count > 0.5 or
+                        sum([buyer.job_satisfied for buyer in rd.sample(self.market_ref.buyers,
+                        self.market_ref.buyers_count // 3)]) /
+                        (self.market_ref.buyers_count // 3) < 0.5):
+                    self.become_manufacturer()
+
+    def become_manufacturer(self):
+        manuf_products = self.market_ref.products
+        # vacancies = {product: ceil(Market.buyers_count / Market.product_complexities[i] / Market.total_complexity / Market.manufacturers_count) for i, product in enumerate(manuf_products)}
+        vacancies = {product: 10 for product in manuf_products}
+        # salaries = {product: max(m.salary[product] for m in Market.manufacturers) * (1.3 - self.greed) for product in manuf_products}
+        salaries = {product: (MANUFACTURER_SALARY_UP_CONSTANT + MANUFACTURER_SALARY_LOW_CONSTANT) / 2 for product in
+                    manuf_products}
+        self.market_ref.new_manufacturers.append({
+            'as_person': self,
+            'name': ''.join([rd.choice(['a', 'b', 'c']) * rd.randint(0, 2) for i in range(4)]),
+            'products': manuf_products,
+            'number_of_vacancies': vacancies,
+            'salary': salaries,
+            'technology_param': 0
+        })
+        self.budget -= 500 * (1 + self.greed)
+        self.ambition = 0
 
 
 class Person(BasePerson):
     def __init__(self, default_data, buyer_data=None, seller_data=None, manufacturer_data=None):
         super().__init__(**default_data)
-        self.buyer = Buyer(**buyer_data) if buyer_data else None
-        self.seller = Seller(**seller_data) if seller_data else None
-        self.manufacturer = Manufacturer(**manufacturer_data) if manufacturer_data else None
+        self.buyer = Buyer(**buyer_data.update({'inventory': self.inventory, 'as_person': self})) if buyer_data else None
+        self.seller = Seller(**seller_data.update({'as_person': self})) if seller_data else None
+        self.manufacturer = Manufacturer(**manufacturer_data.update({'as_person': self})) if manufacturer_data else None
 
     def start(self, ask, demand, bid):
         self.update_day_values()
@@ -275,6 +300,11 @@ class Person(BasePerson):
         found_job = base_worker.find_job(self.market_ref)
         self.jobs += found_job
         del base_worker
+
+    def try_actions(self, ask, demand, bid):
+        self.try_birth_new()
+        self.try_become_seller(ask, demand, bid, self.buyer.best_offers, self.buyer.estimated) if not self.seller else None
+        self.try_become_manufacturer(ask) if not self.manufacturer else None
 
     def delete_cache(self):
         self.get_available_roles.cache_clear()

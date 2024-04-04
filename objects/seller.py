@@ -124,6 +124,7 @@ class BaseSeller:
 class Seller(BaseSeller):
     def __init__(self, as_person, guess=None, prices=None, from_start=True):
         super().__init__(as_person=as_person, guess=guess, prices=prices, from_start=from_start)
+        self.as_person.seller = self
         self.providers = {}
         self.ambition = 20
 
