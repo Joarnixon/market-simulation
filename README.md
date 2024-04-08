@@ -1,6 +1,6 @@
 # Currently a raw project made for fun.
 
-## Maybe not just for fun, it actually boosts my knowledge in machine learning and is very scalable to another AI and algorithms application. Also experience with git branches.
+## Maybe not just for fun, it actually boosts my knowledge in machine learning and is very scalable to another AI and algorithms application. Also experience with git branches and OOP.
 
 ## How about make an RL agents in this environment? Neural network doesn't suite this complex environment and perform bad. Regressions show better results.
 
