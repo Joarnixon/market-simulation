@@ -38,6 +38,25 @@ def assign_numbers(coefficients, max_assigning=1, default_max=None):
     return assigned_weights
 
 
+def generate_name():
+    from random import choice
+    first_names = ["Alice", "Bob", "Charlie", "David", "Eve", "Alex", "Paul", "Stephan", "Chris", "Michael",
+                   "John", "Josh", "Samantha", "Sam", "Kate", "Robert", "Larry", "Garry", "Diana"]
+    last_names = ["Smith", "Johnson", "Brown", "Williams", "Jones", "Simpson", "Anderson", "Taylor", "Davis",
+                  "Wilson", "Miller", "Thomas", "Martin", "Thompson"]
+
+    first_name = choice(first_names)
+    last_name = choice(last_names)
+
+    return f"{first_name} {last_name}"
+
+
+def generate_id():
+    from secrets import token_urlsafe
+    id = ''.join([c for c in token_urlsafe(10) if c not in '-_OI0l'])[:5]
+    return id
+
+
 def sellers_test(market_demands: dict, market_bought: dict, population: list) -> float:
     '''
     Shows the mean unsatisfaction with products for a person taken in average for one day.
