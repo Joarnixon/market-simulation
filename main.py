@@ -4,7 +4,6 @@ import time
 from math import ceil
 from random import shuffle
 import warnings
-from sklearn.linear_model import SGDRegressor
 import matplotlib.pyplot as plt
 from other.utils import sellers_test, buyers_test, log, generate_name
 from objects.manufacturer import Manufacturer
@@ -102,17 +101,19 @@ class Market:
                                             complexity=Market.product_complexities[s]))
 
         for i in range(Market.start_sellers_count):
-            person_seller = Person(default_data={'name': generate_name(), 'market_ref': self}, seller_data={})
-            person_seller.budget *= 2
+            person_seller = Person(default_data={'name': generate_name(), 'market_ref': self}, seller_data={}, buyer_data={})
+            person_seller.budget += 200
             Market.persons.append(person_seller)
             Market.sellers.append(person_seller.seller)
+            Market.buyers.append(person_seller.buyer)
             Market.sellers_count += 1
             Market.persons_count += 1
+            Market.buyers_count += 1
         Market.inspecting_seller = Market.sellers[rd.randint(0, Market.sellers_count-1)]
 
         for j in range(Market.start_manufacturers_count):
             manuf_products = Market.products
-            vacancies = {product: ceil(Market.buyers_count / Market.product_complexities[i] / Market.total_complexity / Market.manufacturers_count) for i, product in enumerate(manuf_products)}
+            vacancies = {product: ceil(Market.start_persons_count / Market.product_complexities[i] / Market.total_complexity / Market.start_manufacturers_count) for i, product in enumerate(manuf_products)}
             salaries = {product: (Market.manufacturer_salary_up_constant + Market.manufacturer_salary_low_constant) / 2 for product in manuf_products}
             person_manufacturer = Person(default_data={'name': generate_name(), 'market_ref': self}, manufacturer_data={
                 'name': ''.join([rd.choice(['a', 'b', 'c']) * rd.randint(0, 2) for i in range(4)]),
@@ -120,15 +121,18 @@ class Market:
                 'number_of_vacancies': vacancies,
                 'salary': salaries,
                 'technology_param': 0
-            })
+            }, buyer_data={})
+            person_manufacturer.budget += 1000
             Market.persons.append(person_manufacturer)
-            Market.manufacturers.append(person_manufacturer)
+            Market.manufacturers.append(person_manufacturer.manufacturer)
+            Market.buyers.append(person_manufacturer.buyer)
             Market.manufacturers_count += 1
             Market.persons_count += 1
+            Market.buyers_count += 1
 
         for k in range(Market.start_persons_count - Market.persons_count):
-            person_buyer = Person(default_data={'name': generate_name(), 'market_ref': self}, buyer_data={})
-            Market.buyers.append(person_buyer)
+            person_buyer = Person(default_data={'name': generate_name(), 'market_ref': self},  buyer_data={})
+            Market.buyers.append(person_buyer.buyer)
             Market.persons.append(person_buyer)
             Market.persons_count += 1
             Market.buyers_count += 1
@@ -151,8 +155,10 @@ class Market:
                 seller.local_ask[product] = []
             for buyer in Market.buyers:
                 buyer.loyalty[seller] = 5
-        for buyer in Market.buyers:
-            buyer.find_job(market_ref=Market)
+
+        for person in Market.persons:
+            if person.manufacturer not in Market.manufacturers:
+                person.find_new_job()
 
     @staticmethod
     def find_biggest_seller(product):
@@ -179,13 +185,19 @@ class Market:
         for manufacturer in Market.manufacturers:
             manufacturer.start()
 
+        for person in Market.persons:
+            person.work()
+
         for seller in Market.sellers:
-            seller_wealth[seller] += [seller.wealth]
+            seller_wealth[seller] += [seller.profit]
             x_axis[seller] += [n]
             seller.start(market_ref=Market, ask=ask)
 
         for buyer in Market.buyers:
-            buyer.start(market_ref=Market, demand=ask, ask=ask, bid=bid)
+            buyer.start(market_ref=Market)
+
+        for person in Market.persons:
+            person.start(ask=ask, demand=demand, bid=bid)
 
         for seller in Market.sellers:
             seller.summarize(n, volatility_index)
@@ -203,9 +215,7 @@ class Market:
 
         def check_sellers_bankrupt(verbose: int = 0):
             for seller in Market.sellers:
-                if sum(seller_wealth[seller][-50:]) < -50:
-                    Market.sellers.remove(seller)
-                    Market.sellers_count -= 1
+                if sum(seller_wealth[seller][-50:]) < -50 or seller.budget < -50:
                     clean_up_seller_info(seller)
 
                     if Market.sellers_count == 0:
@@ -213,13 +223,13 @@ class Market:
                         del seller
                         return False
                     del seller
-
                     if verbose > 0:
                         print('Seller eliminated')
 
         def clean_up_seller_info(seller: Seller):
             for buyer in Market.buyers:
-                del buyer.loyalty[seller]
+                if seller in buyer.loyalty:
+                    del buyer.loyalty[seller]
                 for product in Market.products:
                     if product not in buyer.offers:
                         continue
@@ -240,7 +250,7 @@ class Market:
                     print('New person')
 
         def handle_new_sellers(verbose: int = 0):
-            for new_seller, person in list(Market.new_sellers):
+            for new_seller in list(Market.new_sellers):
                 the_seller = Seller(**new_seller)
                 x_axis[the_seller] = []
                 seller_wealth[the_seller] = []
@@ -252,7 +262,6 @@ class Market:
                     the_seller.local_ask[product] = 0
                 for buyer in Market.buyers:
                     buyer.loyalty[the_seller] = 5
-                person.seller = the_seller
                 if verbose > 0:
                     print('New seller')
 
@@ -299,13 +308,14 @@ class Market:
                 Buyer.product_ask[product] = 0
                 volatility_index[product] = np.clip(abs((bid[product][-1]-ask[product][-1]))//(Market.buyers_count//5), np.clip(Market.buyers_count//(10*Market.sellers_count), 1, 2), 2)
 
-            Market.buyers_money += [np.mean([buyer.wealth for buyer in Market.buyers])]
+            Market.buyers_money += [np.mean([buyer.budget for buyer in Market.buyers])]
             Market.buyers_satisfaction += [np.mean([buyer.satisfaction for buyer in Market.buyers])]
             Market.buyers_count_list += [Market.buyers_count]
             Market.buyers_starvation += [np.mean(Buyer.starvation_index)]
             Buyer.starvation_index = []
-            Market.unemployed = 0
-            Market.unemployed = sum([buyer.employer is None for buyer in Market.buyers])
+            Market.unemployed = sum([person.jobs == [] for person in Market.persons]) - Market.manufacturers_count
+            jobbers = np.array([len([job for job in person.jobs if job.employer is not None]) for person in Market.persons])
+            print(sum(jobbers), jobbers)
             time_axis.append(time.time()-start_time)
 
         function_sequence()

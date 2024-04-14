@@ -60,7 +60,7 @@ def set_memory_spent() -> list:
 
 
 class Inventory:
-    def __init__(self, money=0):
+    def __init__(self, money=30):
         self.money = money
         self.food = {}
         self.items = {}
@@ -106,7 +106,7 @@ class BasePerson:
     needs: float = 0.05
     starvation: int = 2000
     satisfaction: float = 0
-    alive: int = 1
+    alive: int = -1
     ambition: int = 0
     generation: int = 0
     fed_up: dict = field(default_factory=set_fed_up)
@@ -142,10 +142,12 @@ class BasePerson:
         self.needs = np.clip(self.needs, 0.05, 1)
 
     def update_satisfaction(self):
+        self.satisfaction += self.day_satisfaction
         self.satisfaction -= 0.5 * (2 + self.needs)
 
     def update_day_values(self):
         # TODO: not updating right now
+        self.alive += 1
         self.day_saturation = 0
         self.day_satisfaction = 0
         self.day_spent = 0
@@ -155,13 +157,20 @@ class BasePerson:
         self.age += AGING
 
     def consume_food(self, other):
-        for food, amount in other:
+        for food, amount in other.items():
             self.starvation += food.calories * amount
             self.day_saturation += food.calories * amount
             if food not in self.fed_up:
                 self.fed_up[food] = amount
             else:
                 self.fed_up[food] += amount
+
+    def work(self, order=None):
+        if not order:
+            for job in list(self.jobs):
+                job.start()
+        else:
+            order.start()
 
     def try_birth_new(self):
         if self.birth >= self.birth_threshold:
@@ -197,6 +206,7 @@ class BasePerson:
                     self.become_seller(best_offers, estimated, ask)
 
     def become_seller(self, best_offers, estimated, ask):
+        print('BECOMING SELLERRRRR')
         self.budget = sum(self.memory_salary[-5:]) / 5 * 3
         self.ambition = 0
         guess = {}
@@ -252,36 +262,46 @@ class BasePerson:
         })
         self.budget -= 500 * (1 + self.greed)
         self.ambition = 0
+        for job in self.jobs:
+            del job
 
 
 class Person(BasePerson):
     def __init__(self, default_data, buyer_data=None, seller_data=None, manufacturer_data=None):
         super().__init__(**default_data)
-        self.buyer = Buyer(**buyer_data.update({'inventory': self.inventory, 'as_person': self})) if buyer_data else None
-        self.seller = Seller(**seller_data.update({'as_person': self})) if seller_data else None
-        self.manufacturer = Manufacturer(**manufacturer_data.update({'as_person': self})) if manufacturer_data else None
+        self.buyer = None
+        self.seller = None
+        self.manufacturer = None
+        if buyer_data is not None:
+            buyer_data.update({'inventory': self.inventory, 'as_person': self})
+            self.buyer = Buyer(**buyer_data)
+        if seller_data is not None:
+            seller_data.update({'as_person': self})
+            self.seller = Seller(**seller_data)
+        if manufacturer_data is not None:
+            manufacturer_data.update({'as_person': self})
+            self.manufacturer = Manufacturer(**manufacturer_data)
 
     def start(self, ask, demand, bid):
-        self.update_day_values()
         if len(self.jobs) == 0 and self.manufacturer is None:
             self.find_new_job()
-        for role in self.get_available_roles():
-            role.start(self.market_ref, ask, demand, bid)
+        # TODO: Requires parallelization
+        # for role in self.get_available_roles():
+        #     role.start(self.market_ref, ask, demand, bid)
         self.consume_food(self.inventory.get_all_food())
         self.update_ambition()
         self.update_satisfaction()
+        self.update_day_values()
         self.check_death()
         if self.seller is None:
             self.try_become_seller(ask, demand, bid, self.buyer.best_offers, self.buyer.estimated)
+        if self.manufacturer is None:
+            self.try_become_manufacturer(ask)
 
-    @cache
     def get_available_roles(self):
         roles = []
         if self.manufacturer is not None:
             roles += [self.manufacturer]
-        else:
-            for job in self.jobs:
-                roles += [job]
         if self.seller is not None:
             roles += [self.seller]
         if self.buyer is not None:

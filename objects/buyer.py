@@ -22,6 +22,7 @@ class BaseBuyer:
     def __del__(self):
         self.market_ref.buyers.remove(self)
         self.market_ref.buyers_count -= 1
+        self.as_person.buyer = None
 
     def __getattr__(self, name):
         return getattr(self.as_person, name)
@@ -63,7 +64,7 @@ class BaseBuyer:
     def market_ref(self):
         return self.as_person.market_ref
 
-    def get_food_satisfaction(self, price: float, quality: float,  product: Products, amount: int = 1):
+    def get_food_satisfaction(self, price: float, quality: float, product: Products, amount: int = 1):
         """
         A secret for buyer function that it will try to interpolate for himself.
         """
@@ -197,10 +198,10 @@ class Buyer(BaseBuyer):
         for item in seller.qualities:
             if item in self.offers:
                 self.offers[item][seller] = {"cost": seller.prices[item], "quality": seller.qualities[item]}
-                self.offers_stf[item][seller] = self.get_satisfaction(seller=seller, product=item)
+                self.offers_stf[item][seller] = self.get_food_satisfaction(seller.prices[item], seller.qualities[item], product=item)
             else:
                 self.offers[item] = {seller: {'cost': seller.prices[item], 'quality': seller.qualities[item]}}
-                self.offers_stf[item] = {seller: self.get_satisfaction(seller=seller, product=item)}
+                self.offers_stf[item] = {seller: self.get_food_satisfaction(seller.prices[item], seller.qualities[item], product=item)}
 
     def update_loyalty(self, satisfactions: dict = None, event=None) -> None:
         if isinstance(satisfactions, dict):
@@ -216,7 +217,7 @@ class Buyer(BaseBuyer):
         quality = seller.qualities[product]
 
         # TODO: do this better
-        stsf = self.get_satisfaction(cost, quality, product)
+        stsf = self.get_food_satisfaction(cost, quality, product)
 
         if product not in self.memory:
             self.memory_stf[product] = [stsf]
@@ -268,7 +269,8 @@ class Buyer(BaseBuyer):
 
             if len(products) == 0:
                 return True
-            available = {product: [seller for seller in market_ref.sellers if seller.amounts[product] > 0] for product in
+            available = {product: [seller for seller in market_ref.sellers if seller.amounts[product] > 0] for product
+                         in
                          products.keys()}
             missing = []
             for product in products:
@@ -369,7 +371,9 @@ class Buyer(BaseBuyer):
                     #  Соответственно и не ясно откуда это берется. Идей нет.
                     if amounts == 0:
                         continue
-                    satisfactions[current].update({product: self.get_satisfaction(seller=current, product=product)})
+                    satisfactions[current].update({product: self.get_food_satisfaction(price=current.prices[product],
+                                                                                       quality=current.qualities[product],
+                                                                                       product=product)})
                     bought.update(
                         final_decision(seller=current, product=product, availables=available[product], amount=amounts,
                                        satisfactions=satisfactions))
@@ -395,7 +399,9 @@ class Buyer(BaseBuyer):
                     amounts = 0
                 if amounts == 0:
                     continue
-                satisfactions[current].update({product: self.get_satisfaction(seller=current, product=product)})
+                satisfactions[current].update({product: self.get_food_satisfaction(price=current.prices[product],
+                                                                                   quality=current.qualities[product],
+                                                                                   product=product)})
                 bought.update(
                     final_decision(seller=current, product=product, availables=available[product], amount=amounts,
                                    satisfactions=satisfactions))
@@ -411,14 +417,16 @@ class Buyer(BaseBuyer):
                 [[self.loyalty[seller] for seller in memory_available[product]] for product in memory_available],
                 start=[])
             new_current = \
-            rd.choices(sum([memory_available[product] for product in memory_available], start=[]), loyalties)[0]
+                rd.choices(sum([memory_available[product] for product in memory_available], start=[]), loyalties)[0]
             self.remember_seller(seller=new_current)
             bought = {}
             for product, amount in products.items():
                 amounts = min(amount, new_current.amounts[product], floor(self.budget / new_current.prices[product]))
                 if amounts == 0:
                     continue
-                satisfactions[new_current].update({product: self.get_satisfaction(seller=new_current, product=product)})
+                satisfactions[new_current].update({product: self.get_food_satisfaction(price=new_current.prices[product],
+                                                                                       quality=new_current.qualities[product],
+                                                                                       product=product)})
                 bought.update(
                     final_decision(seller=new_current, product=product, availables=available[product], amount=amounts,
                                    satisfactions=satisfactions))
@@ -448,7 +456,9 @@ class Buyer(BaseBuyer):
                     print(new_current.forcheckX)
                 if amounts == 0:
                     continue
-                satisfactions[new_current].update({product: self.get_satisfaction(seller=new_current, product=product)})
+                satisfactions[new_current].update({product: self.get_food_satisfaction(price=new_current.prices[product],
+                                                                                       quality=new_current.qualities[product],
+                                                                                       product=product)})
                 bought.update(
                     final_decision(seller=new_current, product=product, availables=available[product], amount=amounts,
                                    satisfactions=satisfactions))
@@ -457,7 +467,8 @@ class Buyer(BaseBuyer):
         def visit(availables, products, visit_func):
             bought = visit_func(products)
             outcome = update_dict(products, bought)
-            new_available = {product: [seller for seller in market_ref.sellers if seller.amounts[product] > 0] for product
+            new_available = {product: [seller for seller in market_ref.sellers if seller.amounts[product] > 0] for
+                             product
                              in
                              products.keys()}
             availables.update(new_available)
@@ -476,7 +487,7 @@ class Buyer(BaseBuyer):
             # 8 is questionable but for now it will stay like this
             if len(set(market_ref.newcomers_sellers) & set(
                     sum([list(self.offers[item].keys()) for item in self.offers], start=[]))) != len(
-                    market_ref.newcomers_sellers) and rd.randint(0, 10) >= 8:
+                market_ref.newcomers_sellers) and rd.randint(0, 10) >= 8:
                 if visit(available, list_of_products, newcomers_visit):
                     return True
 
@@ -509,8 +520,8 @@ class Buyer(BaseBuyer):
     def buy(self, seller: Seller, product: Union[dict, Products], amount: Union[dict, int], satisfactions: dict):
         bought = super().buy(seller, product, amount, satisfactions)
         self.day_calories_bought += sum(bought[product] * product.calories for product in bought)
-        self.update_memory_product_seller(product, seller)
-        satisfactions[seller].update({product: self.get_satisfaction(seller=seller, product=product)})
+        for product in bought: self.update_memory_product_seller(product, seller)
+        satisfactions[seller].update({product: self.get_food_satisfaction(seller.prices[product], seller.qualities[product], product=product) for product in bought})
         return bought
 
     def planning(self, market_ref, exclude_products: list = None):
@@ -561,7 +572,7 @@ class Buyer(BaseBuyer):
         self.day_spent += self.spent
         self.day_satisfaction += self.satisfaction
 
-        if self.live % 3 == 0:
+        if self.alive % 3 == 0:
             self.train_stf_brains()
 
         # TODO: ?

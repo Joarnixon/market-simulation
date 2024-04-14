@@ -36,9 +36,12 @@ class BaseManufacturer:
         self.memory_income_total_hr: list = []
         self.brains = {'salary': LinearRegression(), 'technology_param': LinearRegression()}
 
+        self.forcheck_n = {}
+
     def __del__(self):
         self.market_ref.manufacturers.remove(self)
         self.market_ref.manufacturers_count -= 1
+        self.as_person.manufacturer = None
 
     @property
     def budget(self):
@@ -66,16 +69,20 @@ class BaseManufacturer:
         specific_worker.load_data(worker.get_memory_data())
         self.workers[job].append(specific_worker)
         self.num_workers[job] += 1
+
         if worker.employer is not None:
             # TODO: this is highly bad but this causes lots of trouble and is time consuming for now
             # TODO: this whole system with fire, hire is such a pain lmao
-            worker.employer.workers[worker.product].remove(worker)
-            worker.employer.num_workers[worker.product] -= 1
+            worker.employer.fire(worker)
+            worker.change_job(specific_worker)
+            worker.employer = None
+
         return [specific_worker]
 
-    def fire(self, person):
+    def fire(self, person: ManufactureWorker, product=None, amount=None):
         self.workers[person.product].remove(person)
         self.num_workers[person.product] -= 1
+        person.employer = None
         del person
 
     def pay_salary(self, worker: ManufactureWorker, product, produced):
@@ -93,7 +100,7 @@ class BaseManufacturer:
                 if sum(self.salary.values()) > c:
                     salary_scale = c * (self.salary[product]) / sum([self.salary[product] for product in self.salary if self.daily_produced[product] != 0])
                 else:
-                    salary_scale = self.salary[product]
+                    salary_scale = self.salary[product] / sum([self.salary[product] for product in self.salary])
                 money = (3/4) * salary_scale * produced * self.wage_rate[product]
 
         money = round(money, 2)
@@ -106,6 +113,7 @@ class BaseManufacturer:
         self.storage[product] += produced
         self.daily_produced[product] += produced
         self.pay_salary(worker, product, produced)
+        self.forcheck_n[product] += 1
         return produced
 
     def sell(self, product, amount, quality):
@@ -132,7 +140,7 @@ class BaseManufacturer:
                     memory[product] = list(np.array(x)[:, j])
                 target = y
             model.fit(x, y)
-            slope = model.coef_[:num_changing]
+            slope = model.coef_[0][:num_changing]
             z_adding = np.copysign(adding_point * rd.randint(1, 3) / 40, np.round(slope, 2))
             z_adding = z_adding * assign_numbers(slope)
             for i, product in enumerate(changing):
@@ -155,7 +163,7 @@ class BaseManufacturer:
                 memory = x
                 target = y
             model.fit(x, y)
-            slope = model.coef_
+            slope = model.coef_[0]
             z_adding = np.copysign(adding_point * rd.uniform(0.1, 0.3) / 40, np.round(slope, 2))
             z_adding = z_adding * assign_numbers(slope)
             self.technology_param = np.clip(self.technology_param + z_adding[-1], 0, 3)
@@ -173,32 +181,36 @@ class BaseManufacturer:
                                                                                target=self.memory_income_total_hr,
                                                                                num_changing=len(self.products)-1)
 
+    def update_daily(self):
+        self.daily_income = {product: 0 for product in self.products}
+        self.daily_produced = {product: 0 for product in self.products}
+
     def update_memory(self, unemployed):
         for product in self.products:
             self.memory_hr[product] += [self.salary[product]]
         self.memory_income_total_hr += [sum(self.daily_income[product] / self.daily_produced[product] for product in self.products if self.daily_produced[product] != 0)]
         self.memory_tech += [self.technology_param]
         self.memory_hr['produced'] += [sum(self.daily_produced.values())]
-        self.memory_income += sum([self.daily_income[product] for product in self.daily_income])
+        self.memory_income += [sum([self.daily_income[product] for product in self.daily_income])]
         self.daily_income_before = {product: self.daily_income[product] for product in self.daily_income}
-        self.daily_produced = {product: 0 for product in self.products}
         self.wage_rate.update({product: self.daily_income_before[product] / self.daily_produced[product] for product in self.daily_produced if self.daily_produced[product] != 0})
-        self.daily_income = {product: 0 for product in self.products}
 
     def start(self, market_ref=None, ask=None, demand=None, bid=None):
-        self.payed = {product: 0 for product in self.products}
-        for product, workers in self.workers.items():
-            for worker in workers:
-                worker.work(employer=self)
-        # print(self.name)
-        # print('workers', list(self.num_workers.values()))
+        # for product, workers in self.workers.items():
+        #     for worker in workers:
+        #         worker.work(employer=self)
+        print(self.name)
+        print('workers', list(self.num_workers.values()), sum(list(self.num_workers.values())))
         # print('salary', list(self.salary.values()))
-        # print('enemployed', Market.unemployed)
-        # #print('payed', list(self.payed.values()))
-        # print('------------------')
+        print('enemployed', self.market_ref.unemployed)
+        print('payed', list(self.payed.values()))
+        print('------------------')
+        self.payed = {product: 0 for product in self.products}
+        self.forcheck_n = {product: 0 for product in self.products}
 
     def summarize(self, unemployed):
         self.update_memory(unemployed)
+        self.update_daily()
         self.budget += self.memory_income[-1]
         self.estimate(unemployed)
         self.days += 1
@@ -242,7 +254,7 @@ class Manufacturer(BaseManufacturer):
                 return super().hire(worker, vacancy)
         return []
 
-    def fire(self, product=None, amount=None, person: ManufactureWorker = None):
+    def fire(self, person: ManufactureWorker = None, product=None, amount=None):
         if person is None:
             k = min(amount, self.num_workers[product])
             for i in range(k):
@@ -250,13 +262,18 @@ class Manufacturer(BaseManufacturer):
                 moved = self.hire(worker)
                 if not moved:
                     super().fire(person=worker)
-                else:
-                    worker.change_job(moved[0])
+                    worker.employer = None
+                # else:
+                #
+                #      TODO: A manufacturer moves a person but DON'T ERASE IT FROM HIS LOGS and then if it tries to move it again - he founds a worker that is not
+                #      TODO: in person_jobs because person changed the job as it supposed to and when trying to erase this not existing job we get a bug
         else:
-            super().fire(person=person)
+            if person in self.workers[person.product]:
+                super().fire(person=person)
+                person.employer = None
 
     def application(self, worker: ManufactureWorker, resume=None, desired_vacancy=None):
-        return self.hire(worker, resume, desired_vacancy)
+        return self.hire(worker=worker, resume=resume, desired_vacancy=desired_vacancy)
 
     def make_production(self, worker: ManufactureWorker, product, hours):
         produced = super().make_production(worker, product, hours)
@@ -319,6 +336,11 @@ class Manufacturer(BaseManufacturer):
                                                                                              num_changing=self.business_changing_params,
                                                                                              unemployed=unemployed)
 
+    def update_daily(self):
+        super().update_daily()
+        self.daily_income_in = {product: 0 for product in self.products}
+        self.daily_income_out = {product: 0 for product in self.products}
+
     def update_memory(self, unemployed):
         super().update_memory(unemployed)
         for product in self.products:
@@ -330,21 +352,27 @@ class Manufacturer(BaseManufacturer):
         self.memory_income_in += [sum(self.daily_income_in.values())]
         self.memory_income_out += [sum(self.daily_income_out.values())]
         self.memory_income_total_business += [self.memory_income_in[-1] + self.memory_income_out[-1]]
-        self.memory_income[-1] = [self.memory_income_in[-1] + self.memory_income_out[-1]]
+        self.memory_income[-1] = self.memory_income_in[-1] + self.memory_income_out[-1]
         self.memory_business['unemployed'] += [unemployed]
         self.daily_income_before = {product: self.daily_income_in[product] + self.daily_income_out[product] for product
                                     in self.daily_income_in}
-        self.daily_income_in = {product: 0 for product in self.products}
-        self.daily_income_out = {product: 0 for product in self.products}
+        self.wage_rate.update({product: self.daily_income_before[product] / self.daily_produced[product] for product in
+                               self.daily_produced if self.daily_produced[product] != 0})
+        print('wage', self.name, self.wage_rate)
+        print('prod', self.name, self.daily_produced)
+        print('inc', self.name, self.daily_income_before)
+        print('tech', self.technology_param)
 
     def summarize(self, unemployed):
         self.sell_out()
         self.update_memory(unemployed)
+        self.update_daily()
         self.budget += self.memory_income_in[-1] + self.memory_income_out[-1]
         self.estimate(unemployed)
         for product in self.number_of_vacancies:
             if self.number_of_vacancies[product] < self.num_workers[product]:
                 fired = self.num_workers[product] - self.number_of_vacancies[product]
-                self.fire(product, fired)
+                self.fire(person=None, product=product, amount=fired)
         self.days += 1
+
 

@@ -3,6 +3,7 @@ from functools import cache
 import numpy as np
 from sklearn.linear_model import LinearRegression
 from typing import Union
+from random import sample
 from other.utils import cluster_data, f_round, assign_numbers
 from objects.products import Products
 from settings.constants import *
@@ -12,6 +13,7 @@ class BaseSeller:
     def __init__(self, as_person, guess=None, prices=None, from_start=True):
         self.from_start = from_start
         self.as_person = as_person
+        self.as_person.seller = self
         self.memory = {}
         self.memory_incomes = {}
         self.prices = {} if not prices else prices
@@ -21,6 +23,7 @@ class BaseSeller:
         self.available_products = []
         self.n_product_params = 3
         self.days = 0
+        self.profit = 0
         self.amounts = {}
         self.income = {}
         self.initial_guess = {}
@@ -30,6 +33,7 @@ class BaseSeller:
     def __del__(self):
         self.market_ref.sellers.remove(self)
         self.market_ref.sellers_count -= 1
+        self.as_person.seller = None
 
     @property
     def greed(self):
@@ -124,7 +128,6 @@ class BaseSeller:
 class Seller(BaseSeller):
     def __init__(self, as_person, guess=None, prices=None, from_start=True):
         super().__init__(as_person=as_person, guess=guess, prices=prices, from_start=from_start)
-        self.as_person.seller = self
         self.providers = {}
         self.ambition = 20
 
@@ -137,7 +140,7 @@ class Seller(BaseSeller):
             offers = {}
             if product not in self.qualities:
                 self.initial_guess[product] = self.get_guess(product)
-                for manufactory in market_ref.manufacturers:
+                for manufactory in sample(market_ref.manufacturers, market_ref.manufacturers_count):
                     offers[manufactory] = manufactory.get_price(product, self.initial_guess[product]["quality"])
                 offers = sorted(offers.items(), key=lambda d: d[1])
                 spent = 0
@@ -164,7 +167,7 @@ class Seller(BaseSeller):
                 self.memory_incomes[product] = []
                 self.local_ask[product] = 0
             else:
-                for manufactory in market_ref.manufacturers:
+                for manufactory in sample(market_ref.manufacturers, market_ref.manufacturers_count):
                     offers[manufactory] = manufactory.get_price(product, self.qualities[product])
                 offers = sorted(offers.items(), key=lambda d: d[1])
                 spent = 0
@@ -206,6 +209,7 @@ class Seller(BaseSeller):
 
     def summarize(self, iterat, volatility_index):
         for product in self.available_products:
+            self.profit += self.income[product]
             self.budget += self.income[product]
             self.memory_incomes[product] += [self.income[product]]
             self.estimate(product, iterat, volatility_index)

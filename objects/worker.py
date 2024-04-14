@@ -1,7 +1,12 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 import random as rd
 import numpy as np
+from other.utils import generate_id
+
+
+def set_id():
+    return generate_id()
 
 
 @dataclass
@@ -9,20 +14,24 @@ class Worker:
     as_person: Any
     working_hours: int = 8
     job_satisfied: float = 0.5
+    employer: Any = None
+    uid: str = field(default_factory=set_id)
+
+    def __del__(self):
+        if self in self.as_person.jobs:
+            self.as_person.jobs.remove(self)
+        if self.employer is not None:
+            self.employer.fire(person=self)
 
 
 class ManufactureWorker(Worker):
     def __init__(self, worker_data):
         super().__init__(**worker_data)
         self.product = None
-        self.employer = None
         self.salary: float = 0
 
-    def __del__(self):
-        if self in self.as_person.jobs:
-            self.as_person.jobs.remove(self)
-        if self in self.employer.workers[self.product]:
-            self.employer.fire(person=self)
+    def __eq__(self, other):
+        return (self.uid == other.uid) and (self.product == other.product)
 
     @property
     def memory_spent(self):
@@ -80,9 +89,14 @@ class ManufactureWorker(Worker):
         return []
 
     def change_job(self, changing):
-        self.as_person.jobs.remove(self)
+        if self in self.as_person.jobs:
+            self.as_person.jobs.remove(self)
         self.as_person.jobs.append(changing)
         del self
+
+    def quit_job(self):
+        del self
+        return
 
     def get_base_data(self):
         return {
@@ -133,40 +147,46 @@ class ManufactureWorker(Worker):
             self.salary = 0
 
     def start(self):
+        if self.helper_check_deletion():
+            del self
+            return
         self.work()
         self.get_payed()
         if rd.randint(0, 10) >= 8:
             found = self.find_job(changing=True, market_ref=self.as_person.market_ref)
             if found:
-                self.as_person.jobs += found
                 del self
                 return
         self.job_satisfaction()
 
+    def helper_check_deletion(self):
+        if self.employer is None:
+            return True
+
 
 class BreadMaker(ManufactureWorker):
     def __init__(self, worker_data):
-        super().__init__(**worker_data)
+        super().__init__(worker_data)
 
 
 class CerealMaker(ManufactureWorker):
     def __init__(self, worker_data):
-        super().__init__(**worker_data)
+        super().__init__(worker_data)
 
 
 class MeatMaker(ManufactureWorker):
     def __init__(self, worker_data):
-        super().__init__(**worker_data)
+        super().__init__(worker_data)
 
 
 class MilkMaker(ManufactureWorker):
     def __init__(self, worker_data):
-        super().__init__(**worker_data)
+        super().__init__(worker_data)
 
 
 class PieMaker(ManufactureWorker):
     def __init__(self, worker_data):
-        super().__init__(**worker_data)
+        super().__init__(worker_data)
 
 
 def assignClass(job):
@@ -180,13 +200,13 @@ def assignClass(job):
 # example
 class Thief(Worker):
     def __init__(self, worker_data):
-        super().__init__(**worker_data)
+        super().__init__(worker_data)
         self.luck = 0.5
 
 
 # example
 class Guardian(Worker):
     def __init__(self, worker_data):
-        super().__init__(**worker_data)
+        super().__init__(worker_data)
         self.strength = 0.5
 
