@@ -38,11 +38,6 @@ class BaseManufacturer:
 
         self.forcheck_n = {}
 
-    def __del__(self):
-        self.market_ref.manufacturers.remove(self)
-        self.market_ref.manufacturers_count -= 1
-        self.as_person.manufacturer = None
-
     @property
     def budget(self):
         return self.as_person.inventory.money
@@ -140,7 +135,12 @@ class BaseManufacturer:
                     memory[product] = list(np.array(x)[:, j])
                 target = y
             model.fit(x, y)
-            slope = model.coef_[0][:num_changing]
+            if model.coef_.ndim == 2:
+                slope = model.coef_[0][:num_changing]
+            else:
+                slope = model.coef_[:num_changing]
+                target = np.array(target).reshape(-1, 1).tolist()
+
             z_adding = np.copysign(adding_point * rd.randint(1, 3) / 40, np.round(slope, 2))
             z_adding = z_adding * assign_numbers(slope)
             for i, product in enumerate(changing):
@@ -201,9 +201,9 @@ class BaseManufacturer:
         #         worker.work(employer=self)
         print(self.name)
         print('workers', list(self.num_workers.values()), sum(list(self.num_workers.values())))
-        # print('salary', list(self.salary.values()))
-        print('enemployed', self.market_ref.unemployed)
-        print('payed', list(self.payed.values()))
+        print('salary', list(self.salary.values()))
+        # print('enemployed', self.market_ref.unemployed)
+        # print('payed', list(self.payed.values()))
         print('------------------')
         self.payed = {product: 0 for product in self.products}
         self.forcheck_n = {product: 0 for product in self.products}
@@ -358,10 +358,6 @@ class Manufacturer(BaseManufacturer):
                                     in self.daily_income_in}
         self.wage_rate.update({product: self.daily_income_before[product] / self.daily_produced[product] for product in
                                self.daily_produced if self.daily_produced[product] != 0})
-        print('wage', self.name, self.wage_rate)
-        print('prod', self.name, self.daily_produced)
-        print('inc', self.name, self.daily_income_before)
-        print('tech', self.technology_param)
 
     def summarize(self, unemployed):
         self.sell_out()

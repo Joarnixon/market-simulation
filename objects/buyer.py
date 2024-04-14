@@ -19,11 +19,6 @@ class BaseBuyer:
         self.as_person = person
         self.inventory = inventory
 
-    def __del__(self):
-        self.market_ref.buyers.remove(self)
-        self.market_ref.buyers_count -= 1
-        self.as_person.buyer = None
-
     def __getattr__(self, name):
         return getattr(self.as_person, name)
 
@@ -130,7 +125,7 @@ class Buyer(BaseBuyer):
         self.estimated_stf = {}
         self.dsm = Desummation()
         self.dsm.fit(REQUIRES)
-        self.loyalty = {}
+        self.loyalty = {seller: 5 for seller in self.as_person.market_ref.sellers}
         self.stf_brains = {product: SGDRegressor(max_iter=BUYER_BRAIN_CONSTANT) for product in self.market_ref.products}
         self.product_found = {}
         self.plan = {}
@@ -412,7 +407,6 @@ class Buyer(BaseBuyer):
 
             if len(memory_available) == 0:
                 return {}
-
             loyalties = sum(
                 [[self.loyalty[seller] for seller in memory_available[product]] for product in memory_available],
                 start=[])
@@ -534,7 +528,7 @@ class Buyer(BaseBuyer):
                  in planning_products]  # удовольствие
             C = [product.calories for product in planning_products]  # калории
             D = [self.product_found[product] for product in planning_products]  # был ли в прошлый раз найден.
-            require_buyer = REQUIRES
+            require_buyer = list(REQUIRES)
             starvation_factor = np.clip((1 + (-self.starvation + self.day_calories_bought) / 4000), 1, 3)
             max_prod_call = np.argmax(np.array(C) / np.array(A))
             require_buyer[1] = max(B) * round((2200 / C[np.argmax(B)]))
@@ -565,7 +559,6 @@ class Buyer(BaseBuyer):
                 return do_something_plan
 
     def start(self, market_ref):
-
         plan = self.planning(market_ref)
         self.think(plans=plan, market_ref=market_ref)
 

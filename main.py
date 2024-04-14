@@ -138,6 +138,8 @@ class Market:
             Market.buyers_count += 1
         Market.inspecting_buyer = Market.buyers[rd.randint(0, Market.buyers_count-1)]
 
+        Market.inspecting_person = Market.persons[rd.randint(0, Market.persons_count-1)]
+
         for product in Market.products:
             Buyer.product_ask[product] = 0
             Buyer.product_bought[product] = 0
@@ -168,9 +170,66 @@ class Market:
             return None
 
     @staticmethod
+    def delete_seller(seller):
+        Market.sellers.remove(seller)
+        Market.sellers_count -= 1
+        seller.as_person.seller = None
+        del seller
+
+    @staticmethod
+    def clean_up_seller_info(seller: Seller):
+        for buyer in Market.buyers:
+            if seller in list(buyer.loyalty.keys()):
+                del buyer.loyalty[seller]
+            for product in Market.products:
+                if product not in buyer.offers:
+                    continue
+                if seller in buyer.offers[product]:
+                    del buyer.offers[product][seller]
+                    del buyer.offers_stf[product][seller]
+
+            for product in list(buyer.best_offers):
+                if buyer.best_offers[product]["seller"] == seller:
+                    del buyer.best_offers[product]
+
+    @staticmethod
+    def delete_person(person):
+        Market.persons.remove(person)
+        Market.persons_count -= 1
+        if person.manufacturer is not None:
+            Market.delete_manufacturer(person.manufacturer)
+        if person.seller is not None:
+            Market.clean_up_seller_info(person.seller)
+            Market.delete_seller(person.seller)
+        if person.buyer is not None:
+            Market.delete_buyer(person.buyer)
+        for job in list(person.jobs):
+            del job
+
+    @staticmethod
+    def delete_manufacturer(manufacturer):
+        Market.manufacturers.remove(manufacturer)
+        Market.manufacturers_count -= 1
+        manufacturer.as_person.manufacturer = None
+        for product in manufacturer.products:
+            for worker in list(manufacturer.workers[product]):
+                worker.as_person.delete_job(worker)
+        del manufacturer
+
+    @staticmethod
+    def delete_buyer(buyer):
+        Market.buyers.remove(buyer)
+        Market.buyers_count -= 1
+        buyer.as_person.buyer = None
+        del buyer
+
+    @staticmethod
     def start():
         for k in range(Market.ticks):
             Market._iteration(k, verbose=0)
+            print(Market.inspecting_person)
+            time.sleep(0)
+            # TODO: still bug with number of persons in employer's list
         Market.visualise(verbose=1)
 
     @staticmethod
@@ -205,6 +264,7 @@ class Market:
         for manufacturer in Market.manufacturers:
             manufacturer.summarize(Market.unemployed)
 
+
         def function_sequence():
             statistics_gather()
             check_sellers_bankrupt(verbose=verbose)
@@ -214,38 +274,26 @@ class Market:
             handle_new_manufacturers(verbose=verbose)
 
         def check_sellers_bankrupt(verbose: int = 0):
-            for seller in Market.sellers:
-                if sum(seller_wealth[seller][-50:]) < -50 or seller.budget < -50:
-                    clean_up_seller_info(seller)
-
+            for seller in list(Market.sellers):
+                if sum(seller_wealth[seller][-50:]) < -50 and seller.budget < 50:
+                    print(sum(seller_wealth[seller][-50:]))
+                    Market.clean_up_seller_info(seller)
+                    Market.delete_seller(seller)
                     if Market.sellers_count == 0:
                         print('No sellers left')
-                        del seller
                         return False
-                    del seller
                     if verbose > 0:
                         print('Seller eliminated')
 
-        def clean_up_seller_info(seller: Seller):
-            for buyer in Market.buyers:
-                if seller in buyer.loyalty:
-                    del buyer.loyalty[seller]
-                for product in Market.products:
-                    if product not in buyer.offers:
-                        continue
-                    if seller in buyer.offers[product]:
-                        del buyer.offers[product][seller]
-                        del buyer.offers_stf[product][seller]
-
-                for product in list(buyer.best_offers):
-                    if buyer.best_offers[product]["seller"] == seller:
-                        del buyer.best_offers[product]
-
         def handle_new_persons(verbose: int = 0):
             for new_person in list(Market.new_persons):
-                Market.persons.append(Person(**new_person))
+                person_buyer = Person(default_data=new_person, buyer_data={})
+                Market.persons.append(person_buyer)
+                Market.buyers.append(person_buyer.buyer)
                 Market.persons_count += 1
+                Market.buyers_count += 1
                 Market.new_persons.remove(new_person)
+
                 if verbose > 0:
                     print('New person')
 
@@ -322,17 +370,17 @@ class Market:
 
     @staticmethod
     def visualise(verbose: int = 0):
-        for buyer in Market.buyers:
-            if buyer.generation in salary_distribution.keys():
-                salary_distribution[buyer.generation] += [buyer.salary]
-            else:
-                salary_distribution[buyer.generation] = [buyer.salary]
-
-        st = sellers_test(demand, satisfied, Market.buyers_count_list)
-        bt = buyers_test(Market.initial_salary, salary_distribution)
-        print('Sellers test:', st)
-        print('Buyers test:', bt[0], '\n', bt[1])
-        log(st, bt[0], bt[1])
+        # for person in Market.person:
+        #     if buyer.generation in salary_distribution.keys():
+        #         salary_distribution[buyer.generation] += [.salary]
+        #     else:
+        #         salary_distribution[buyer.generation] = [buyer.salary]
+        #
+        # st = sellers_test(demand, satisfied, Market.buyers_count_list)
+        # bt = buyers_test(Market.initial_salary, salary_distribution)
+        # print('Sellers test:', st)
+        # print('Buyers test:', bt[0], '\n', bt[1])
+        # log(st, bt[0], bt[1])
 
         if verbose <= 0:
             return True

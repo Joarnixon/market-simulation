@@ -18,10 +18,9 @@ class Worker:
     uid: str = field(default_factory=set_id)
 
     def __del__(self):
-        if self in self.as_person.jobs:
-            self.as_person.jobs.remove(self)
         if self.employer is not None:
             self.employer.fire(person=self)
+        self.as_person.delete_job(self)
 
 
 class ManufactureWorker(Worker):
@@ -89,10 +88,8 @@ class ManufactureWorker(Worker):
         return []
 
     def change_job(self, changing):
-        if self in self.as_person.jobs:
-            self.as_person.jobs.remove(self)
         self.as_person.jobs.append(changing)
-        del self
+        self.as_person.delete_job(self)
 
     def quit_job(self):
         del self
@@ -148,14 +145,14 @@ class ManufactureWorker(Worker):
 
     def start(self):
         if self.helper_check_deletion():
-            del self
+            self.as_person.delete_job(self)
             return
         self.work()
         self.get_payed()
         if rd.randint(0, 10) >= 8:
             found = self.find_job(changing=True, market_ref=self.as_person.market_ref)
             if found:
-                del self
+                self.as_person.delete_job(self)
                 return
         self.job_satisfaction()
 
@@ -168,25 +165,40 @@ class BreadMaker(ManufactureWorker):
     def __init__(self, worker_data):
         super().__init__(worker_data)
 
+    def __str__(self):
+        return f'BreadMaker(job_satisfied={self.job_satisfied}, employer={self.employer.name if self.employer is not None else None}, working_hours={self.working_hours}, uid={self.uid})'
+
 
 class CerealMaker(ManufactureWorker):
     def __init__(self, worker_data):
         super().__init__(worker_data)
+
+    def __str__(self):
+        return f'CerealMaker(job_satisfied={self.job_satisfied}, employer={self.employer.name if self.employer is not None else None}, working_hours={self.working_hours}, uid={self.uid})'
 
 
 class MeatMaker(ManufactureWorker):
     def __init__(self, worker_data):
         super().__init__(worker_data)
 
+    def __str__(self):
+        return f'MeatMaker(job_satisfied={self.job_satisfied}, employer={self.employer.name if self.employer is not None else None}, working_hours={self.working_hours}, uid={self.uid})'
+
 
 class MilkMaker(ManufactureWorker):
     def __init__(self, worker_data):
         super().__init__(worker_data)
 
+    def __str__(self):
+        return f'MilkMaker(job_satisfied={self.job_satisfied}, employer={self.employer.name if self.employer is not None else None}, working_hours={self.working_hours}, uid={self.uid})'
+
 
 class PieMaker(ManufactureWorker):
     def __init__(self, worker_data):
         super().__init__(worker_data)
+
+    def __str__(self):
+        return f'PieMaker(job_satisfied={self.job_satisfied}, employer={self.employer.name if self.employer is not None else None}, working_hours={self.working_hours}, uid={self.uid})'
 
 
 def assignClass(job):

@@ -122,8 +122,10 @@ class BasePerson:
     greed: float = field(default_factory=set_greed)
 
     def __del__(self):
-        self.market_ref.persons.remove(self)
-        self.market_ref.persons_count -= 1
+        self.market_ref.delete_person(self)
+
+    def __str__(self):
+        return f'Person(name={self.name}, budget={self.budget}, starvation={self.starvation}, age={self.age}, satisfaction={self.satisfaction}, jobs={[str(job) for job in self.jobs]}, memory_spent={self.memory_spent}, memory_salary={self.memory_salary}, birth={self.birth}, workaholic={self.workaholic}, needs={self.needs}'
 
     @property
     def budget(self):
@@ -132,6 +134,11 @@ class BasePerson:
     @budget.setter
     def budget(self, value):
         self.inventory.money = value
+
+    def delete_job(self, job):
+        if job in self.jobs:
+            self.jobs.remove(job)
+            del job
 
     def update_ambition(self):
         self.ambition = max(0, self.ambition + rd.randint(-1, 1) * 5)
@@ -145,6 +152,10 @@ class BasePerson:
         self.satisfaction += self.day_satisfaction
         self.satisfaction -= 0.5 * (2 + self.needs)
 
+    def update_memory(self):
+        self.memory_spent += [self.day_spent]
+        self.memory_salary += [self.day_salary]
+
     def update_day_values(self):
         # TODO: not updating right now
         self.alive += 1
@@ -152,6 +163,8 @@ class BasePerson:
         self.day_satisfaction = 0
         self.day_spent = 0
         self.day_salary = 0
+        if self == self.market_ref.inspecting_person:
+            print(self.starvation, REQUIRES[2], 'out', self.starvation - REQUIRES[2])
         self.starvation -= REQUIRES[2]
         self.birth += 1
         self.age += AGING
@@ -174,7 +187,7 @@ class BasePerson:
 
     def try_birth_new(self):
         if self.birth >= self.birth_threshold:
-            if self.starvation >= 7000 * (1 + self.needs):
+            if self.starvation >= 5000 * (1 + self.needs):
                 if self.budget >= 3 * sum(self.memory_salary[-5:]) / 5 * (1 + self.needs):
                     self.birth_new()
 
@@ -282,17 +295,25 @@ class Person(BasePerson):
             manufacturer_data.update({'as_person': self})
             self.manufacturer = Manufacturer(**manufacturer_data)
 
+    def __del__(self):
+        self.market_ref.delete_person(self)
+
     def start(self, ask, demand, bid):
-        if len(self.jobs) == 0 and self.manufacturer is None:
+        if len([job for job in self.jobs if job.employer is not None]) == 0 and self.manufacturer is None:
             self.find_new_job()
         # TODO: Requires parallelization
         # for role in self.get_available_roles():
         #     role.start(self.market_ref, ask, demand, bid)
         self.consume_food(self.inventory.get_all_food())
         self.update_ambition()
+        self.update_needs()
         self.update_satisfaction()
+        self.update_memory()
         self.update_day_values()
-        self.check_death()
+        if self.check_death():
+            self.market_ref.delete_person(self)
+            return
+        self.try_birth_new()
         if self.seller is None:
             self.try_become_seller(ask, demand, bid, self.buyer.best_offers, self.buyer.estimated)
         if self.manufacturer is None:
@@ -310,10 +331,7 @@ class Person(BasePerson):
 
     def check_death(self):
         if self.starvation < -20000:
-            for role in list(self.get_available_roles()):
-                del role
-            del self
-            return
+            return True
 
     def find_new_job(self):
         base_worker = ManufactureWorker({'as_person': self, 'working_hours': 8, 'job_satisfied': 0.5})

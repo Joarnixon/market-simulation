@@ -30,11 +30,6 @@ class BaseSeller:
         self.guess = {} if not guess else guess
         self.brain = LinearRegression()
 
-    def __del__(self):
-        self.market_ref.sellers.remove(self)
-        self.market_ref.sellers_count -= 1
-        self.as_person.seller = None
-
     @property
     def greed(self):
         return self.as_person.greed
