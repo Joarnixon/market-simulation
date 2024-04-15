@@ -1,0 +1,20 @@
+MilkMaker(name=Larry Thompson, job_satisfied=0.5, employer=bbb, salary=55.62, working_hours=8)
+
+MilkMaker(name=Larry Thompson, job_satisfied=0.6, employer=bbb, salary=0.75, working_hours=8)
+
+MilkMaker(name=Larry Thompson, job_satisfied=0.7, employer=bbb, salary=0.86, working_hours=8)
+
+MilkMaker(name=Larry Thompson, job_satisfied=0.8, employer=bbb, salary=0.99, working_hours=8)
+
+MilkMaker(name=Larry Thompson, job_satisfied=0.9, employer=bbb, salary=0.8, working_hours=8)
+
+BreadMaker(name=Larry Thompson, job_satisfied=0.93, employer=bbb, salary=2.97, working_hours=8)
+
+BreadMaker(name=Larry Thompson, job_satisfied=1.0, employer=bbb, salary=2.27, working_hours=8)
+
+BreadMaker(name=Larry Thompson, job_satisfied=1.0, employer=bbb, salary=1.16, working_hours=8)
+
+BreadMaker(name=Larry Thompson, job_satisfied=1.0, employer=bbb, salary=3.07, working_hours=8)
+
+BreadMaker(name=Larry Thompson, job_satisfied=1.0, employer=bbb, salary=1.33, working_hours=8)
+

@@ -1,0 +1,12 @@
+MilkMaker(name=Robert Martin, job_satisfied=0.4, employer=bbbccaa, salary=1.98, working_hours=8)
+
+MilkMaker(name=Robert Martin, job_satisfied=0.3, employer=bbbccaa, salary=1.13, working_hours=8)
+
+MilkMaker(name=Robert Martin, job_satisfied=0.4, employer=bbbccaa, salary=1.2, working_hours=8)
+
+BreadMaker(name=Robert Martin, job_satisfied=0.5, employer=bbb, salary=0.84, working_hours=8)
+
+BreadMaker(name=Robert Martin, job_satisfied=0.4, employer=bbb, salary=2.4, working_hours=8)
+
+CerealMaker(name=Robert Martin, job_satisfied=0.3, employer=bbb, salary=0.2, working_hours=8)
+

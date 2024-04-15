@@ -1,0 +1,20 @@
+BreadMaker(name=Charlie Thomas, job_satisfied=0.5, employer=bbbccaa, salary=20.89, working_hours=8)
+
+BreadMaker(name=Charlie Thomas, job_satisfied=0.6, employer=bbbccaa, salary=1.07, working_hours=8)
+
+BreadMaker(name=Charlie Thomas, job_satisfied=0.7, employer=bbbccaa, salary=1.23, working_hours=8)
+
+BreadMaker(name=Charlie Thomas, job_satisfied=0.8, employer=bbbccaa, salary=3.57, working_hours=8)
+
+BreadMaker(name=Charlie Thomas, job_satisfied=0.9, employer=bbbccaa, salary=4.57, working_hours=8)
+
+BreadMaker(name=Charlie Thomas, job_satisfied=1.0, employer=bbbccaa, salary=2.07, working_hours=8)
+
+BreadMaker(name=Charlie Thomas, job_satisfied=1.0, employer=bbbccaa, salary=2.86, working_hours=8)
+
+MeatMaker(name=Charlie Thomas, job_satisfied=1.0, employer=bbbccaa, salary=6.66, working_hours=8)
+
+MeatMaker(name=Charlie Thomas, job_satisfied=1.0, employer=bbbccaa, salary=3.29, working_hours=8)
+
+MeatMaker(name=Charlie Thomas, job_satisfied=1.0, employer=bbbccaa, salary=3.72, working_hours=8)
+

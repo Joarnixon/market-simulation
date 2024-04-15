@@ -1,0 +1,4 @@
+CerealMaker(name=Chris Davis, job_satisfied=0.5, employer=bbbccaa, salary=8.71, working_hours=8)
+
+CerealMaker(name=Chris Davis, job_satisfied=0.6, employer=bbbccaa, salary=0.63, working_hours=8)
+

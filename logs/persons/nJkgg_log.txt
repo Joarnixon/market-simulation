@@ -1,0 +1,20 @@
+Person(name=Sam Davis, budget=36.42, starvation=1380, age=18.1, satisfaction=-1.44, jobs=['MeatMaker(name=Sam Davis, job_satisfied=0.5, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.93], memory_salary=[7.35], birth=4, workaholic=0.27, needs=0.05
+
+Person(name=Sam Davis, budget=37.39, starvation=-620, age=18.200000000000003, satisfaction=-2.52, jobs=['MeatMaker(name=Sam Davis, job_satisfied=0.6, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.93 0.  ], memory_salary=[7.35 0.97], birth=5, workaholic=0.27, needs=0.15000000000000002
+
+Person(name=Sam Davis, budget=36.98, starvation=790, age=18.300000000000004, satisfaction=12.07, jobs=['MeatMaker(name=Sam Davis, job_satisfied=0.7, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.93 0.   1.07], memory_salary=[7.35 0.97 0.66], birth=6, workaholic=0.27, needs=0.25
+
+Person(name=Sam Davis, budget=36.95, starvation=770, age=18.400000000000006, satisfaction=11.85, jobs=['MilkMaker(name=Sam Davis, job_satisfied=0.8, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.93 0.   1.07 0.61], memory_salary=[7.35 0.97 0.66 0.58], birth=7, workaholic=0.27, needs=0.35
+
+Person(name=Sam Davis, budget=36.76, starvation=1300, age=18.500000000000007, satisfaction=11.24, jobs=['BreadMaker(name=Sam Davis, job_satisfied=0.86, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.93 0.   1.07 0.61 0.82], memory_salary=[7.35 0.97 0.66 0.58 0.64], birth=8, workaholic=0.27, needs=0.24999999999999997
+
+Person(name=Sam Davis, budget=37.9, starvation=1280, age=18.60000000000001, satisfaction=10.67, jobs=['BreadMaker(name=Sam Davis, job_satisfied=0.76, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.   1.07 0.61 0.82 0.61], memory_salary=[0.97 0.66 0.58 0.64 1.75], birth=9, workaholic=0.27, needs=0.14999999999999997
+
+Person(name=Sam Davis, budget=39.13, starvation=-720, age=18.70000000000001, satisfaction=9.55, jobs=['MilkMaker(name=Sam Davis, job_satisfied=0.86, employer=bbb, salary=0, working_hours=8)'], memory_spent=[1.07 0.61 0.82 0.61 0.  ], memory_salary=[0.66 0.58 0.64 1.75 1.23], birth=10, workaholic=0.27, needs=0.24999999999999997
+
+Person(name=Sam Davis, budget=39.01, starvation=-20, age=18.80000000000001, satisfaction=14.38, jobs=['MilkMaker(name=Sam Davis, job_satisfied=0.96, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.61 0.82 0.61 0.   1.43], memory_salary=[0.58 0.64 1.75 1.23 1.31], birth=11, workaholic=0.27, needs=0.35
+
+Person(name=Sam Davis, budget=38.32, starvation=130, age=18.900000000000013, satisfaction=16.2, jobs=['MilkMaker(name=Sam Davis, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.82 0.61 0.   1.43 1.24], memory_salary=[0.64 1.75 1.23 1.31 0.55], birth=12, workaholic=0.27, needs=0.44999999999999996
+
+Person(name=Sam Davis, budget=38.78, starvation=-440, age=19.000000000000014, satisfaction=15.47, jobs=['MilkMaker(name=Sam Davis, job_satisfied=0.96, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.61 0.   1.43 1.24 0.46], memory_salary=[1.75 1.23 1.31 0.55 0.92], birth=13, workaholic=0.27, needs=0.35
+

@@ -1,0 +1,20 @@
+Person(name=Garry Thompson, budget=235.43, starvation=5900, age=18.1, satisfaction=-3.61, jobs=['CerealMaker(name=Garry Thompson, job_satisfied=0.5, employer=bbb, salary=0, working_hours=8)'], memory_spent=[3.37], memory_salary=[8.8], birth=28, workaholic=0.42, needs=0.05
+
+Person(name=Garry Thompson, budget=238.65, starvation=3900, age=18.200000000000003, satisfaction=-4.68, jobs=['CerealMaker(name=Garry Thompson, job_satisfied=0.6, employer=bbb, salary=0, working_hours=8)'], memory_spent=[3.37 0.  ], memory_salary=[8.8  1.52], birth=29, workaholic=0.42, needs=0.15000000000000002
+
+Person(name=Garry Thompson, budget=222.11, starvation=5700, age=18.300000000000004, satisfaction=15.75, jobs=['CerealMaker(name=Garry Thompson, job_satisfied=0.7, employer=bbb, salary=0, working_hours=8)'], memory_spent=[3.37 0.   2.09], memory_salary=[8.8  1.52 1.85], birth=30, workaholic=0.42, needs=0.25
+
+Person(name=Garry Thompson, budget=213.91, starvation=3700, age=18.400000000000006, satisfaction=14.57, jobs=['CerealMaker(name=Garry Thompson, job_satisfied=0.8, employer=bbb, salary=0, working_hours=8)'], memory_spent=[3.37 0.   2.09 0.  ], memory_salary=[8.8  1.52 1.85 1.63], birth=31, workaholic=0.42, needs=0.35
+
+Person(name=Garry Thompson, budget=204.65, starvation=3130, age=18.500000000000007, satisfaction=14.79, jobs=['CerealMaker(name=Garry Thompson, job_satisfied=0.9, employer=bbb, salary=0, working_hours=8)'], memory_spent=[3.37 0.   2.09 0.   0.46], memory_salary=[8.8  1.52 1.85 1.63 0.68], birth=32, workaholic=0.42, needs=0.44999999999999996
+
+Person(name=Garry Thompson, budget=203.97, starvation=3110, age=18.60000000000001, satisfaction=14.61, jobs=['CerealMaker(name=Garry Thompson, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.   2.09 0.   0.46 0.64], memory_salary=[1.52 1.85 1.63 0.68 3.41], birth=33, workaholic=0.42, needs=0.5499999999999999
+
+Person(name=Garry Thompson, budget=197.02, starvation=2540, age=18.70000000000001, satisfaction=14.59, jobs=['CerealMaker(name=Garry Thompson, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[2.09 0.   0.46 0.64 0.49], memory_salary=[1.85 1.63 0.68 3.41 1.63], birth=34, workaholic=0.42, needs=0.6499999999999999
+
+Person(name=Garry Thompson, budget=192.32, starvation=2520, age=18.80000000000001, satisfaction=15.09, jobs=['CerealMaker(name=Garry Thompson, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.   0.46 0.64 0.49 0.66], memory_salary=[1.63 0.68 3.41 1.63 0.65], birth=35, workaholic=0.42, needs=0.7499999999999999
+
+Person(name=Garry Thompson, budget=190.4, starvation=2340, age=18.900000000000013, satisfaction=13.78, jobs=['CerealMaker(name=Garry Thompson, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.46 0.64 0.49 0.66 0.7 ], memory_salary=[0.68 3.41 1.63 0.65 0.75], birth=36, workaholic=0.42, needs=0.8499999999999999
+
+Person(name=Garry Thompson, budget=185.14, starvation=340, age=19.000000000000014, satisfaction=12.34, jobs=['PieMaker(name=Garry Thompson, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.64 0.49 0.66 0.7  0.  ], memory_salary=[3.41 1.63 0.65 0.75 0.42], birth=37, workaholic=0.42, needs=0.8699999999999999
+

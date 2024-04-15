@@ -1,0 +1,20 @@
+CerealMaker(name=Sam Wilson, job_satisfied=0.5, employer=bbbccaa, salary=7.6, working_hours=8)
+
+CerealMaker(name=Sam Wilson, job_satisfied=0.6, employer=bbbccaa, salary=0.69, working_hours=8)
+
+CerealMaker(name=Sam Wilson, job_satisfied=0.7, employer=bbbccaa, salary=1.67, working_hours=8)
+
+CerealMaker(name=Sam Wilson, job_satisfied=0.8, employer=bbbccaa, salary=3.32, working_hours=8)
+
+CerealMaker(name=Sam Wilson, job_satisfied=0.9, employer=bbbccaa, salary=2.52, working_hours=8)
+
+CerealMaker(name=Sam Wilson, job_satisfied=1.0, employer=bbbccaa, salary=2.03, working_hours=8)
+
+CerealMaker(name=Sam Wilson, job_satisfied=1.0, employer=bbbccaa, salary=2.08, working_hours=8)
+
+CerealMaker(name=Sam Wilson, job_satisfied=1.0, employer=bbbccaa, salary=1.46, working_hours=8)
+
+CerealMaker(name=Sam Wilson, job_satisfied=1.0, employer=bbbccaa, salary=1.58, working_hours=8)
+
+CerealMaker(name=Sam Wilson, job_satisfied=1.0, employer=bbbccaa, salary=1.91, working_hours=8)
+

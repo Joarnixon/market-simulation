@@ -1,0 +1,18 @@
+CerealMaker(name=Chris Thomas, job_satisfied=0.6, employer=bbbccaa, salary=0.65, working_hours=8)
+
+CerealMaker(name=Chris Thomas, job_satisfied=0.7, employer=bbbccaa, salary=1.58, working_hours=8)
+
+CerealMaker(name=Chris Thomas, job_satisfied=0.8, employer=bbbccaa, salary=3.14, working_hours=8)
+
+CerealMaker(name=Chris Thomas, job_satisfied=0.9, employer=bbbccaa, salary=3.15, working_hours=8)
+
+CerealMaker(name=Chris Thomas, job_satisfied=1.0, employer=bbbccaa, salary=1.92, working_hours=8)
+
+CerealMaker(name=Chris Thomas, job_satisfied=1.0, employer=bbbccaa, salary=1.97, working_hours=8)
+
+CerealMaker(name=Chris Thomas, job_satisfied=1.0, employer=bbbccaa, salary=1.38, working_hours=8)
+
+CerealMaker(name=Chris Thomas, job_satisfied=1.0, employer=bbbccaa, salary=1.49, working_hours=8)
+
+CerealMaker(name=Chris Thomas, job_satisfied=1.0, employer=bbbccaa, salary=1.81, working_hours=8)
+

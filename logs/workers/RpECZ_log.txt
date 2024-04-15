@@ -1,0 +1,20 @@
+BreadMaker(name=Eve Williams, job_satisfied=0.5, employer=bbb, salary=9.19, working_hours=8)
+
+BreadMaker(name=Eve Williams, job_satisfied=0.6, employer=bbb, salary=1.64, working_hours=8)
+
+BreadMaker(name=Eve Williams, job_satisfied=0.7, employer=bbb, salary=2.71, working_hours=8)
+
+BreadMaker(name=Eve Williams, job_satisfied=0.8, employer=bbb, salary=2.49, working_hours=8)
+
+BreadMaker(name=Eve Williams, job_satisfied=0.9, employer=bbb, salary=1.66, working_hours=8)
+
+PieMaker(name=Eve Williams, job_satisfied=1.0, employer=bbbccaa, salary=4.06, working_hours=8)
+
+PieMaker(name=Eve Williams, job_satisfied=1.0, employer=bbbccaa, salary=5.43, working_hours=8)
+
+PieMaker(name=Eve Williams, job_satisfied=1.0, employer=bbbccaa, salary=6.83, working_hours=8)
+
+PieMaker(name=Eve Williams, job_satisfied=1.0, employer=bbbccaa, salary=5.72, working_hours=8)
+
+PieMaker(name=Eve Williams, job_satisfied=1.0, employer=bbbccaa, salary=6.82, working_hours=8)
+

@@ -1,0 +1,16 @@
+Person(name=Larry Miller, budget=26.63, starvation=4000, age=18.1, satisfaction=-4.16, jobs=[], memory_spent=[3.37], memory_salary=[0], birth=0, workaholic=0.46, needs=0.05
+
+Person(name=Larry Miller, budget=26.63, starvation=2000, age=18.200000000000003, satisfaction=-5.18, jobs=['MilkMaker(name=Larry Miller, job_satisfied=0.5, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.37 0.  ], memory_salary=[0 0], birth=1, workaholic=0.46, needs=0.05
+
+Person(name=Larry Miller, budget=28.42, starvation=0, age=18.300000000000004, satisfaction=-6.21, jobs=['MilkMaker(name=Larry Miller, job_satisfied=0.4, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.37 0.   0.  ], memory_salary=[0.   0.   1.79], birth=2, workaholic=0.46, needs=0.05
+
+Person(name=Larry Miller, budget=29.45, starvation=-2000, age=18.400000000000006, satisfaction=-7.29, jobs=['MilkMaker(name=Larry Miller, job_satisfied=0.3, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.37 0.   0.   0.  ], memory_salary=[0.   0.   1.79 1.03], birth=3, workaholic=0.46, needs=0.15000000000000002
+
+Person(name=Larry Miller, budget=29.03, starvation=290, age=18.500000000000007, satisfaction=-4.73, jobs=['MilkMaker(name=Larry Miller, job_satisfied=0.4, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.37 0.   0.   0.   1.5 ], memory_salary=[0.   0.   1.79 1.03 1.08], birth=4, workaholic=0.46, needs=0.25
+
+Person(name=Larry Miller, budget=29.65, starvation=1150, age=18.60000000000001, satisfaction=-4.28, jobs=['MilkMaker(name=Larry Miller, job_satisfied=0.5, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.   0.   0.   1.5  0.94], memory_salary=[0.   1.79 1.03 1.08 1.56], birth=5, workaholic=0.46, needs=0.35
+
+Person(name=Larry Miller, budget=31.06, starvation=-850, age=18.70000000000001, satisfaction=-5.51, jobs=['MilkMaker(name=Larry Miller, job_satisfied=0.6, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.   0.   1.5  0.94 0.  ], memory_salary=[1.79 1.03 1.08 1.56 1.41], birth=6, workaholic=0.46, needs=0.44999999999999996
+
+Person(name=Larry Miller, budget=31.06, starvation=10, age=18.80000000000001, satisfaction=-5.07, jobs=['CerealMaker(name=Larry Miller, job_satisfied=0.7, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.   1.5  0.94 0.   0.91], memory_salary=[1.03 1.08 1.56 1.41 0.91], birth=7, workaholic=0.46, needs=0.5499999999999999
+

@@ -1,0 +1,14 @@
+Person(name=Larry Williams, budget=26.21, starvation=5900, age=18.1, satisfaction=-4.24, jobs=['CerealMaker(name=Larry Williams, job_satisfied=0.5, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.79], memory_salary=[0], birth=9, workaholic=0.61, needs=0.05
+
+Person(name=Larry Williams, budget=27.66, starvation=3900, age=18.200000000000003, satisfaction=-5.27, jobs=['CerealMaker(name=Larry Williams, job_satisfied=0.4, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.79 0.  ], memory_salary=[0.   1.45], birth=10, workaholic=0.61, needs=0.05
+
+Person(name=Larry Williams, budget=28.93, starvation=1900, age=18.300000000000004, satisfaction=-6.29, jobs=['BreadMaker(name=Larry Williams, job_satisfied=0.3, employer=bbb, salary=0, working_hours=8)'], memory_spent=[3.79 0.   0.  ], memory_salary=[0.   1.45 1.27], birth=11, workaholic=0.61, needs=0.05
+
+Person(name=Larry Williams, budget=29.08, starvation=1100, age=18.400000000000006, satisfaction=-2.84, jobs=['MeatMaker(name=Larry Williams, job_satisfied=0.2, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.79 0.   0.   1.  ], memory_salary=[0.   1.45 1.27 1.15], birth=12, workaholic=0.61, needs=0.15000000000000002
+
+Person(name=Larry Williams, budget=30.64, starvation=1330, age=18.500000000000007, satisfaction=-0.72, jobs=['MeatMaker(name=Larry Williams, job_satisfied=0.3, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.79 0.   0.   1.   1.12], memory_salary=[0.   1.45 1.27 1.15 2.67], birth=13, workaholic=0.61, needs=0.25
+
+Person(name=Larry Williams, budget=31.05, starvation=930, age=18.60000000000001, satisfaction=3.51, jobs=['MeatMaker(name=Larry Williams, job_satisfied=0.4, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.   0.   1.   1.12 1.32], memory_salary=[1.45 1.27 1.15 2.67 1.74], birth=14, workaholic=0.61, needs=0.35
+
+Person(name=Larry Williams, budget=32.06, starvation=1160, age=18.70000000000001, satisfaction=6.88, jobs=['MeatMaker(name=Larry Williams, job_satisfied=0.5, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.   1.   1.12 1.32 1.1 ], memory_salary=[1.27 1.15 2.67 1.74 2.11], birth=15, workaholic=0.61, needs=0.44999999999999996
+

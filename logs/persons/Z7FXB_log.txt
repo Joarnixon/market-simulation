@@ -1,0 +1,20 @@
+Person(name=Larry Thompson, budget=83.94, starvation=3200, age=18.1, satisfaction=-1.87, jobs=['MilkMaker(name=Larry Thompson, job_satisfied=0.5, employer=bbb, salary=0, working_hours=8)'], memory_spent=[1.68], memory_salary=[55.62], birth=1, workaholic=0.28, needs=0.05
+
+Person(name=Larry Thompson, budget=84.04, starvation=3400, age=18.200000000000003, satisfaction=105.44, jobs=['MilkMaker(name=Larry Thompson, job_satisfied=0.6, employer=bbb, salary=0, working_hours=8)'], memory_spent=[1.68 0.64], memory_salary=[55.62  0.75], birth=2, workaholic=0.28, needs=0.15000000000000002
+
+Person(name=Larry Thompson, budget=84.41, starvation=2830, age=18.300000000000004, satisfaction=145.87, jobs=['MilkMaker(name=Larry Thompson, job_satisfied=0.7, employer=bbb, salary=0, working_hours=8)'], memory_spent=[1.68 0.64 0.49], memory_salary=[55.62  0.75  0.86], birth=3, workaholic=0.28, needs=0.25
+
+Person(name=Larry Thompson, budget=84.91, starvation=2260, age=18.400000000000006, satisfaction=145.07, jobs=['MilkMaker(name=Larry Thompson, job_satisfied=0.8, employer=bbb, salary=0, working_hours=8)'], memory_spent=[1.68 0.64 0.49 0.49], memory_salary=[55.62  0.75  0.86  0.99], birth=4, workaholic=0.28, needs=0.35
+
+Person(name=Larry Thompson, budget=84.57, starvation=2560, age=18.500000000000007, satisfaction=145.92, jobs=['BreadMaker(name=Larry Thompson, job_satisfied=0.9, employer=bbb, salary=0, working_hours=8)'], memory_spent=[1.68 0.64 0.49 0.49 1.14], memory_salary=[55.62  0.75  0.86  0.99  0.8 ], birth=5, workaholic=0.28, needs=0.44999999999999996
+
+Person(name=Larry Thompson, budget=86.61, starvation=2940, age=18.60000000000001, satisfaction=145.51, jobs=['BreadMaker(name=Larry Thompson, job_satisfied=0.93, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.64 0.49 0.49 1.14 0.93], memory_salary=[0.75 0.86 0.99 0.8  2.97], birth=6, workaholic=0.28, needs=0.5299999999999999
+
+Person(name=Larry Thompson, budget=88.12, starvation=2760, age=18.70000000000001, satisfaction=145.55, jobs=['BreadMaker(name=Larry Thompson, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.49 0.49 1.14 0.93 0.76], memory_salary=[0.86 0.99 0.8  2.97 2.27], birth=7, workaholic=0.28, needs=0.6299999999999999
+
+Person(name=Larry Thompson, budget=89.28, starvation=760, age=18.80000000000001, satisfaction=144.18, jobs=['BreadMaker(name=Larry Thompson, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.49 1.14 0.93 0.76 0.  ], memory_salary=[0.99 0.8  2.97 2.27 1.16], birth=8, workaholic=0.28, needs=0.7299999999999999
+
+Person(name=Larry Thompson, budget=92.35, starvation=-1240, age=18.900000000000013, satisfaction=142.77, jobs=['BreadMaker(name=Larry Thompson, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[1.14 0.93 0.76 0.   0.  ], memory_salary=[0.8  2.97 2.27 1.16 3.07], birth=9, workaholic=0.28, needs=0.8299999999999998
+
+Person(name=Larry Thompson, budget=93.68, starvation=-3240, age=19.000000000000014, satisfaction=141.3, jobs=['BreadMaker(name=Larry Thompson, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.93 0.76 0.   0.   0.  ], memory_salary=[2.97 2.27 1.16 3.07 1.33], birth=10, workaholic=0.28, needs=0.9299999999999998
+

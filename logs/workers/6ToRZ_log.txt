@@ -1,0 +1,20 @@
+MilkMaker(name=John Anderson, job_satisfied=0.5, employer=bbbccaa, salary=54.54, working_hours=8)
+
+MilkMaker(name=John Anderson, job_satisfied=0.6, employer=bbbccaa, salary=0.37, working_hours=8)
+
+MilkMaker(name=John Anderson, job_satisfied=0.7, employer=bbbccaa, salary=1.16, working_hours=8)
+
+MilkMaker(name=John Anderson, job_satisfied=0.8, employer=bbbccaa, salary=2.11, working_hours=8)
+
+MilkMaker(name=John Anderson, job_satisfied=0.7, employer=bbbccaa, salary=2.35, working_hours=8)
+
+MilkMaker(name=John Anderson, job_satisfied=0.8, employer=bbbccaa, salary=1.36, working_hours=8)
+
+MilkMaker(name=John Anderson, job_satisfied=0.9, employer=bbbccaa, salary=1.63, working_hours=8)
+
+MilkMaker(name=John Anderson, job_satisfied=1.0, employer=bbbccaa, salary=2.31, working_hours=8)
+
+MilkMaker(name=John Anderson, job_satisfied=1.0, employer=bbbccaa, salary=2.05, working_hours=8)
+
+MilkMaker(name=John Anderson, job_satisfied=1.0, employer=bbbccaa, salary=1.24, working_hours=8)
+

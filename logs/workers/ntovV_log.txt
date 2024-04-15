@@ -1,0 +1,20 @@
+CerealMaker(name=Alex Martin, job_satisfied=0.5, employer=bbb, salary=20.12, working_hours=8)
+
+CerealMaker(name=Alex Martin, job_satisfied=0.6, employer=bbb, salary=2.08, working_hours=8)
+
+CerealMaker(name=Alex Martin, job_satisfied=0.7, employer=bbb, salary=2.53, working_hours=8)
+
+CerealMaker(name=Alex Martin, job_satisfied=0.8, employer=bbb, salary=2.23, working_hours=8)
+
+CerealMaker(name=Alex Martin, job_satisfied=0.9, employer=bbb, salary=0.93, working_hours=8)
+
+CerealMaker(name=Alex Martin, job_satisfied=1.0, employer=bbb, salary=4.67, working_hours=8)
+
+PieMaker(name=Alex Martin, job_satisfied=1.0, employer=bbb, salary=18.53, working_hours=8)
+
+PieMaker(name=Alex Martin, job_satisfied=1.0, employer=bbb, salary=4.61, working_hours=8)
+
+PieMaker(name=Alex Martin, job_satisfied=1.0, employer=bbb, salary=11.6, working_hours=8)
+
+BreadMaker(name=Alex Martin, job_satisfied=1.0, employer=bbb, salary=3.58, working_hours=8)
+

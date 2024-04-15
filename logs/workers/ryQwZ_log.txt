@@ -1,0 +1,20 @@
+CerealMaker(name=David Davis, job_satisfied=0.5, employer=bbb, salary=13.4, working_hours=8)
+
+PieMaker(name=David Davis, job_satisfied=0.6, employer=bbbccaa, salary=0.0, working_hours=8)
+
+PieMaker(name=David Davis, job_satisfied=0.7, employer=bbbccaa, salary=5.2, working_hours=8)
+
+PieMaker(name=David Davis, job_satisfied=0.8, employer=bbbccaa, salary=11.51, working_hours=8)
+
+PieMaker(name=David Davis, job_satisfied=0.9, employer=bbbccaa, salary=10.6, working_hours=8)
+
+PieMaker(name=David Davis, job_satisfied=1.0, employer=bbbccaa, salary=5.99, working_hours=8)
+
+PieMaker(name=David Davis, job_satisfied=1.0, employer=bbbccaa, salary=7.7, working_hours=8)
+
+PieMaker(name=David Davis, job_satisfied=1.0, employer=bbbccaa, salary=9.74, working_hours=8)
+
+PieMaker(name=David Davis, job_satisfied=1.0, employer=bbbccaa, salary=7.09, working_hours=8)
+
+PieMaker(name=David Davis, job_satisfied=1.0, employer=bbbccaa, salary=8.4, working_hours=8)
+

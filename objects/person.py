@@ -5,12 +5,17 @@ from objects.manufacturer import Manufacturer
 from objects.worker import ManufactureWorker
 from objects.products import Products
 from settings.constants import REQUIRES, AGING, MANUFACTURER_SALARY_UP_CONSTANT, MANUFACTURER_SALARY_LOW_CONSTANT
-from other.utils import generate_name
+from other.utils import generate_name, generate_id
+from other.logs import Logger
 from dataclasses import dataclass, field
 from functools import cache
 import numpy as np
 import random as rd
 from typing import Any
+
+
+def set_id():
+    return generate_id()
 
 
 def set_workaholic() -> float:
@@ -104,11 +109,12 @@ class BasePerson:
     day_salary: int = 0
     day_satisfaction: int = 0
     needs: float = 0.05
-    starvation: int = 2000
+    starvation: int = 1000
     satisfaction: float = 0
     alive: int = -1
     ambition: int = 0
     generation: int = 0
+    uid: str = field(default_factory=set_id)
     fed_up: dict = field(default_factory=set_fed_up)
     jobs: list = field(default_factory=set_jobs)
     memory_spent: list = field(default_factory=set_memory_spent)
@@ -125,7 +131,10 @@ class BasePerson:
         self.market_ref.delete_person(self)
 
     def __str__(self):
-        return f'Person(name={self.name}, budget={self.budget}, starvation={self.starvation}, age={self.age}, satisfaction={self.satisfaction}, jobs={[str(job) for job in self.jobs]}, memory_spent={self.memory_spent}, memory_salary={self.memory_salary}, birth={self.birth}, workaholic={self.workaholic}, needs={self.needs}'
+        return f'Person(name={self.name}, budget={round(self.budget, 2)}, starvation={self.starvation}, age={self.age}, satisfaction={round(self.satisfaction, 2)}, jobs={[str(job) for job in self.jobs]}, memory_spent={np.round(self.memory_spent[-5:], 2)}, memory_salary={np.round(self.memory_salary[-5:], 2)}, birth={self.birth}, workaholic={round(self.workaholic, 2)}, needs={self.needs}'
+
+    def __eq__(self, other):
+        return self.uid == other.uid
 
     @property
     def budget(self):
@@ -280,6 +289,8 @@ class BasePerson:
 
 
 class Person(BasePerson):
+    globalLogger = Logger('logs/persons')
+
     def __init__(self, default_data, buyer_data=None, seller_data=None, manufacturer_data=None):
         super().__init__(**default_data)
         self.buyer = None
@@ -294,6 +305,7 @@ class Person(BasePerson):
         if manufacturer_data is not None:
             manufacturer_data.update({'as_person': self})
             self.manufacturer = Manufacturer(**manufacturer_data)
+        self.logger = Person.globalLogger.get_logger(self.uid)
 
     def __del__(self):
         self.market_ref.delete_person(self)
@@ -318,6 +330,7 @@ class Person(BasePerson):
             self.try_become_seller(ask, demand, bid, self.buyer.best_offers, self.buyer.estimated)
         if self.manufacturer is None:
             self.try_become_manufacturer(ask)
+        self.logger.info(str(self) + '\n')
 
     def get_available_roles(self):
         roles = []

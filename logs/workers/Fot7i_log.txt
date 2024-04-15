@@ -1,0 +1,20 @@
+MilkMaker(name=Michael Taylor, job_satisfied=0.5, employer=bbbccaa, salary=23.47, working_hours=8)
+
+MilkMaker(name=Michael Taylor, job_satisfied=0.6, employer=bbbccaa, salary=0.34, working_hours=8)
+
+MilkMaker(name=Michael Taylor, job_satisfied=0.7, employer=bbbccaa, salary=1.06, working_hours=8)
+
+MilkMaker(name=Michael Taylor, job_satisfied=0.8, employer=bbbccaa, salary=1.93, working_hours=8)
+
+MilkMaker(name=Michael Taylor, job_satisfied=0.9, employer=bbbccaa, salary=2.15, working_hours=8)
+
+BreadMaker(name=Michael Taylor, job_satisfied=1.0, employer=bbbccaa, salary=1.52, working_hours=8)
+
+BreadMaker(name=Michael Taylor, job_satisfied=1.0, employer=bbbccaa, salary=1.72, working_hours=8)
+
+BreadMaker(name=Michael Taylor, job_satisfied=1.0, employer=bbbccaa, salary=2.1, working_hours=8)
+
+BreadMaker(name=Michael Taylor, job_satisfied=1.0, employer=bbbccaa, salary=2.66, working_hours=8)
+
+BreadMaker(name=Michael Taylor, job_satisfied=1.0, employer=bbbccaa, salary=2.68, working_hours=8)
+

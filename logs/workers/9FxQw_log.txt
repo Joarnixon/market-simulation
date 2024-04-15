@@ -1,0 +1,14 @@
+CerealMaker(name=Samantha Thomas, job_satisfied=0.4, employer=bbbccaa, salary=1.0, working_hours=8)
+
+CerealMaker(name=Samantha Thomas, job_satisfied=0.3, employer=bbbccaa, salary=1.35, working_hours=8)
+
+CerealMaker(name=Samantha Thomas, job_satisfied=0.4, employer=bbbccaa, salary=1.18, working_hours=8)
+
+CerealMaker(name=Samantha Thomas, job_satisfied=0.5, employer=bbbccaa, salary=1.01, working_hours=8)
+
+MilkMaker(name=Samantha Thomas, job_satisfied=0.6, employer=bbb, salary=1.34, working_hours=8)
+
+MilkMaker(name=Samantha Thomas, job_satisfied=0.62, employer=bbb, salary=0.57, working_hours=8)
+
+MilkMaker(name=Samantha Thomas, job_satisfied=0.67, employer=bbb, salary=0.94, working_hours=8)
+

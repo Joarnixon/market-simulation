@@ -1,0 +1,20 @@
+Person(name=Stephan Wilson, budget=54.85, starvation=5900, age=18.1, satisfaction=-3.75, jobs=['BreadMaker(name=Stephan Wilson, job_satisfied=0.5, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.54], memory_salary=[28.39], birth=2, workaholic=0.87, needs=0.05
+
+Person(name=Stephan Wilson, budget=55.86, starvation=3900, age=18.200000000000003, satisfaction=-4.82, jobs=['BreadMaker(name=Stephan Wilson, job_satisfied=0.6, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.54 0.  ], memory_salary=[28.39  1.01], birth=3, workaholic=0.87, needs=0.15000000000000002
+
+Person(name=Stephan Wilson, budget=56.25, starvation=3720, age=18.300000000000004, satisfaction=26.73, jobs=['BreadMaker(name=Stephan Wilson, job_satisfied=0.7, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.54 0.   0.78], memory_salary=[28.39  1.01  1.16], birth=4, workaholic=0.87, needs=0.25
+
+Person(name=Stephan Wilson, budget=59.05, starvation=3150, age=18.400000000000006, satisfaction=26.22, jobs=['BreadMaker(name=Stephan Wilson, job_satisfied=0.8, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.54 0.   0.78 0.57], memory_salary=[28.39  1.01  1.16  3.37], birth=5, workaholic=0.87, needs=0.35
+
+Person(name=Stephan Wilson, budget=62.98, starvation=2250, age=18.500000000000007, satisfaction=27.18, jobs=['BreadMaker(name=Stephan Wilson, job_satisfied=0.9, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.54 0.   0.78 0.57 0.36], memory_salary=[28.39  1.01  1.16  3.37  4.3 ], birth=6, workaholic=0.87, needs=0.44999999999999996
+
+Person(name=Stephan Wilson, budget=63.24, starvation=2950, age=18.60000000000001, satisfaction=29.88, jobs=['BreadMaker(name=Stephan Wilson, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.   0.78 0.57 0.36 1.7 ], memory_salary=[1.01 1.16 3.37 4.3  1.95], birth=7, workaholic=0.87, needs=0.5499999999999999
+
+Person(name=Stephan Wilson, budget=64.99, starvation=3480, age=18.70000000000001, satisfaction=31.67, jobs=['BreadMaker(name=Stephan Wilson, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.78 0.57 0.36 1.7  0.94], memory_salary=[1.16 3.37 4.3  1.95 2.69], birth=8, workaholic=0.87, needs=0.6499999999999999
+
+Person(name=Stephan Wilson, budget=68.27, starvation=1480, age=18.80000000000001, satisfaction=30.3, jobs=['MilkMaker(name=Stephan Wilson, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.57 0.36 1.7  0.94 0.  ], memory_salary=[3.37 4.3  1.95 2.69 3.28], birth=9, workaholic=0.87, needs=0.7499999999999999
+
+Person(name=Stephan Wilson, budget=70.68, starvation=-520, age=18.900000000000013, satisfaction=28.87, jobs=['MilkMaker(name=Stephan Wilson, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.36 1.7  0.94 0.   0.  ], memory_salary=[4.3  1.95 2.69 3.28 2.41], birth=10, workaholic=0.87, needs=0.8499999999999999
+
+Person(name=Stephan Wilson, budget=70.86, starvation=-920, age=19.000000000000014, satisfaction=28.03, jobs=['MilkMaker(name=Stephan Wilson, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.7  0.94 0.   0.   1.27], memory_salary=[1.95 2.69 3.28 2.41 1.45], birth=11, workaholic=0.87, needs=0.9499999999999998
+

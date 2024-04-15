@@ -1,0 +1,20 @@
+BreadMaker(name=Charlie Johnson, job_satisfied=0.5, employer=bbb, salary=98.43, working_hours=8)
+
+BreadMaker(name=Charlie Johnson, job_satisfied=0.6, employer=bbb, salary=1.67, working_hours=8)
+
+BreadMaker(name=Charlie Johnson, job_satisfied=0.7, employer=bbb, salary=2.77, working_hours=8)
+
+BreadMaker(name=Charlie Johnson, job_satisfied=0.8, employer=bbb, salary=2.55, working_hours=8)
+
+BreadMaker(name=Charlie Johnson, job_satisfied=0.9, employer=bbb, salary=1.7, working_hours=8)
+
+BreadMaker(name=Charlie Johnson, job_satisfied=1.0, employer=bbb, salary=4.47, working_hours=8)
+
+BreadMaker(name=Charlie Johnson, job_satisfied=1.0, employer=bbb, salary=3.52, working_hours=8)
+
+BreadMaker(name=Charlie Johnson, job_satisfied=1.0, employer=bbb, salary=1.75, working_hours=8)
+
+BreadMaker(name=Charlie Johnson, job_satisfied=1.0, employer=bbb, salary=4.61, working_hours=8)
+
+BreadMaker(name=Charlie Johnson, job_satisfied=1.0, employer=bbb, salary=2.7, working_hours=8)
+

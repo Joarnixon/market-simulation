@@ -10,14 +10,16 @@ from sklearn.exceptions import NotFittedError
 from settings.constants import *
 from objects.seller import Seller
 from objects.products import Products
-from other.utils import f_round, assign_numbers
+from other.utils import f_round, assign_numbers, generate_id
 from other.desummation import Desummation
+from other.logs import Logger
 
 
 class BaseBuyer:
     def __init__(self, inventory, person):
         self.as_person = person
         self.inventory = inventory
+        self.uid = generate_id()
 
     def __getattr__(self, name):
         return getattr(self.as_person, name)
@@ -112,6 +114,7 @@ class Buyer(BaseBuyer):
     product_ask = {}
     starvation_index = []
     product_bought = {}
+    globalLogger = Logger('logs/buyers')
 
     def __init__(self, inventory, as_person):
         super().__init__(inventory, as_person)
@@ -125,8 +128,9 @@ class Buyer(BaseBuyer):
         self.estimated_stf = {}
         self.dsm = Desummation()
         self.dsm.fit(REQUIRES)
-        self.loyalty = {seller: 5 for seller in self.as_person.market_ref.sellers}
+        self.loyalty = {seller: 5 for seller in self.market_ref.sellers}
         self.stf_brains = {product: SGDRegressor(max_iter=BUYER_BRAIN_CONSTANT) for product in self.market_ref.products}
+        self.logger = Buyer.globalLogger.get_logger(self.uid)
         self.product_found = {}
         self.plan = {}
         self.day_calories_bought = 0
@@ -134,6 +138,9 @@ class Buyer(BaseBuyer):
         self.satisfaction = 0
         # self.employer_days_worked = 0
         # self.jobs_experience = {}
+
+    def __str__(self):
+        return f'Buyer(budget={round(self.budget, 2)}, needs={round(self.needs, 2)}, best_offers={list(map(lambda x: list(x.values())[1:], list(self.best_offers.values())))}, product_found={list(self.product_found.values())}, plan={list(self.plan.values())}, loyalty={list(self.loyalty.values())}, day_calories={self.day_calories_bought}, estimated={list(self.estimated.values())})'
 
     def estimate_satisfaction(self, product: Products, price: float, quality: float):
         model = self.stf_brains[product]
@@ -570,7 +577,7 @@ class Buyer(BaseBuyer):
 
         # TODO: ?
         Buyer.starvation_index += [self.starvation]
-
+        self.logger.info(str(self) + '\n')
         self.day_calories_bought = 0
         self.satisfaction = 0
         self.spent = 0

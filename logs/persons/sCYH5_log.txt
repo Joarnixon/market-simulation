@@ -1,0 +1,20 @@
+Person(name=Bob Smith, budget=35.86, starvation=1380, age=18.1, satisfaction=-1.35, jobs=['MilkMaker(name=Bob Smith, job_satisfied=0.5, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.93], memory_salary=[6.79], birth=8, workaholic=0.29, needs=0.05
+
+Person(name=Bob Smith, budget=36.62, starvation=-620, age=18.200000000000003, satisfaction=-2.43, jobs=['MilkMaker(name=Bob Smith, job_satisfied=0.6, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.93 0.  ], memory_salary=[6.79 0.76], birth=9, workaholic=0.29, needs=0.15000000000000002
+
+Person(name=Bob Smith, budget=37.17, starvation=-1520, age=18.300000000000004, satisfaction=1.88, jobs=['MilkMaker(name=Bob Smith, job_satisfied=0.7, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.93 0.   0.32], memory_salary=[6.79 0.76 0.87], birth=10, workaholic=0.29, needs=0.25
+
+Person(name=Bob Smith, budget=37.25, starvation=-660, age=18.400000000000006, satisfaction=1.7, jobs=['MilkMaker(name=Bob Smith, job_satisfied=0.8, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.93 0.   0.32 0.93], memory_salary=[6.79 0.76 0.87 1.  ], birth=11, workaholic=0.29, needs=0.35
+
+Person(name=Bob Smith, budget=37.13, starvation=-1460, age=18.500000000000007, satisfaction=2.04, jobs=['BreadMaker(name=Bob Smith, job_satisfied=0.9, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.93 0.   0.32 0.93 0.93], memory_salary=[6.79 0.76 0.87 1.   0.81], birth=12, workaholic=0.29, needs=0.44999999999999996
+
+Person(name=Bob Smith, budget=38.22, starvation=-600, age=18.60000000000001, satisfaction=1.35, jobs=['BreadMaker(name=Bob Smith, job_satisfied=0.92, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.   0.32 0.93 0.93 1.14], memory_salary=[0.76 0.87 1.   0.81 2.24], birth=13, workaholic=0.29, needs=0.42999999999999994
+
+Person(name=Bob Smith, budget=38.99, starvation=0, age=18.70000000000001, satisfaction=2.73, jobs=['MilkMaker(name=Bob Smith, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.32 0.93 0.93 1.14 0.9 ], memory_salary=[0.87 1.   0.81 2.24 1.67], birth=14, workaholic=0.29, needs=0.5299999999999999
+
+Person(name=Bob Smith, budget=40.12, starvation=-1200, age=18.80000000000001, satisfaction=2.91, jobs=['MilkMaker(name=Bob Smith, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.93 0.93 1.14 0.9  0.62], memory_salary=[1.   0.81 2.24 1.67 1.74], birth=15, workaholic=0.29, needs=0.6299999999999999
+
+Person(name=Bob Smith, budget=39.8, starvation=-340, age=18.900000000000013, satisfaction=3.24, jobs=['MilkMaker(name=Bob Smith, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.93 1.14 0.9  0.62 0.99], memory_salary=[0.81 2.24 1.67 1.74 0.68], birth=16, workaholic=0.29, needs=0.7299999999999999
+
+Person(name=Bob Smith, budget=39.96, starvation=520, age=19.000000000000014, satisfaction=2.51, jobs=['MeatMaker(name=Bob Smith, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[1.14 0.9  0.62 0.99 0.98], memory_salary=[2.24 1.67 1.74 0.68 1.13], birth=17, workaholic=0.29, needs=0.8299999999999998
+

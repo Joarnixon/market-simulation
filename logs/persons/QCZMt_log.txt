@@ -1,0 +1,20 @@
+Person(name=Sam Miller, budget=38.69, starvation=5900, age=18.1, satisfaction=-3.34, jobs=['MilkMaker(name=Sam Miller, job_satisfied=0.5, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.2], memory_salary=[11.89], birth=7, workaholic=0.62, needs=0.05
+
+Person(name=Sam Miller, budget=39.07, starvation=3900, age=18.200000000000003, satisfaction=-4.42, jobs=['MilkMaker(name=Sam Miller, job_satisfied=0.6, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.2 0. ], memory_salary=[11.89  0.38], birth=8, workaholic=0.62, needs=0.15000000000000002
+
+Person(name=Sam Miller, budget=39.8, starvation=3330, age=18.300000000000004, satisfaction=3.87, jobs=['MilkMaker(name=Sam Miller, job_satisfied=0.7, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.2  0.   0.46], memory_salary=[11.89  0.38  1.19], birth=9, workaholic=0.62, needs=0.25
+
+Person(name=Sam Miller, budget=41.5, starvation=2760, age=18.400000000000006, satisfaction=3.14, jobs=['MilkMaker(name=Sam Miller, job_satisfied=0.8, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.2  0.   0.46 0.46], memory_salary=[11.89  0.38  1.19  2.16], birth=10, workaholic=0.62, needs=0.35
+
+Person(name=Sam Miller, budget=42.23, starvation=3460, age=18.500000000000007, satisfaction=8.98, jobs=['MilkMaker(name=Sam Miller, job_satisfied=0.9, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.2  0.   0.46 0.46 1.67], memory_salary=[11.89  0.38  1.19  2.16  2.4 ], birth=11, workaholic=0.62, needs=0.44999999999999996
+
+Person(name=Sam Miller, budget=42.98, starvation=3990, age=18.60000000000001, satisfaction=10.79, jobs=['CerealMaker(name=Sam Miller, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.   0.46 0.46 1.67 0.81], memory_salary=[0.38 1.19 2.16 2.4  1.55], birth=12, workaholic=0.62, needs=0.5499999999999999
+
+Person(name=Sam Miller, budget=43.63, starvation=4520, age=18.70000000000001, satisfaction=11.38, jobs=['CerealMaker(name=Sam Miller, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.46 0.46 1.67 0.81 0.81], memory_salary=[1.19 2.16 2.4  1.55 1.46], birth=13, workaholic=0.62, needs=0.6499999999999999
+
+Person(name=Sam Miller, budget=43.99, starvation=4500, age=18.80000000000001, satisfaction=10.88, jobs=['CerealMaker(name=Sam Miller, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.46 1.67 0.81 0.81 0.67], memory_salary=[2.16 2.4  1.55 1.46 1.03], birth=14, workaholic=0.62, needs=0.7499999999999999
+
+Person(name=Sam Miller, budget=44.83, starvation=3930, age=18.900000000000013, satisfaction=9.85, jobs=['CerealMaker(name=Sam Miller, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.67 0.81 0.81 0.67 0.51], memory_salary=[2.4  1.55 1.46 1.03 1.34], birth=15, workaholic=0.62, needs=0.8499999999999999
+
+Person(name=Sam Miller, budget=44.68, starvation=3930, age=19.000000000000014, satisfaction=9.52, jobs=['CerealMaker(name=Sam Miller, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.81 0.81 0.67 0.51 1.76], memory_salary=[1.55 1.46 1.03 1.34 1.62], birth=16, workaholic=0.62, needs=0.9499999999999998
+

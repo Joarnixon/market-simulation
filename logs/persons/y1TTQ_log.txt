@@ -1,0 +1,20 @@
+Person(name=John Jones, budget=50.09, starvation=5900, age=18.1, satisfaction=-3.61, jobs=['MilkMaker(name=John Jones, job_satisfied=0.5, employer=bbb, salary=0, working_hours=8)'], memory_spent=[3.37], memory_salary=[23.46], birth=15, workaholic=0.13, needs=0.05
+
+Person(name=John Jones, budget=50.75, starvation=3900, age=18.200000000000003, satisfaction=-4.68, jobs=['MilkMaker(name=John Jones, job_satisfied=0.6, employer=bbb, salary=0, working_hours=8)'], memory_spent=[3.37 0.  ], memory_salary=[23.46  0.66], birth=16, workaholic=0.13, needs=0.15000000000000002
+
+Person(name=John Jones, budget=51.51, starvation=1900, age=18.300000000000004, satisfaction=-5.81, jobs=['MilkMaker(name=John Jones, job_satisfied=0.7, employer=bbb, salary=0, working_hours=8)'], memory_spent=[3.37 0.   0.  ], memory_salary=[23.46  0.66  0.76], birth=17, workaholic=0.13, needs=0.25
+
+Person(name=John Jones, budget=51.62, starvation=1730, age=18.400000000000006, satisfaction=-6.19, jobs=['PieMaker(name=John Jones, job_satisfied=0.8, employer=bbb, salary=0, working_hours=8)'], memory_spent=[3.37 0.   0.   0.77], memory_salary=[23.46  0.66  0.76  0.88], birth=18, workaholic=0.13, needs=0.35
+
+Person(name=John Jones, budget=51.17, starvation=2180, age=18.500000000000007, satisfaction=-5.6, jobs=['MeatMaker(name=John Jones, job_satisfied=0.9, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.37 0.   0.   0.77 1.1 ], memory_salary=[23.46  0.66  0.76  0.88  0.65], birth=19, workaholic=0.13, needs=0.44999999999999996
+
+Person(name=John Jones, budget=51.88, starvation=2160, age=18.60000000000001, satisfaction=-6.23, jobs=['MeatMaker(name=John Jones, job_satisfied=0.92, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.   0.   0.77 1.1  0.64], memory_salary=[0.66 0.76 0.88 0.65 1.35], birth=20, workaholic=0.13, needs=0.35
+
+Person(name=John Jones, budget=53.36, starvation=3570, age=18.70000000000001, satisfaction=-5.64, jobs=['MeatMaker(name=John Jones, job_satisfied=0.87, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.   0.77 1.1  0.64 1.14], memory_salary=[0.76 0.88 0.65 1.35 2.62], birth=21, workaholic=0.13, needs=0.44999999999999996
+
+Person(name=John Jones, budget=58.06, starvation=1570, age=18.80000000000001, satisfaction=-6.91, jobs=['MeatMaker(name=John Jones, job_satisfied=0.97, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.77 1.1  0.64 1.14 0.  ], memory_salary=[0.88 0.65 1.35 2.62 4.7 ], birth=22, workaholic=0.13, needs=0.5499999999999999
+
+Person(name=John Jones, budget=59.88, starvation=1220, age=18.900000000000013, satisfaction=-4.5, jobs=['MeatMaker(name=John Jones, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.1  0.64 1.14 0.   0.5 ], memory_salary=[0.65 1.35 2.62 4.7  2.32], birth=23, workaholic=0.13, needs=0.6499999999999999
+
+Person(name=John Jones, budget=61.41, starvation=2150, age=19.000000000000014, satisfaction=-1.14, jobs=['MeatMaker(name=John Jones, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.64 1.14 0.   0.5  1.14], memory_salary=[1.35 2.62 4.7  2.32 2.67], birth=24, workaholic=0.13, needs=0.7499999999999999
+

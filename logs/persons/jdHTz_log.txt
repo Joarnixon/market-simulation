@@ -1,0 +1,16 @@
+Person(name=Robert Martin, budget=26.9, starvation=4000, age=18.1, satisfaction=-3.54, jobs=[], memory_spent=[3.1], memory_salary=[0], birth=0, workaholic=0.61, needs=0.05
+
+Person(name=Robert Martin, budget=26.9, starvation=2000, age=18.200000000000003, satisfaction=-4.56, jobs=['MilkMaker(name=Robert Martin, job_satisfied=0.5, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.1 0. ], memory_salary=[0 0], birth=1, workaholic=0.61, needs=0.05
+
+Person(name=Robert Martin, budget=28.88, starvation=0, age=18.300000000000004, satisfaction=-5.59, jobs=['MilkMaker(name=Robert Martin, job_satisfied=0.4, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.1 0.  0. ], memory_salary=[0.   0.   1.98], birth=2, workaholic=0.61, needs=0.05
+
+Person(name=Robert Martin, budget=29.86, starvation=-1450, age=18.400000000000006, satisfaction=-5.85, jobs=['MilkMaker(name=Robert Martin, job_satisfied=0.3, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.1  0.   0.   0.15], memory_salary=[0.   0.   1.98 1.13], birth=3, workaholic=0.61, needs=0.15000000000000002
+
+Person(name=Robert Martin, budget=28.86, starvation=680, age=18.500000000000007, satisfaction=1.64, jobs=['BreadMaker(name=Robert Martin, job_satisfied=0.4, employer=bbb, salary=0, working_hours=8)'], memory_spent=[3.1  0.   0.   0.15 2.21], memory_salary=[0.   0.   1.98 1.13 1.2 ], birth=4, workaholic=0.61, needs=0.25
+
+Person(name=Robert Martin, budget=28.89, starvation=1540, age=18.60000000000001, satisfaction=1.83, jobs=['BreadMaker(name=Robert Martin, job_satisfied=0.5, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.   0.   0.15 2.21 0.8 ], memory_salary=[0.   1.98 1.13 1.2  0.84], birth=5, workaholic=0.61, needs=0.24
+
+Person(name=Robert Martin, budget=30.49, starvation=2400, age=18.70000000000001, satisfaction=1.85, jobs=['BreadMaker(name=Robert Martin, job_satisfied=0.4, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.   0.15 2.21 0.8  0.8 ], memory_salary=[1.98 1.13 1.2  0.84 2.4 ], birth=6, workaholic=0.61, needs=0.13999999999999999
+
+Person(name=Robert Martin, budget=29.89, starvation=3260, age=18.80000000000001, satisfaction=3.48, jobs=['CerealMaker(name=Robert Martin, job_satisfied=0.3, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.15 2.21 0.8  0.8  0.8 ], memory_salary=[1.13 1.2  0.84 2.4  0.2 ], birth=7, workaholic=0.61, needs=0.24
+

@@ -1,0 +1,20 @@
+Person(name=Charlie Jones, budget=41.25, starvation=3200, age=18.1, satisfaction=-2.05, jobs=['BreadMaker(name=Charlie Jones, job_satisfied=0.5, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.63], memory_salary=[12.88], birth=36, workaholic=0.85, needs=0.05
+
+Person(name=Charlie Jones, budget=42.25, starvation=1200, age=18.200000000000003, satisfaction=-3.13, jobs=['BreadMaker(name=Charlie Jones, job_satisfied=0.6, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.63 0.  ], memory_salary=[12.88  1.  ], birth=37, workaholic=0.85, needs=0.15000000000000002
+
+Person(name=Charlie Jones, budget=43.4, starvation=-800, age=18.300000000000004, satisfaction=-4.25, jobs=['BreadMaker(name=Charlie Jones, job_satisfied=0.7, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.63 0.   0.  ], memory_salary=[12.88  1.    1.15], birth=38, workaholic=0.85, needs=0.25
+
+Person(name=Charlie Jones, budget=45.29, starvation=840, age=18.400000000000006, satisfaction=-4.17, jobs=['BreadMaker(name=Charlie Jones, job_satisfied=0.8, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.63 0.   0.   1.44], memory_salary=[12.88  1.    1.15  3.33], birth=39, workaholic=0.85, needs=0.35
+
+Person(name=Charlie Jones, budget=48.81, starvation=660, age=18.500000000000007, satisfaction=-3.26, jobs=['BreadMaker(name=Charlie Jones, job_satisfied=0.9, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.63 0.   0.   1.44 0.73], memory_salary=[12.88  1.    1.15  3.33  4.26], birth=40, workaholic=0.85, needs=0.44999999999999996
+
+Person(name=Charlie Jones, budget=50.74, starvation=-1340, age=18.60000000000001, satisfaction=-4.54, jobs=['CerealMaker(name=Charlie Jones, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.   0.   1.44 0.73 0.  ], memory_salary=[1.   1.15 3.33 4.26 1.93], birth=41, workaholic=0.85, needs=0.5499999999999999
+
+Person(name=Charlie Jones, budget=51.24, starvation=300, age=18.70000000000001, satisfaction=-0.58, jobs=['CerealMaker(name=Charlie Jones, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.   1.44 0.73 0.   1.52], memory_salary=[1.15 3.33 4.26 1.93 2.02], birth=42, workaholic=0.85, needs=0.6499999999999999
+
+Person(name=Charlie Jones, budget=52.66, starvation=-1700, age=18.80000000000001, satisfaction=-1.95, jobs=['MilkMaker(name=Charlie Jones, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.44 0.73 0.   1.52 0.  ], memory_salary=[3.33 4.26 1.93 2.02 1.42], birth=43, workaholic=0.85, needs=0.7499999999999999
+
+Person(name=Charlie Jones, budget=53.35, starvation=-60, age=18.900000000000013, satisfaction=-2.44, jobs=['MilkMaker(name=Charlie Jones, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.73 0.   1.52 0.   1.7 ], memory_salary=[4.26 1.93 2.02 1.42 2.39], birth=44, workaholic=0.85, needs=0.8499999999999999
+
+Person(name=Charlie Jones, budget=53.93, starvation=-240, age=19.000000000000014, satisfaction=-3.58, jobs=['MilkMaker(name=Charlie Jones, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.   1.52 0.   1.7  0.86], memory_salary=[1.93 2.02 1.42 2.39 1.44], birth=45, workaholic=0.85, needs=0.9499999999999998
+

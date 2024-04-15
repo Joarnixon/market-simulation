@@ -1,0 +1,20 @@
+Person(name=Sam Wilson, budget=34.96, starvation=1380, age=18.1, satisfaction=-1.41, jobs=['MilkMaker(name=Sam Wilson, job_satisfied=0.5, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.95], memory_salary=[5.91], birth=36, workaholic=0.91, needs=0.05
+
+Person(name=Sam Wilson, budget=35.41, starvation=-620, age=18.200000000000003, satisfaction=-2.49, jobs=['MilkMaker(name=Sam Wilson, job_satisfied=0.6, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.95 0.  ], memory_salary=[5.91 0.45], birth=37, workaholic=0.91, needs=0.15000000000000002
+
+Person(name=Sam Wilson, budget=36.01, starvation=-90, age=18.300000000000004, satisfaction=5.52, jobs=['MilkMaker(name=Sam Wilson, job_satisfied=0.7, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.95 0.   0.79], memory_salary=[5.91 0.45 1.39], birth=38, workaholic=0.91, needs=0.25
+
+Person(name=Sam Wilson, budget=37.77, starvation=-260, age=18.400000000000006, satisfaction=5.55, jobs=['MilkMaker(name=Sam Wilson, job_satisfied=0.8, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.95 0.   0.79 0.79], memory_salary=[5.91 0.45 1.39 2.54], birth=39, workaholic=0.91, needs=0.35
+
+Person(name=Sam Wilson, budget=39.5, starvation=1150, age=18.500000000000007, satisfaction=8.6, jobs=['MilkMaker(name=Sam Wilson, job_satisfied=0.9, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.95 0.   0.79 0.79 1.08], memory_salary=[5.91 0.45 1.39 2.54 2.82], birth=40, workaholic=0.91, needs=0.44999999999999996
+
+Person(name=Sam Wilson, budget=41.0, starvation=250, age=18.60000000000001, satisfaction=9.38, jobs=['MilkMaker(name=Sam Wilson, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.   0.79 0.79 1.08 0.32], memory_salary=[0.45 1.39 2.54 2.82 1.82], birth=41, workaholic=0.91, needs=0.5499999999999999
+
+Person(name=Sam Wilson, budget=43.18, starvation=-1750, age=18.70000000000001, satisfaction=8.06, jobs=['MilkMaker(name=Sam Wilson, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.79 0.79 1.08 0.32 0.  ], memory_salary=[1.39 2.54 2.82 1.82 2.18], birth=42, workaholic=0.91, needs=0.6499999999999999
+
+Person(name=Sam Wilson, budget=44.77, starvation=210, age=18.80000000000001, satisfaction=9.49, jobs=['MilkMaker(name=Sam Wilson, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.79 1.08 0.32 0.   1.33], memory_salary=[2.54 2.82 1.82 2.18 2.92], birth=43, workaholic=0.91, needs=0.7499999999999999
+
+Person(name=Sam Wilson, budget=46.07, starvation=1620, age=18.900000000000013, satisfaction=10.43, jobs=['MilkMaker(name=Sam Wilson, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.08 0.32 0.   1.33 1.16], memory_salary=[2.82 1.82 2.18 2.92 2.46], birth=44, workaholic=0.91, needs=0.8499999999999999
+
+Person(name=Sam Wilson, budget=47.38, starvation=170, age=19.000000000000014, satisfaction=9.24, jobs=['MilkMaker(name=Sam Wilson, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.32 0.   1.33 1.16 0.17], memory_salary=[1.82 2.18 2.92 2.46 1.48], birth=45, workaholic=0.91, needs=0.9499999999999998
+

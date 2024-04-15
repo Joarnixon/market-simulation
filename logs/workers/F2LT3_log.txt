@@ -1,0 +1,2 @@
+CerealMaker(name=Chris Thomas, job_satisfied=0.5, employer=bbbccaa, salary=41.77, working_hours=8)
+

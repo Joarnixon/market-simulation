@@ -1,0 +1,20 @@
+BreadMaker(name=Robert Miller, job_satisfied=0.5, employer=bbb, salary=20.64, working_hours=8)
+
+BreadMaker(name=Robert Miller, job_satisfied=0.6, employer=bbb, salary=1.73, working_hours=8)
+
+BreadMaker(name=Robert Miller, job_satisfied=0.7, employer=bbb, salary=2.87, working_hours=8)
+
+BreadMaker(name=Robert Miller, job_satisfied=0.8, employer=bbb, salary=2.64, working_hours=8)
+
+BreadMaker(name=Robert Miller, job_satisfied=0.9, employer=bbb, salary=1.76, working_hours=8)
+
+BreadMaker(name=Robert Miller, job_satisfied=1.0, employer=bbb, salary=4.63, working_hours=8)
+
+BreadMaker(name=Robert Miller, job_satisfied=1.0, employer=bbb, salary=3.65, working_hours=8)
+
+MilkMaker(name=Robert Miller, job_satisfied=1.0, employer=bbb, salary=2.7, working_hours=8)
+
+MilkMaker(name=Robert Miller, job_satisfied=1.0, employer=bbb, salary=1.06, working_hours=8)
+
+MilkMaker(name=Robert Miller, job_satisfied=1.0, employer=bbb, salary=1.75, working_hours=8)
+

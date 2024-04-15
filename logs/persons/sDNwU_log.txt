@@ -1,0 +1,20 @@
+Person(name=John Anderson, budget=39.65, starvation=1380, age=18.1, satisfaction=-1.46, jobs=['CerealMaker(name=John Anderson, job_satisfied=0.5, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.02], memory_salary=[10.67], birth=36, workaholic=0.36, needs=0.05
+
+Person(name=John Anderson, budget=40.14, starvation=-620, age=18.200000000000003, satisfaction=-2.53, jobs=['CerealMaker(name=John Anderson, job_satisfied=0.6, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.02 0.  ], memory_salary=[10.67  0.49], birth=37, workaholic=0.36, needs=0.15000000000000002
+
+Person(name=John Anderson, budget=40.17, starvation=790, age=18.300000000000004, satisfaction=17.04, jobs=['CerealMaker(name=John Anderson, job_satisfied=0.7, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.02 0.   1.16], memory_salary=[10.67  0.49  1.19], birth=38, workaholic=0.36, needs=0.25
+
+Person(name=John Anderson, budget=42.05, starvation=220, age=18.400000000000006, satisfaction=16.33, jobs=['PieMaker(name=John Anderson, job_satisfied=0.8, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.02 0.   1.16 0.48], memory_salary=[10.67  0.49  1.19  2.36], birth=39, workaholic=0.36, needs=0.35
+
+Person(name=John Anderson, budget=47.25, starvation=-1780, age=18.500000000000007, satisfaction=15.1, jobs=['PieMaker(name=John Anderson, job_satisfied=0.9, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.02 0.   1.16 0.48 0.  ], memory_salary=[10.67  0.49  1.19  2.36  5.2 ], birth=40, workaholic=0.36, needs=0.44999999999999996
+
+Person(name=John Anderson, budget=48.2, starvation=-1250, age=18.60000000000001, satisfaction=19.27, jobs=['PieMaker(name=John Anderson, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.   1.16 0.48 0.   0.82], memory_salary=[0.49 1.19 2.36 5.2  1.78], birth=41, workaholic=0.36, needs=0.5499999999999999
+
+Person(name=John Anderson, budget=50.68, starvation=-1820, age=18.70000000000001, satisfaction=19.82, jobs=['PieMaker(name=John Anderson, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.16 0.48 0.   0.82 0.47], memory_salary=[1.19 2.36 5.2  1.78 2.94], birth=42, workaholic=0.36, needs=0.6499999999999999
+
+Person(name=John Anderson, budget=52.99, starvation=470, age=18.80000000000001, satisfaction=21.03, jobs=['PieMaker(name=John Anderson, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.48 0.   0.82 0.47 1.41], memory_salary=[2.36 5.2  1.78 2.94 3.72], birth=43, workaholic=0.36, needs=0.7499999999999999
+
+Person(name=John Anderson, budget=53.65, starvation=-100, age=18.900000000000013, satisfaction=20.45, jobs=['CerealMaker(name=John Anderson, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.   0.82 0.47 1.41 0.46], memory_salary=[5.2  1.78 2.94 3.72 1.12], birth=44, workaholic=0.36, needs=0.8499999999999999
+
+Person(name=John Anderson, budget=54.21, starvation=760, age=19.000000000000014, satisfaction=19.1, jobs=['CerealMaker(name=John Anderson, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.82 0.47 1.41 0.46 0.8 ], memory_salary=[1.78 2.94 3.72 1.12 1.36], birth=45, workaholic=0.36, needs=0.9499999999999998
+

@@ -1,0 +1,12 @@
+MilkMaker(name=Larry Miller, job_satisfied=0.4, employer=bbbccaa, salary=1.79, working_hours=8)
+
+MilkMaker(name=Larry Miller, job_satisfied=0.3, employer=bbbccaa, salary=1.03, working_hours=8)
+
+MilkMaker(name=Larry Miller, job_satisfied=0.4, employer=bbbccaa, salary=1.08, working_hours=8)
+
+MilkMaker(name=Larry Miller, job_satisfied=0.5, employer=bbbccaa, salary=1.56, working_hours=8)
+
+MilkMaker(name=Larry Miller, job_satisfied=0.6, employer=bbbccaa, salary=1.41, working_hours=8)
+
+MilkMaker(name=Larry Miller, job_satisfied=0.7, employer=bbbccaa, salary=0.91, working_hours=8)
+

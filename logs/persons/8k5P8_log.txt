@@ -1,0 +1,20 @@
+Person(name=Kate Johnson, budget=38.14, starvation=3200, age=18.1, satisfaction=-2.05, jobs=['BreadMaker(name=Kate Johnson, job_satisfied=0.5, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.63], memory_salary=[9.77], birth=14, workaholic=0.93, needs=0.05
+
+Person(name=Kate Johnson, budget=39.18, starvation=1200, age=18.200000000000003, satisfaction=-3.13, jobs=['BreadMaker(name=Kate Johnson, job_satisfied=0.6, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.63 0.  ], memory_salary=[9.77 1.04], birth=15, workaholic=0.93, needs=0.15000000000000002
+
+Person(name=Kate Johnson, budget=39.66, starvation=1020, age=18.300000000000004, satisfaction=6.06, jobs=['BreadMaker(name=Kate Johnson, job_satisfied=0.7, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.63 0.   0.72], memory_salary=[9.77 1.04 1.2 ], birth=16, workaholic=0.93, needs=0.25
+
+Person(name=Kate Johnson, budget=42.41, starvation=840, age=18.400000000000006, satisfaction=5.59, jobs=['BreadMaker(name=Kate Johnson, job_satisfied=0.8, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.63 0.   0.72 0.72], memory_salary=[9.77 1.04 1.2  3.47], birth=17, workaholic=0.93, needs=0.35
+
+Person(name=Kate Johnson, budget=45.82, starvation=1060, age=18.500000000000007, satisfaction=8.06, jobs=['BreadMaker(name=Kate Johnson, job_satisfied=0.9, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.63 0.   0.72 0.72 1.03], memory_salary=[9.77 1.04 1.2  3.47 4.44], birth=18, workaholic=0.93, needs=0.44999999999999996
+
+Person(name=Kate Johnson, budget=47.1, starvation=880, age=18.60000000000001, satisfaction=10.18, jobs=['BreadMaker(name=Kate Johnson, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.   0.72 0.72 1.03 0.73], memory_salary=[1.04 1.2  3.47 4.44 2.01], birth=19, workaholic=0.93, needs=0.5499999999999999
+
+Person(name=Kate Johnson, budget=49.13, starvation=700, age=18.70000000000001, satisfaction=10.78, jobs=['BreadMaker(name=Kate Johnson, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.72 0.72 1.03 0.73 0.75], memory_salary=[1.2  3.47 4.44 2.01 2.78], birth=20, workaholic=0.93, needs=0.6499999999999999
+
+Person(name=Kate Johnson, budget=51.76, starvation=520, age=18.80000000000001, satisfaction=10.25, jobs=['BreadMaker(name=Kate Johnson, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.72 1.03 0.73 0.75 0.75], memory_salary=[3.47 4.44 2.01 2.78 3.38], birth=21, workaholic=0.93, needs=0.7499999999999999
+
+Person(name=Kate Johnson, budget=54.53, starvation=340, age=18.900000000000013, satisfaction=9.54, jobs=['BreadMaker(name=Kate Johnson, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.03 0.73 0.75 0.75 0.75], memory_salary=[4.44 2.01 2.78 3.38 3.52], birth=22, workaholic=0.93, needs=0.8499999999999999
+
+Person(name=Kate Johnson, budget=57.36, starvation=160, age=19.000000000000014, satisfaction=8.53, jobs=['BreadMaker(name=Kate Johnson, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.73 0.75 0.75 0.75 0.73], memory_salary=[2.01 2.78 3.38 3.52 3.55], birth=23, workaholic=0.93, needs=0.9499999999999998
+

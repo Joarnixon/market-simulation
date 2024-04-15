@@ -4,7 +4,8 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 from typing import Union
 from random import sample
-from other.utils import cluster_data, f_round, assign_numbers
+from other.utils import cluster_data, f_round, assign_numbers, generate_id
+from other.logs import Logger
 from objects.products import Products
 from settings.constants import *
 
@@ -23,12 +24,16 @@ class BaseSeller:
         self.available_products = []
         self.n_product_params = 3
         self.days = 0
+        self.uid = generate_id()
         self.profit = 0
         self.amounts = {}
         self.income = {}
         self.initial_guess = {}
         self.guess = {} if not guess else guess
         self.brain = LinearRegression()
+
+    def __str__(self):
+        return f'Seller(budget={self.budget}, overprices={np.round(list(self.overprices.values()), 2)}, qualities={np.round(list(self.qualities.values()), 2)}, amounts={list(self.amounts.values())}, local_ask={list(self.local_ask.values())}, memory_income={list(map(lambda x: np.round(x[-3:], 2), list(self.memory_incomes.values())))}'
 
     @property
     def greed(self):
@@ -121,10 +126,13 @@ class BaseSeller:
 
 
 class Seller(BaseSeller):
+    globalLogger = Logger('logs/sellers')
+
     def __init__(self, as_person, guess=None, prices=None, from_start=True):
         super().__init__(as_person=as_person, guess=guess, prices=prices, from_start=from_start)
         self.providers = {}
         self.ambition = 20
+        self.logger = Seller.globalLogger.get_logger(self.uid)
 
     def start(self, market_ref, ask, demand=None, bid=None):
         self.available_products = []
@@ -208,4 +216,5 @@ class Seller(BaseSeller):
             self.budget += self.income[product]
             self.memory_incomes[product] += [self.income[product]]
             self.estimate(product, iterat, volatility_index)
+        self.logger.info(str(self) + '\n')
         self.days += 1

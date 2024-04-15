@@ -1,0 +1,20 @@
+CerealMaker(name=John Anderson, job_satisfied=0.5, employer=bbbccaa, salary=10.67, working_hours=8)
+
+CerealMaker(name=John Anderson, job_satisfied=0.6, employer=bbbccaa, salary=0.49, working_hours=8)
+
+CerealMaker(name=John Anderson, job_satisfied=0.7, employer=bbbccaa, salary=1.19, working_hours=8)
+
+CerealMaker(name=John Anderson, job_satisfied=0.8, employer=bbbccaa, salary=2.36, working_hours=8)
+
+PieMaker(name=John Anderson, job_satisfied=0.9, employer=bbbccaa, salary=5.2, working_hours=8)
+
+PieMaker(name=John Anderson, job_satisfied=1.0, employer=bbbccaa, salary=1.78, working_hours=8)
+
+PieMaker(name=John Anderson, job_satisfied=1.0, employer=bbbccaa, salary=2.94, working_hours=8)
+
+PieMaker(name=John Anderson, job_satisfied=1.0, employer=bbbccaa, salary=3.72, working_hours=8)
+
+CerealMaker(name=John Anderson, job_satisfied=1.0, employer=bbbccaa, salary=1.12, working_hours=8)
+
+CerealMaker(name=John Anderson, job_satisfied=1.0, employer=bbbccaa, salary=1.36, working_hours=8)
+

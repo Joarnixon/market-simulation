@@ -1,0 +1,20 @@
+Person(name=Alex Martin, budget=249.19, starvation=1380, age=18.1, satisfaction=-1.44, jobs=['CerealMaker(name=Alex Martin, job_satisfied=0.5, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.93], memory_salary=[20.12], birth=13, workaholic=0.95, needs=0.05
+
+Person(name=Alex Martin, budget=253.51, starvation=-620, age=18.200000000000003, satisfaction=-2.52, jobs=['CerealMaker(name=Alex Martin, job_satisfied=0.6, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.93 0.  ], memory_salary=[20.12  2.08], birth=14, workaholic=0.95, needs=0.15000000000000002
+
+Person(name=Alex Martin, budget=240.83, starvation=790, age=18.300000000000004, satisfaction=39.07, jobs=['CerealMaker(name=Alex Martin, job_satisfied=0.7, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.93 0.   1.14], memory_salary=[20.12  2.08  2.53], birth=15, workaholic=0.95, needs=0.25
+
+Person(name=Alex Martin, budget=228.9, starvation=770, age=18.400000000000006, satisfaction=41.48, jobs=['CerealMaker(name=Alex Martin, job_satisfied=0.8, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.93 0.   1.14 0.65], memory_salary=[20.12  2.08  2.53  2.23], birth=16, workaholic=0.95, needs=0.35
+
+Person(name=Alex Martin, budget=219.1, starvation=200, age=18.500000000000007, satisfaction=42.01, jobs=['CerealMaker(name=Alex Martin, job_satisfied=0.9, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.93 0.   1.14 0.65 0.49], memory_salary=[20.12  2.08  2.53  2.23  0.93], birth=17, workaholic=0.95, needs=0.44999999999999996
+
+Person(name=Alex Martin, budget=213.21, starvation=-1800, age=18.60000000000001, satisfaction=40.73, jobs=['PieMaker(name=Alex Martin, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.   1.14 0.65 0.49 0.  ], memory_salary=[2.08 2.53 2.23 0.93 4.67], birth=18, workaholic=0.95, needs=0.5499999999999999
+
+Person(name=Alex Martin, budget=219.33, starvation=490, age=18.70000000000001, satisfaction=43.06, jobs=['PieMaker(name=Alex Martin, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[1.14 0.65 0.49 0.   1.73], memory_salary=[ 2.53  2.23  0.93  4.67 18.53], birth=19, workaholic=0.95, needs=0.6499999999999999
+
+Person(name=Alex Martin, budget=221.11, starvation=-1110, age=18.80000000000001, satisfaction=43.85, jobs=['PieMaker(name=Alex Martin, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.65 0.49 0.   1.73 0.27], memory_salary=[ 2.23  0.93  4.67 18.53  4.61], birth=20, workaholic=0.95, needs=0.7499999999999999
+
+Person(name=Alex Martin, budget=227.28, starvation=-250, age=18.900000000000013, satisfaction=48.95, jobs=['BreadMaker(name=Alex Martin, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.49 0.   1.73 0.27 0.91], memory_salary=[ 0.93  4.67 18.53  4.61 11.6 ], birth=21, workaholic=0.95, needs=0.8499999999999999
+
+Person(name=Alex Martin, budget=226.9, starvation=-1700, age=19.000000000000014, satisfaction=48.28, jobs=['BreadMaker(name=Alex Martin, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.   1.73 0.27 0.91 0.18], memory_salary=[ 4.67 18.53  4.61 11.6   3.58], birth=22, workaholic=0.95, needs=0.9499999999999998
+
