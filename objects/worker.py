@@ -3,6 +3,7 @@ from typing import Any
 import random as rd
 import numpy as np
 from other.utils import generate_id
+from other.logs import Logger
 
 
 def set_id():
@@ -14,20 +15,26 @@ class Worker:
     as_person: Any
     working_hours: int = 8
     job_satisfied: float = 0.5
-    employer: Any = None
     uid: str = field(default_factory=set_id)
+    employer: Any = None
 
     def __del__(self):
         if self.employer is not None:
             self.employer.fire(person=self)
         self.as_person.delete_job(self)
 
+    def __eq__(self, other):
+        return self.uid == other.uid
+
 
 class ManufactureWorker(Worker):
+    globalLogger = Logger('logs/workers')
+
     def __init__(self, worker_data):
         super().__init__(**worker_data)
         self.product = None
         self.salary: float = 0
+        self.logger = ManufactureWorker.globalLogger.get_logger(self.uid)
 
     def __eq__(self, other):
         return (self.uid == other.uid) and (self.product == other.product)
@@ -100,6 +107,7 @@ class ManufactureWorker(Worker):
             'as_person': self.as_person,
             'working_hours': self.working_hours,
             'job_satisfied': self.job_satisfied,
+            'uid': self.uid
         }
 
     def load_data(self, data):
@@ -148,13 +156,14 @@ class ManufactureWorker(Worker):
             self.as_person.delete_job(self)
             return
         self.work()
+        self.job_satisfaction()
+        self.logger.info(str(self) + '\n')
         self.get_payed()
         if rd.randint(0, 10) >= 8:
             found = self.find_job(changing=True, market_ref=self.as_person.market_ref)
             if found:
                 self.as_person.delete_job(self)
                 return
-        self.job_satisfaction()
 
     def helper_check_deletion(self):
         if self.employer is None:
@@ -166,7 +175,7 @@ class BreadMaker(ManufactureWorker):
         super().__init__(worker_data)
 
     def __str__(self):
-        return f'BreadMaker(job_satisfied={self.job_satisfied}, employer={self.employer.name if self.employer is not None else None}, working_hours={self.working_hours}, uid={self.uid})'
+        return f'BreadMaker(name={self.as_person.name}, job_satisfied={round(self.job_satisfied, 2)}, employer={self.employer.name if self.employer is not None else None}, salary={self.salary}, working_hours={self.working_hours})'
 
 
 class CerealMaker(ManufactureWorker):
@@ -174,7 +183,7 @@ class CerealMaker(ManufactureWorker):
         super().__init__(worker_data)
 
     def __str__(self):
-        return f'CerealMaker(job_satisfied={self.job_satisfied}, employer={self.employer.name if self.employer is not None else None}, working_hours={self.working_hours}, uid={self.uid})'
+        return f'CerealMaker(name={self.as_person.name}, job_satisfied={round(self.job_satisfied, 2)}, employer={self.employer.name if self.employer is not None else None}, salary={self.salary}, working_hours={self.working_hours})'
 
 
 class MeatMaker(ManufactureWorker):
@@ -182,7 +191,7 @@ class MeatMaker(ManufactureWorker):
         super().__init__(worker_data)
 
     def __str__(self):
-        return f'MeatMaker(job_satisfied={self.job_satisfied}, employer={self.employer.name if self.employer is not None else None}, working_hours={self.working_hours}, uid={self.uid})'
+        return f'MeatMaker(name={self.as_person.name}, job_satisfied={round(self.job_satisfied, 2)}, employer={self.employer.name if self.employer is not None else None}, salary={self.salary}, working_hours={self.working_hours})'
 
 
 class MilkMaker(ManufactureWorker):
@@ -190,7 +199,7 @@ class MilkMaker(ManufactureWorker):
         super().__init__(worker_data)
 
     def __str__(self):
-        return f'MilkMaker(job_satisfied={self.job_satisfied}, employer={self.employer.name if self.employer is not None else None}, working_hours={self.working_hours}, uid={self.uid})'
+        return f'MilkMaker(name={self.as_person.name}, job_satisfied={round(self.job_satisfied, 2)}, employer={self.employer.name if self.employer is not None else None}, salary={self.salary}, working_hours={self.working_hours})'
 
 
 class PieMaker(ManufactureWorker):
@@ -198,7 +207,7 @@ class PieMaker(ManufactureWorker):
         super().__init__(worker_data)
 
     def __str__(self):
-        return f'PieMaker(job_satisfied={self.job_satisfied}, employer={self.employer.name if self.employer is not None else None}, working_hours={self.working_hours}, uid={self.uid})'
+        return f'PieMaker(name={self.as_person.name}, job_satisfied={round(self.job_satisfied, 2)}, employer={self.employer.name if self.employer is not None else None}, salary={self.salary}, working_hours={self.working_hours})'
 
 
 def assignClass(job):

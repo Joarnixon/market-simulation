@@ -1,0 +1,20 @@
+MeatMaker(name=Sam Jones, job_satisfied=0.5, employer=bbb, salary=16.87, working_hours=8)
+
+MeatMaker(name=Sam Jones, job_satisfied=0.6, employer=bbb, salary=1.03, working_hours=8)
+
+MeatMaker(name=Sam Jones, job_satisfied=0.7, employer=bbb, salary=0.71, working_hours=8)
+
+MeatMaker(name=Sam Jones, job_satisfied=0.8, employer=bbb, salary=0.62, working_hours=8)
+
+MeatMaker(name=Sam Jones, job_satisfied=0.7, employer=bbb, salary=0.42, working_hours=8)
+
+MeatMaker(name=Sam Jones, job_satisfied=0.6, employer=bbb, salary=1.94, working_hours=8)
+
+MeatMaker(name=Sam Jones, job_satisfied=0.7, employer=bbb, salary=1.14, working_hours=8)
+
+MeatMaker(name=Sam Jones, job_satisfied=0.61, employer=bbb, salary=0.33, working_hours=8)
+
+MilkMaker(name=Sam Jones, job_satisfied=0.71, employer=bbbccaa, salary=1.76, working_hours=8)
+
+CerealMaker(name=Sam Jones, job_satisfied=0.81, employer=bbbccaa, salary=1.16, working_hours=8)
+

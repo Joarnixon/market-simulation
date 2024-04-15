@@ -1,0 +1,20 @@
+Person(name=Josh Martin, budget=241.6, starvation=5900, age=18.1, satisfaction=-3.56, jobs=['PieMaker(name=Josh Martin, job_satisfied=0.5, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.1], memory_salary=[14.7], birth=3, workaholic=0.83, needs=0.05
+
+Person(name=Josh Martin, budget=245.15, starvation=6100, age=18.200000000000003, satisfaction=21.62, jobs=['PieMaker(name=Josh Martin, job_satisfied=0.6, employer=bbbccaa, salary=0.0, working_hours=8)'], memory_spent=[3.1  0.59], memory_salary=[14.7  0. ], birth=4, workaholic=0.83, needs=0.15000000000000002
+
+Person(name=Josh Martin, budget=236.53, starvation=5200, age=18.300000000000004, satisfaction=31.74, jobs=['PieMaker(name=Josh Martin, job_satisfied=0.7, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.1  0.59 0.3 ], memory_salary=[14.7   0.    5.07], birth=5, workaholic=0.83, needs=0.25
+
+Person(name=Josh Martin, budget=237.55, starvation=4300, age=18.400000000000006, satisfaction=33.52, jobs=['PieMaker(name=Josh Martin, job_satisfied=0.8, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.1  0.59 0.3  0.3 ], memory_salary=[14.7   0.    5.07 11.22], birth=6, workaholic=0.83, needs=0.35
+
+Person(name=Josh Martin, budget=241.49, starvation=3400, age=18.500000000000007, satisfaction=40.78, jobs=['PieMaker(name=Josh Martin, job_satisfied=0.9, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.1  0.59 0.3  0.3  0.3 ], memory_salary=[14.7   0.    5.07 11.22 10.33], birth=7, workaholic=0.83, needs=0.44999999999999996
+
+Person(name=Josh Martin, budget=232.26, starvation=4320, age=18.60000000000001, satisfaction=60.11, jobs=['PieMaker(name=Josh Martin, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.59 0.3  0.3  0.3  1.11], memory_salary=[ 0.    5.07 11.22 10.33  5.84], birth=8, workaholic=0.83, needs=0.5499999999999999
+
+Person(name=Josh Martin, budget=226.62, starvation=3420, age=18.70000000000001, satisfaction=64.24, jobs=['PieMaker(name=Josh Martin, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.3  0.3  0.3  1.11 0.31], memory_salary=[ 5.07 11.22 10.33  5.84  7.5 ], birth=9, workaholic=0.83, needs=0.6499999999999999
+
+Person(name=Josh Martin, budget=231.96, starvation=1970, age=18.80000000000001, satisfaction=64.58, jobs=['PieMaker(name=Josh Martin, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.3  0.3  1.11 0.31 0.16], memory_salary=[11.22 10.33  5.84  7.5   9.49], birth=10, workaholic=0.83, needs=0.7499999999999999
+
+Person(name=Josh Martin, budget=234.27, starvation=520, age=18.900000000000013, satisfaction=64.78, jobs=['PieMaker(name=Josh Martin, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.3  1.11 0.31 0.16 0.16], memory_salary=[10.33  5.84  7.5   9.49  6.91], birth=11, workaholic=0.83, needs=0.8499999999999999
+
+Person(name=Josh Martin, budget=238.71, starvation=-1480, age=19.000000000000014, satisfaction=63.31, jobs=['PieMaker(name=Josh Martin, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.11 0.31 0.16 0.16 0.  ], memory_salary=[5.84 7.5  9.49 6.91 8.19], birth=12, workaholic=0.83, needs=0.9499999999999998
+

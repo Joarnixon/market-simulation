@@ -1,0 +1,20 @@
+MeatMaker(name=Alice Miller, job_satisfied=0.5, employer=bbbccaa, salary=13.78, working_hours=8)
+
+MeatMaker(name=Alice Miller, job_satisfied=0.6, employer=bbbccaa, salary=0.44, working_hours=8)
+
+MeatMaker(name=Alice Miller, job_satisfied=0.7, employer=bbbccaa, salary=1.64, working_hours=8)
+
+MeatMaker(name=Alice Miller, job_satisfied=0.8, employer=bbbccaa, salary=2.21, working_hours=8)
+
+MeatMaker(name=Alice Miller, job_satisfied=0.9, employer=bbbccaa, salary=3.61, working_hours=8)
+
+MeatMaker(name=Alice Miller, job_satisfied=1.0, employer=bbbccaa, salary=1.2, working_hours=8)
+
+CerealMaker(name=Alice Miller, job_satisfied=1.0, employer=bbbccaa, salary=1.48, working_hours=8)
+
+CerealMaker(name=Alice Miller, job_satisfied=1.0, employer=bbbccaa, salary=1.04, working_hours=8)
+
+CerealMaker(name=Alice Miller, job_satisfied=0.9, employer=bbbccaa, salary=1.37, working_hours=8)
+
+CerealMaker(name=Alice Miller, job_satisfied=0.8, employer=bbbccaa, salary=1.57, working_hours=8)
+

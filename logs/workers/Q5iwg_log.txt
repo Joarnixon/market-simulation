@@ -1,0 +1,18 @@
+CerealMaker(name=Bob Brown, job_satisfied=0.6, employer=bbbccaa, salary=0.71, working_hours=8)
+
+BreadMaker(name=Bob Brown, job_satisfied=0.7, employer=bbb, salary=1.67, working_hours=8)
+
+BreadMaker(name=Bob Brown, job_satisfied=0.8, employer=bbb, salary=1.57, working_hours=8)
+
+BreadMaker(name=Bob Brown, job_satisfied=0.9, employer=bbb, salary=1.02, working_hours=8)
+
+BreadMaker(name=Bob Brown, job_satisfied=0.8, employer=bbb, salary=2.76, working_hours=8)
+
+MeatMaker(name=Bob Brown, job_satisfied=0.9, employer=bbb, salary=1.86, working_hours=8)
+
+MeatMaker(name=Bob Brown, job_satisfied=1.0, employer=bbb, salary=0.53, working_hours=8)
+
+MeatMaker(name=Bob Brown, job_satisfied=1.0, employer=bbb, salary=1.61, working_hours=8)
+
+MeatMaker(name=Bob Brown, job_satisfied=1.0, employer=bbb, salary=2.36, working_hours=8)
+

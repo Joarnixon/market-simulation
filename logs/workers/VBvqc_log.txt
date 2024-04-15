@@ -1,0 +1,16 @@
+CerealMaker(name=Samantha Jones, job_satisfied=0.5, employer=bbb, salary=33.08, working_hours=8)
+
+CerealMaker(name=Samantha Jones, job_satisfied=0.6, employer=bbb, salary=1.71, working_hours=8)
+
+CerealMaker(name=Samantha Jones, job_satisfied=0.7, employer=bbb, salary=2.08, working_hours=8)
+
+CerealMaker(name=Samantha Jones, job_satisfied=0.8, employer=bbb, salary=1.83, working_hours=8)
+
+CerealMaker(name=Samantha Jones, job_satisfied=0.9, employer=bbb, salary=0.77, working_hours=8)
+
+CerealMaker(name=Samantha Jones, job_satisfied=1.0, employer=bbb, salary=3.84, working_hours=8)
+
+PieMaker(name=Samantha Jones, job_satisfied=1.0, employer=bbb, salary=15.23, working_hours=8)
+
+PieMaker(name=Samantha Jones, job_satisfied=1.0, employer=bbb, salary=3.79, working_hours=8)
+

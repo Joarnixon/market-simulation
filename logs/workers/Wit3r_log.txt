@@ -1,0 +1,20 @@
+BreadMaker(name=Alex Jones, job_satisfied=0.5, employer=bbb, salary=15.3, working_hours=8)
+
+BreadMaker(name=Alex Jones, job_satisfied=0.6, employer=bbb, salary=1.67, working_hours=8)
+
+PieMaker(name=Alex Jones, job_satisfied=0.7, employer=bbbccaa, salary=5.33, working_hours=8)
+
+PieMaker(name=Alex Jones, job_satisfied=0.8, employer=bbbccaa, salary=11.8, working_hours=8)
+
+PieMaker(name=Alex Jones, job_satisfied=0.9, employer=bbbccaa, salary=10.87, working_hours=8)
+
+PieMaker(name=Alex Jones, job_satisfied=1.0, employer=bbbccaa, salary=4.14, working_hours=8)
+
+PieMaker(name=Alex Jones, job_satisfied=1.0, employer=bbbccaa, salary=5.54, working_hours=8)
+
+PieMaker(name=Alex Jones, job_satisfied=1.0, employer=bbbccaa, salary=6.98, working_hours=8)
+
+PieMaker(name=Alex Jones, job_satisfied=1.0, employer=bbbccaa, salary=5.85, working_hours=8)
+
+PieMaker(name=Alex Jones, job_satisfied=1.0, employer=bbbccaa, salary=6.96, working_hours=8)
+

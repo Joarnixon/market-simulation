@@ -1,0 +1,20 @@
+MilkMaker(name=David Jones, job_satisfied=0.5, employer=bbb, salary=17.02, working_hours=8)
+
+MilkMaker(name=David Jones, job_satisfied=0.6, employer=bbb, salary=0.78, working_hours=8)
+
+MilkMaker(name=David Jones, job_satisfied=0.7, employer=bbb, salary=0.9, working_hours=8)
+
+MilkMaker(name=David Jones, job_satisfied=0.8, employer=bbb, salary=1.04, working_hours=8)
+
+MilkMaker(name=David Jones, job_satisfied=0.7, employer=bbb, salary=0.84, working_hours=8)
+
+MilkMaker(name=David Jones, job_satisfied=0.6, employer=bbb, salary=1.6, working_hours=8)
+
+MilkMaker(name=David Jones, job_satisfied=0.5, employer=bbb, salary=1.72, working_hours=8)
+
+MilkMaker(name=David Jones, job_satisfied=0.59, employer=bbb, salary=1.36, working_hours=8)
+
+MilkMaker(name=David Jones, job_satisfied=0.49, employer=bbb, salary=0.57, working_hours=8)
+
+MilkMaker(name=David Jones, job_satisfied=0.59, employer=bbb, salary=0.88, working_hours=8)
+

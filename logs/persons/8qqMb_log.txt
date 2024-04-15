@@ -1,0 +1,20 @@
+Person(name=Michael Jones, budget=33.61, starvation=3200, age=18.1, satisfaction=-2.05, jobs=['MilkMaker(name=Michael Jones, job_satisfied=0.5, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.63], memory_salary=[5.24], birth=15, workaholic=0.28, needs=0.05
+
+Person(name=Michael Jones, budget=33.91, starvation=1200, age=18.200000000000003, satisfaction=-3.13, jobs=['MilkMaker(name=Michael Jones, job_satisfied=0.6, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.63 0.  ], memory_salary=[5.24 0.3 ], birth=16, workaholic=0.28, needs=0.15000000000000002
+
+Person(name=Michael Jones, budget=34.13, starvation=1020, age=18.300000000000004, satisfaction=0.26, jobs=['MilkMaker(name=Michael Jones, job_satisfied=0.7, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.63 0.   0.72], memory_salary=[5.24 0.3  0.94], birth=17, workaholic=0.28, needs=0.25
+
+Person(name=Michael Jones, budget=35.83, starvation=-980, age=18.400000000000006, satisfaction=-0.92, jobs=['MilkMaker(name=Michael Jones, job_satisfied=0.8, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.63 0.   0.72 0.  ], memory_salary=[5.24 0.3  0.94 1.7 ], birth=18, workaholic=0.28, needs=0.35
+
+Person(name=Michael Jones, budget=36.55, starvation=490, age=18.500000000000007, satisfaction=0.34, jobs=['MilkMaker(name=Michael Jones, job_satisfied=0.9, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.63 0.   0.72 0.   1.17], memory_salary=[5.24 0.3  0.94 1.7  1.89], birth=19, workaholic=0.28, needs=0.44999999999999996
+
+Person(name=Michael Jones, budget=37.31, starvation=-80, age=18.60000000000001, satisfaction=0.35, jobs=['MilkMaker(name=Michael Jones, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.   0.72 0.   1.17 0.46], memory_salary=[0.3  0.94 1.7  1.89 1.22], birth=20, workaholic=0.28, needs=0.5499999999999999
+
+Person(name=Michael Jones, budget=37.96, starvation=780, age=18.70000000000001, satisfaction=-0.25, jobs=['MilkMaker(name=Michael Jones, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.72 0.   1.17 0.46 0.81], memory_salary=[0.94 1.7  1.89 1.22 1.46], birth=21, workaholic=0.28, needs=0.6499999999999999
+
+Person(name=Michael Jones, budget=39.92, starvation=-1220, age=18.80000000000001, satisfaction=-1.62, jobs=['MilkMaker(name=Michael Jones, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.   1.17 0.46 0.81 0.  ], memory_salary=[1.7  1.89 1.22 1.46 1.96], birth=22, workaholic=0.28, needs=0.7499999999999999
+
+Person(name=Michael Jones, budget=40.24, starvation=-1400, age=18.900000000000013, satisfaction=-2.62, jobs=['CerealMaker(name=Michael Jones, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.17 0.46 0.81 0.   0.74], memory_salary=[1.89 1.22 1.46 1.96 1.06], birth=23, workaholic=0.28, needs=0.8499999999999999
+
+Person(name=Michael Jones, budget=40.1, starvation=240, age=19.000000000000014, satisfaction=-3.83, jobs=['CerealMaker(name=Michael Jones, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.46 0.81 0.   0.74 1.42], memory_salary=[1.22 1.46 1.96 1.06 1.28], birth=24, workaholic=0.28, needs=0.9499999999999998
+

@@ -1,0 +1,20 @@
+BreadMaker(name=Charlie Jones, job_satisfied=0.5, employer=bbbccaa, salary=12.88, working_hours=8)
+
+BreadMaker(name=Charlie Jones, job_satisfied=0.6, employer=bbbccaa, salary=1.0, working_hours=8)
+
+BreadMaker(name=Charlie Jones, job_satisfied=0.7, employer=bbbccaa, salary=1.15, working_hours=8)
+
+BreadMaker(name=Charlie Jones, job_satisfied=0.8, employer=bbbccaa, salary=3.33, working_hours=8)
+
+BreadMaker(name=Charlie Jones, job_satisfied=0.9, employer=bbbccaa, salary=4.26, working_hours=8)
+
+BreadMaker(name=Charlie Jones, job_satisfied=1.0, employer=bbbccaa, salary=1.93, working_hours=8)
+
+CerealMaker(name=Charlie Jones, job_satisfied=1.0, employer=bbbccaa, salary=2.02, working_hours=8)
+
+CerealMaker(name=Charlie Jones, job_satisfied=1.0, employer=bbbccaa, salary=1.42, working_hours=8)
+
+MilkMaker(name=Charlie Jones, job_satisfied=1.0, employer=bbbccaa, salary=2.39, working_hours=8)
+
+MilkMaker(name=Charlie Jones, job_satisfied=1.0, employer=bbbccaa, salary=1.44, working_hours=8)
+

@@ -1,0 +1,20 @@
+CerealMaker(name=Garry Thompson, job_satisfied=0.5, employer=bbb, salary=8.8, working_hours=8)
+
+CerealMaker(name=Garry Thompson, job_satisfied=0.6, employer=bbb, salary=1.52, working_hours=8)
+
+CerealMaker(name=Garry Thompson, job_satisfied=0.7, employer=bbb, salary=1.85, working_hours=8)
+
+CerealMaker(name=Garry Thompson, job_satisfied=0.8, employer=bbb, salary=1.63, working_hours=8)
+
+CerealMaker(name=Garry Thompson, job_satisfied=0.9, employer=bbb, salary=0.68, working_hours=8)
+
+CerealMaker(name=Garry Thompson, job_satisfied=1.0, employer=bbb, salary=3.41, working_hours=8)
+
+CerealMaker(name=Garry Thompson, job_satisfied=1.0, employer=bbb, salary=1.63, working_hours=8)
+
+CerealMaker(name=Garry Thompson, job_satisfied=1.0, employer=bbb, salary=0.65, working_hours=8)
+
+CerealMaker(name=Garry Thompson, job_satisfied=1.0, employer=bbb, salary=0.75, working_hours=8)
+
+CerealMaker(name=Garry Thompson, job_satisfied=1.0, employer=bbb, salary=0.42, working_hours=8)
+

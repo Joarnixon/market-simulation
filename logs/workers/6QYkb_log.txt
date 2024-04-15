@@ -1,0 +1,20 @@
+PieMaker(name=Charlie Anderson, job_satisfied=0.5, employer=bbb, salary=14.04, working_hours=8)
+
+PieMaker(name=Charlie Anderson, job_satisfied=0.6, employer=bbb, salary=1.19, working_hours=8)
+
+PieMaker(name=Charlie Anderson, job_satisfied=0.7, employer=bbb, salary=0.83, working_hours=8)
+
+PieMaker(name=Charlie Anderson, job_satisfied=0.8, employer=bbb, salary=0.93, working_hours=8)
+
+PieMaker(name=Charlie Anderson, job_satisfied=0.9, employer=bbb, salary=0.65, working_hours=8)
+
+PieMaker(name=Charlie Anderson, job_satisfied=0.8, employer=bbb, salary=2.36, working_hours=8)
+
+PieMaker(name=Charlie Anderson, job_satisfied=0.8, employer=bbb, salary=2.44, working_hours=8)
+
+PieMaker(name=Charlie Anderson, job_satisfied=0.9, employer=bbb, salary=0.66, working_hours=8)
+
+PieMaker(name=Charlie Anderson, job_satisfied=1.0, employer=bbb, salary=1.86, working_hours=8)
+
+PieMaker(name=Charlie Anderson, job_satisfied=1.0, employer=bbb, salary=2.97, working_hours=8)
+

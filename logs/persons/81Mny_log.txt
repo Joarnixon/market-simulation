@@ -1,0 +1,20 @@
+Person(name=Samantha Davis, budget=32.74, starvation=1380, age=18.1, satisfaction=-1.42, jobs=['MilkMaker(name=Samantha Davis, job_satisfied=0.5, employer=bbb, salary=0, working_hours=8)'], memory_spent=[1.09], memory_salary=[3.83], birth=15, workaholic=0.34, needs=0.05
+
+Person(name=Samantha Davis, budget=33.53, starvation=-620, age=18.200000000000003, satisfaction=-2.5, jobs=['MilkMaker(name=Samantha Davis, job_satisfied=0.6, employer=bbb, salary=0, working_hours=8)'], memory_spent=[1.09 0.  ], memory_salary=[3.83 0.79], birth=16, workaholic=0.34, needs=0.15000000000000002
+
+Person(name=Samantha Davis, budget=32.35, starvation=480, age=18.300000000000004, satisfaction=12.64, jobs=['MeatMaker(name=Samantha Davis, job_satisfied=0.7, employer=bbb, salary=0, working_hours=8)'], memory_spent=[1.09 0.   1.89], memory_salary=[3.83 0.79 0.7 ], birth=17, workaholic=0.34, needs=0.25
+
+Person(name=Samantha Davis, budget=32.96, starvation=-1520, age=18.400000000000006, satisfaction=11.57, jobs=['MeatMaker(name=Samantha Davis, job_satisfied=0.8, employer=bbb, salary=0, working_hours=8)'], memory_spent=[1.09 0.   1.89 0.  ], memory_salary=[3.83 0.79 0.7  0.61], birth=18, workaholic=0.34, needs=0.15
+
+Person(name=Samantha Davis, budget=31.96, starvation=30, age=18.500000000000007, satisfaction=13.37, jobs=['MilkMaker(name=Samantha Davis, job_satisfied=0.5, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.09 0.   1.89 0.   1.41], memory_salary=[3.83 0.79 0.7  0.61 0.42], birth=19, workaholic=0.34, needs=0.05
+
+Person(name=Samantha Davis, budget=31.97, starvation=330, age=18.60000000000001, satisfaction=13.98, jobs=['MeatMaker(name=Samantha Davis, job_satisfied=0.4, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.   1.89 0.   1.41 1.25], memory_salary=[0.79 0.7  0.61 0.42 1.26], birth=20, workaholic=0.34, needs=0.05
+
+Person(name=Samantha Davis, budget=32.09, starvation=1410, age=18.70000000000001, satisfaction=15.75, jobs=['MeatMaker(name=Samantha Davis, job_satisfied=0.3, employer=bbb, salary=0, working_hours=8)'], memory_spent=[1.89 0.   1.41 1.25 0.87], memory_salary=[0.7  0.61 0.42 1.26 0.99], birth=21, workaholic=0.34, needs=0.05
+
+Person(name=Samantha Davis, budget=30.9, starvation=1710, age=18.80000000000001, satisfaction=21.44, jobs=['MeatMaker(name=Samantha Davis, job_satisfied=0.2, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.   1.41 1.25 0.87 1.44], memory_salary=[0.61 0.42 1.26 0.99 0.25], birth=22, workaholic=0.34, needs=0.12000000000000001
+
+Person(name=Samantha Davis, budget=29.73, starvation=2740, age=18.900000000000013, satisfaction=22.58, jobs=['MeatMaker(name=Samantha Davis, job_satisfied=0.1, employer=bbb, salary=0, working_hours=8)'], memory_spent=[1.41 1.25 0.87 1.44 1.83], memory_salary=[0.42 1.26 0.99 0.25 0.66], birth=23, workaholic=0.34, needs=0.05
+
+Person(name=Samantha Davis, budget=29.96, starvation=1540, age=19.000000000000014, satisfaction=22.05, jobs=['CerealMaker(name=Samantha Davis, job_satisfied=0.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.25 0.87 1.44 1.83 0.66], memory_salary=[1.26 0.99 0.25 0.66 0.89], birth=24, workaholic=0.34, needs=0.05
+

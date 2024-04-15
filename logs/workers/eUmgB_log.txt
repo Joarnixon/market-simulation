@@ -1,0 +1,20 @@
+MilkMaker(name=John Simpson, job_satisfied=0.5, employer=bbb, salary=5.47, working_hours=8)
+
+MilkMaker(name=John Simpson, job_satisfied=0.6, employer=bbb, salary=1.01, working_hours=8)
+
+MilkMaker(name=John Simpson, job_satisfied=0.7, employer=bbb, salary=1.16, working_hours=8)
+
+MilkMaker(name=John Simpson, job_satisfied=0.8, employer=bbb, salary=1.33, working_hours=8)
+
+MilkMaker(name=John Simpson, job_satisfied=0.9, employer=bbb, salary=1.07, working_hours=8)
+
+MilkMaker(name=John Simpson, job_satisfied=0.8, employer=bbb, salary=2.3, working_hours=8)
+
+MilkMaker(name=John Simpson, job_satisfied=0.7, employer=bbb, salary=2.48, working_hours=8)
+
+MilkMaker(name=John Simpson, job_satisfied=0.8, employer=bbb, salary=1.97, working_hours=8)
+
+MilkMaker(name=John Simpson, job_satisfied=0.9, employer=bbb, salary=0.82, working_hours=8)
+
+MilkMaker(name=John Simpson, job_satisfied=1.0, employer=bbb, salary=1.43, working_hours=8)
+

@@ -1,0 +1,20 @@
+MeatMaker(name=Paul Williams, job_satisfied=0.5, employer=bbb, salary=67.88, working_hours=8)
+
+MeatMaker(name=Paul Williams, job_satisfied=0.6, employer=bbb, salary=1.31, working_hours=8)
+
+MeatMaker(name=Paul Williams, job_satisfied=0.7, employer=bbb, salary=0.9, working_hours=8)
+
+MeatMaker(name=Paul Williams, job_satisfied=0.8, employer=bbb, salary=0.79, working_hours=8)
+
+MeatMaker(name=Paul Williams, job_satisfied=0.9, employer=bbb, salary=0.54, working_hours=8)
+
+MeatMaker(name=Paul Williams, job_satisfied=0.8, employer=bbb, salary=2.76, working_hours=8)
+
+MeatMaker(name=Paul Williams, job_satisfied=0.9, employer=bbb, salary=1.64, working_hours=8)
+
+MeatMaker(name=Paul Williams, job_satisfied=1.0, employer=bbb, salary=0.47, working_hours=8)
+
+MeatMaker(name=Paul Williams, job_satisfied=1.0, employer=bbb, salary=1.41, working_hours=8)
+
+BreadMaker(name=Paul Williams, job_satisfied=0.9, employer=bbb, salary=1.46, working_hours=8)
+

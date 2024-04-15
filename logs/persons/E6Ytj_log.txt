@@ -1,0 +1,20 @@
+Person(name=Robert Wilson, budget=38.19, starvation=-450, age=18.1, satisfaction=-1.06, jobs=['PieMaker(name=Robert Wilson, job_satisfied=0.5, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.15], memory_salary=[8.34], birth=12, workaholic=0.15, needs=0.05
+
+Person(name=Robert Wilson, budget=38.42, starvation=300, age=18.200000000000003, satisfaction=16.19, jobs=['PieMaker(name=Robert Wilson, job_satisfied=0.6, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.15 0.74], memory_salary=[8.34 0.97], birth=13, workaholic=0.15, needs=0.15000000000000002
+
+Person(name=Robert Wilson, budget=38.49, starvation=500, age=18.300000000000004, satisfaction=29.15, jobs=['PieMaker(name=Robert Wilson, job_satisfied=0.7, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.15 0.74 0.6 ], memory_salary=[8.34 0.97 0.67], birth=14, workaholic=0.15, needs=0.25
+
+Person(name=Robert Wilson, budget=38.66, starvation=700, age=18.400000000000006, satisfaction=29.63, jobs=['PieMaker(name=Robert Wilson, job_satisfied=0.8, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.15 0.74 0.6  0.6 ], memory_salary=[8.34 0.97 0.67 0.76], birth=15, workaholic=0.15, needs=0.35
+
+Person(name=Robert Wilson, budget=38.58, starvation=900, age=18.500000000000007, satisfaction=29.6, jobs=['PieMaker(name=Robert Wilson, job_satisfied=0.83, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.15 0.74 0.6  0.6  0.61], memory_salary=[8.34 0.97 0.67 0.76 0.53], birth=16, workaholic=0.15, needs=0.44999999999999996
+
+Person(name=Robert Wilson, budget=39.83, starvation=1100, age=18.60000000000001, satisfaction=29.14, jobs=['PieMaker(name=Robert Wilson, job_satisfied=0.76, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.74 0.6  0.6  0.61 0.6 ], memory_salary=[0.97 0.67 0.76 0.53 1.85], birth=17, workaholic=0.15, needs=0.48999999999999994
+
+Person(name=Robert Wilson, budget=41.15, starvation=1300, age=18.70000000000001, satisfaction=29.54, jobs=['PieMaker(name=Robert Wilson, job_satisfied=0.86, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.6  0.6  0.61 0.6  0.62], memory_salary=[0.67 0.76 0.53 1.85 1.94], birth=18, workaholic=0.15, needs=0.59
+
+Person(name=Robert Wilson, budget=41.07, starvation=1500, age=18.80000000000001, satisfaction=30.42, jobs=['BreadMaker(name=Robert Wilson, job_satisfied=0.96, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.6  0.61 0.6  0.62 0.63], memory_salary=[0.76 0.53 1.85 1.94 0.55], birth=19, workaholic=0.15, needs=0.69
+
+Person(name=Robert Wilson, budget=43.31, starvation=-500, age=18.900000000000013, satisfaction=29.03, jobs=['BreadMaker(name=Robert Wilson, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.61 0.6  0.62 0.63 0.  ], memory_salary=[0.53 1.85 1.94 0.55 2.24], birth=20, workaholic=0.15, needs=0.7899999999999999
+
+Person(name=Robert Wilson, budget=43.51, starvation=250, age=19.000000000000014, satisfaction=28.05, jobs=['MeatMaker(name=Robert Wilson, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.6  0.62 0.63 0.   0.78], memory_salary=[1.85 1.94 0.55 2.24 0.98], birth=21, workaholic=0.15, needs=0.8899999999999999
+

@@ -1,0 +1,20 @@
+Person(name=Paul Jones, budget=307.43, starvation=3200, age=18.1, satisfaction=-1.94, jobs=['CerealMaker(name=Paul Jones, job_satisfied=0.5, employer=bbb, salary=0, working_hours=8)'], memory_spent=[1.8], memory_salary=[79.23], birth=31, workaholic=0.94, needs=0.05
+
+Person(name=Paul Jones, budget=312.03, starvation=1200, age=18.200000000000003, satisfaction=-3.01, jobs=['PieMaker(name=Paul Jones, job_satisfied=0.6, employer=bbb, salary=0, working_hours=8)'], memory_spent=[1.8 0. ], memory_salary=[79.23  2.07], birth=32, workaholic=0.94, needs=0.15000000000000002
+
+Person(name=Paul Jones, budget=306.46, starvation=-800, age=18.300000000000004, satisfaction=-4.14, jobs=['PieMaker(name=Paul Jones, job_satisfied=0.7, employer=bbb, salary=0, working_hours=8)'], memory_spent=[1.8 0.  0. ], memory_salary=[79.23  2.07  6.01], birth=33, workaholic=0.94, needs=0.25
+
+Person(name=Paul Jones, budget=305.58, starvation=60, age=18.400000000000006, satisfaction=3.66, jobs=['PieMaker(name=Paul Jones, job_satisfied=0.8, employer=bbb, salary=0, working_hours=8)'], memory_spent=[1.8  0.   0.   1.14], memory_salary=[79.23  2.07  6.01  6.57], birth=34, workaholic=0.94, needs=0.35
+
+Person(name=Paul Jones, budget=298.61, starvation=-1940, age=18.500000000000007, satisfaction=2.44, jobs=['PieMaker(name=Paul Jones, job_satisfied=0.9, employer=bbb, salary=0, working_hours=8)'], memory_spent=[1.8  0.   0.   1.14 0.  ], memory_salary=[79.23  2.07  6.01  6.57  4.55], birth=35, workaholic=0.94, needs=0.44999999999999996
+
+Person(name=Paul Jones, budget=302.44, starvation=-1080, age=18.60000000000001, satisfaction=11.58, jobs=['PieMaker(name=Paul Jones, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.   0.   1.14 0.   0.96], memory_salary=[ 2.07  6.01  6.57  4.55 16.81], birth=36, workaholic=0.94, needs=0.5499999999999999
+
+Person(name=Paul Jones, budget=308.86, starvation=-220, age=18.70000000000001, satisfaction=27.36, jobs=['PieMaker(name=Paul Jones, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.   1.14 0.   0.96 0.98], memory_salary=[ 6.01  6.57  4.55 16.81 18.44], birth=37, workaholic=0.94, needs=0.6499999999999999
+
+Person(name=Paul Jones, budget=308.81, starvation=-400, age=18.80000000000001, satisfaction=39.31, jobs=['PieMaker(name=Paul Jones, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[1.14 0.   0.96 0.98 0.8 ], memory_salary=[ 6.57  4.55 16.81 18.44  4.59], birth=38, workaholic=0.94, needs=0.7499999999999999
+
+Person(name=Paul Jones, budget=314.64, starvation=1240, age=18.900000000000013, satisfaction=47.37, jobs=['PieMaker(name=Paul Jones, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.   0.96 0.98 0.8  1.48], memory_salary=[ 4.55 16.81 18.44  4.59 11.55], birth=39, workaholic=0.94, needs=0.8499999999999999
+
+Person(name=Paul Jones, budget=327.07, starvation=-760, age=19.000000000000014, satisfaction=45.89, jobs=['PieMaker(name=Paul Jones, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.96 0.98 0.8  1.48 0.  ], memory_salary=[16.81 18.44  4.59 11.55 16.51], birth=40, workaholic=0.94, needs=0.9499999999999998
+

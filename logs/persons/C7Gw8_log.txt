@@ -1,0 +1,20 @@
+Person(name=Samantha Smith, budget=31.26, starvation=5900, age=18.1, satisfaction=-4.15, jobs=['MilkMaker(name=Samantha Smith, job_satisfied=0.5, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.38], memory_salary=[4.64], birth=26, workaholic=0.71, needs=0.05
+
+Person(name=Samantha Smith, budget=31.66, starvation=3900, age=18.200000000000003, satisfaction=-5.22, jobs=['MilkMaker(name=Samantha Smith, job_satisfied=0.4, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.38 0.  ], memory_salary=[4.64 0.4 ], birth=27, workaholic=0.71, needs=0.15000000000000002
+
+Person(name=Samantha Smith, budget=31.18, starvation=4600, age=18.300000000000004, satisfaction=-3.35, jobs=['MilkMaker(name=Samantha Smith, job_satisfied=0.39, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.38 0.   1.57], memory_salary=[4.64 0.4  1.09], birth=28, workaholic=0.71, needs=0.25
+
+Person(name=Samantha Smith, budget=33.04, starvation=2600, age=18.400000000000006, satisfaction=-4.46, jobs=['MilkMaker(name=Samantha Smith, job_satisfied=0.29, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.38 0.   1.57 0.  ], memory_salary=[4.64 0.4  1.09 1.86], birth=29, workaholic=0.71, needs=0.21
+
+Person(name=Samantha Smith, budget=34.4, starvation=2030, age=18.500000000000007, satisfaction=-4.19, jobs=['MilkMaker(name=Samantha Smith, job_satisfied=0.39, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.38 0.   1.57 0.   0.46], memory_salary=[4.64 0.4  1.09 1.86 1.82], birth=30, workaholic=0.71, needs=0.31
+
+Person(name=Samantha Smith, budget=35.6, starvation=30, age=18.60000000000001, satisfaction=-5.39, jobs=['MeatMaker(name=Samantha Smith, job_satisfied=0.49, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.   1.57 0.   0.46 0.  ], memory_salary=[0.4  1.09 1.86 1.82 1.2 ], birth=31, workaholic=0.71, needs=0.41000000000000003
+
+Person(name=Samantha Smith, budget=36.3, starvation=10, age=18.70000000000001, satisfaction=-5.06, jobs=['MeatMaker(name=Samantha Smith, job_satisfied=0.59, employer=bbb, salary=0, working_hours=8)'], memory_spent=[1.57 0.   0.46 0.   0.65], memory_salary=[1.09 1.86 1.82 1.2  1.35], birth=32, workaholic=0.71, needs=0.51
+
+Person(name=Samantha Smith, budget=36.03, starvation=-10, age=18.80000000000001, satisfaction=-5.37, jobs=['MeatMaker(name=Samantha Smith, job_satisfied=0.69, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.   0.46 0.   0.65 0.65], memory_salary=[1.86 1.82 1.2  1.35 0.39], birth=33, workaholic=0.71, needs=0.61
+
+Person(name=Samantha Smith, budget=37.04, starvation=-1460, age=18.900000000000013, satisfaction=-6.52, jobs=['PieMaker(name=Samantha Smith, job_satisfied=0.79, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.46 0.   0.65 0.65 0.19], memory_salary=[1.82 1.2  1.35 0.39 1.19], birth=34, workaholic=0.71, needs=0.71
+
+Person(name=Samantha Smith, budget=39.44, starvation=-930, age=19.000000000000014, satisfaction=-7.58, jobs=['PieMaker(name=Samantha Smith, job_satisfied=0.89, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.   0.65 0.65 0.19 0.83], memory_salary=[1.2  1.35 0.39 1.19 3.23], birth=35, workaholic=0.71, needs=0.8099999999999999
+

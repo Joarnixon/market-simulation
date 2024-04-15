@@ -1,0 +1,18 @@
+Person(name=Samantha Thomas, budget=26.91, starvation=4000, age=18.1, satisfaction=-3.57, jobs=[], memory_spent=[3.09], memory_salary=[0], birth=0, workaholic=0.61, needs=0.05
+
+Person(name=Samantha Thomas, budget=26.91, starvation=2000, age=18.200000000000003, satisfaction=-4.6, jobs=['CerealMaker(name=Samantha Thomas, job_satisfied=0.5, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.09 0.  ], memory_salary=[0 0], birth=1, workaholic=0.61, needs=0.05
+
+Person(name=Samantha Thomas, budget=27.91, starvation=0, age=18.300000000000004, satisfaction=-5.62, jobs=['CerealMaker(name=Samantha Thomas, job_satisfied=0.4, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.09 0.   0.  ], memory_salary=[0. 0. 1.], birth=2, workaholic=0.61, needs=0.05
+
+Person(name=Samantha Thomas, budget=29.11, starvation=-1450, age=18.400000000000006, satisfaction=-6.35, jobs=['CerealMaker(name=Samantha Thomas, job_satisfied=0.3, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.09 0.   0.   0.15], memory_salary=[0.   0.   1.   1.35], birth=3, workaholic=0.61, needs=0.15000000000000002
+
+Person(name=Samantha Thomas, budget=28.61, starvation=360, age=18.500000000000007, satisfaction=-3.58, jobs=['CerealMaker(name=Samantha Thomas, job_satisfied=0.4, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.09 0.   0.   0.15 1.68], memory_salary=[0.   0.   1.   1.35 1.18], birth=4, workaholic=0.61, needs=0.25
+
+Person(name=Samantha Thomas, budget=29.62, starvation=-1640, age=18.60000000000001, satisfaction=-4.75, jobs=['MilkMaker(name=Samantha Thomas, job_satisfied=0.5, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.   0.   0.15 1.68 0.  ], memory_salary=[0.   1.   1.35 1.18 1.01], birth=5, workaholic=0.61, needs=0.35
+
+Person(name=Samantha Thomas, budget=30.33, starvation=-2840, age=18.70000000000001, satisfaction=-4.86, jobs=['MilkMaker(name=Samantha Thomas, job_satisfied=0.6, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.   0.15 1.68 0.   0.63], memory_salary=[1.   1.35 1.18 1.01 1.34], birth=6, workaholic=0.61, needs=0.44999999999999996
+
+Person(name=Samantha Thomas, budget=29.68, starvation=-3090, age=18.80000000000001, satisfaction=-3.73, jobs=['MilkMaker(name=Samantha Thomas, job_satisfied=0.62, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.15 1.68 0.   0.63 1.22], memory_salary=[1.35 1.18 1.01 1.34 0.57], birth=7, workaholic=0.61, needs=0.5499999999999999
+
+Person(name=Samantha Thomas, budget=29.18, starvation=-580, age=18.900000000000013, satisfaction=-3.77, jobs=['MilkMaker(name=Samantha Thomas, job_satisfied=0.67, employer=bbb, salary=0, working_hours=8)'], memory_spent=[1.68 0.   0.63 1.22 1.44], memory_salary=[1.18 1.01 1.34 0.57 0.94], birth=8, workaholic=0.61, needs=0.58
+

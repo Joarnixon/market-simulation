@@ -1,0 +1,20 @@
+Person(name=Sam Brown, budget=35.27, starvation=1380, age=18.1, satisfaction=-1.48, jobs=['MeatMaker(name=Sam Brown, job_satisfied=0.5, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.87], memory_salary=[6.14], birth=24, workaholic=0.14, needs=0.05
+
+Person(name=Sam Brown, budget=35.58, starvation=-620, age=18.200000000000003, satisfaction=-2.55, jobs=['MeatMaker(name=Sam Brown, job_satisfied=0.6, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.87 0.  ], memory_salary=[6.14 0.31], birth=25, workaholic=0.14, needs=0.15000000000000002
+
+Person(name=Sam Brown, budget=35.12, starvation=-620, age=18.300000000000004, satisfaction=15.13, jobs=['MeatMaker(name=Sam Brown, job_satisfied=0.7, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.87 0.   1.59], memory_salary=[6.14 0.31 1.13], birth=26, workaholic=0.14, needs=0.25
+
+Person(name=Sam Brown, budget=36.24, starvation=-1190, age=18.400000000000006, satisfaction=14.32, jobs=['MeatMaker(name=Sam Brown, job_satisfied=0.8, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.87 0.   1.59 0.4 ], memory_salary=[6.14 0.31 1.13 1.52], birth=27, workaholic=0.14, needs=0.18
+
+Person(name=Sam Brown, budget=37.49, starvation=-190, age=18.500000000000007, satisfaction=19.2, jobs=['MeatMaker(name=Sam Brown, job_satisfied=0.9, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.87 0.   1.59 0.4  1.24], memory_salary=[6.14 0.31 1.13 1.52 2.49], birth=28, workaholic=0.14, needs=0.28
+
+Person(name=Sam Brown, budget=36.65, starvation=840, age=18.60000000000001, satisfaction=25.56, jobs=['CerealMaker(name=Sam Brown, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.   1.59 0.4  1.24 1.67], memory_salary=[0.31 1.13 1.52 2.49 0.83], birth=29, workaholic=0.14, needs=0.38
+
+Person(name=Sam Brown, budget=36.72, starvation=40, age=18.70000000000001, satisfaction=27.04, jobs=['CerealMaker(name=Sam Brown, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.59 0.4  1.24 1.67 0.95], memory_salary=[1.13 1.52 2.49 0.83 1.02], birth=30, workaholic=0.14, needs=0.48
+
+Person(name=Sam Brown, budget=36.97, starvation=-310, age=18.80000000000001, satisfaction=26.87, jobs=['CerealMaker(name=Sam Brown, job_satisfied=0.9, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.4  1.24 1.67 0.95 0.47], memory_salary=[1.52 2.49 0.83 1.02 0.72], birth=31, workaholic=0.14, needs=0.38
+
+Person(name=Sam Brown, budget=37.55, starvation=-1210, age=18.900000000000013, satisfaction=26.47, jobs=['CerealMaker(name=Sam Brown, job_satisfied=0.8, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.24 1.67 0.95 0.47 0.32], memory_salary=[2.49 0.83 1.02 0.72 0.9 ], birth=32, workaholic=0.14, needs=0.48
+
+Person(name=Sam Brown, budget=36.68, starvation=-810, age=19.000000000000014, satisfaction=26.68, jobs=['CerealMaker(name=Sam Brown, job_satisfied=0.9, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.67 0.95 0.47 0.32 1.9 ], memory_salary=[0.83 1.02 0.72 0.9  1.03], birth=33, workaholic=0.14, needs=0.58
+

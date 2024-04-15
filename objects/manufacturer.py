@@ -6,7 +6,8 @@ from objects.products import Products
 from objects.worker import assignClass, ManufactureWorker
 from settings.constants import *
 from typing import Union
-from other.utils import f_round, assign_numbers, cluster_data
+from other.utils import f_round, assign_numbers, cluster_data, generate_id
+from other.logs import Logger
 
 
 # TODO: technology param skipped
@@ -17,6 +18,7 @@ class BaseManufacturer:
         self.products: list[Products] = products
         self.technology_param = technology_param
         self.days: int = 1
+        self.uid: str = generate_id()
         self.from_start: bool = True
         self.storage: dict[Products, float] = {product: 0 for product in products}
         self.raw_material_storage: dict[Products, float] = {product: 0 for product in products}
@@ -37,6 +39,9 @@ class BaseManufacturer:
         self.brains = {'salary': LinearRegression(), 'technology_param': LinearRegression()}
 
         self.forcheck_n = {}
+
+    def __str__(self):
+        return f'Manufacturer(name={self.as_person.name}, budget={round(self.budget, 2)}, payed={np.round(list(self.payed.values()), 2)}, salary={np.round(list(self.salary.values()), 2)}, wage={np.round(list(self.wage_rate.values()), 2)}, technology={round(self.technology_param, 2)}, n_workers={np.round(list(self.num_workers.values()), 2)}, storage={np.round(list(self.storage.values()), 2)}, income={np.round(list(self.daily_income.values()), 2)})'
 
     @property
     def budget(self):
@@ -217,6 +222,7 @@ class BaseManufacturer:
 
 
 class Manufacturer(BaseManufacturer):
+    globalLogger = Logger('logs/manufacturers')
 
     def __init__(self, as_person, name: str, products: list[Products], number_of_vacancies: dict, salary: dict, technology_param: float):
         super().__init__(name=name, as_person=as_person, products=products, technology_param=technology_param, salary=salary)
@@ -235,6 +241,10 @@ class Manufacturer(BaseManufacturer):
         self.memory_income_total_business = []
         self.hr_changing_params = len(self.salary)
         self.business_changing_params = len(self.number_of_vacancies) + 1
+        self.logger = Manufacturer.globalLogger.get_logger(self.uid)
+
+    def __str__(self):
+        return f'Manufacturer(name={self.as_person.name}, budget={round(self.budget, 2)}, payed={np.round(list(self.payed.values()), 2)}, income={np.round(list(self.daily_income_before.values()), 2)}, salary={np.round(list(self.salary.values()), 2)}, n_workers={list(self.num_workers.values())}, wage={np.round(list(self.wage_rate.values()), 2)}, technology={round(self.technology_param, 2)}, storage={np.round(list(self.storage.values()), 2)})'
 
     def get_price_out(self, product):
         return 2.5 * PRODUCT_FIRST_PRICE[product.name]
@@ -369,6 +379,7 @@ class Manufacturer(BaseManufacturer):
             if self.number_of_vacancies[product] < self.num_workers[product]:
                 fired = self.num_workers[product] - self.number_of_vacancies[product]
                 self.fire(person=None, product=product, amount=fired)
+        self.logger.info(str(self) + '\n')
         self.days += 1
 
 

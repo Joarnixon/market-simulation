@@ -1,0 +1,20 @@
+Person(name=Garry Thomas, budget=37.83, starvation=1380, age=18.1, satisfaction=-1.39, jobs=['CerealMaker(name=Garry Thomas, job_satisfied=0.5, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.91], memory_salary=[8.74], birth=41, workaholic=0.83, needs=0.05
+
+Person(name=Garry Thomas, budget=39.78, starvation=-620, age=18.200000000000003, satisfaction=-2.46, jobs=['CerealMaker(name=Garry Thomas, job_satisfied=0.6, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.91 0.  ], memory_salary=[8.74 1.95], birth=42, workaholic=0.83, needs=0.15000000000000002
+
+Person(name=Garry Thomas, budget=41.37, starvation=-90, age=18.300000000000004, satisfaction=12.14, jobs=['CerealMaker(name=Garry Thomas, job_satisfied=0.7, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.91 0.   0.78], memory_salary=[8.74 1.95 2.37], birth=43, workaholic=0.83, needs=0.25
+
+Person(name=Garry Thomas, budget=43.16, starvation=-1690, age=18.400000000000006, satisfaction=12.66, jobs=['PieMaker(name=Garry Thomas, job_satisfied=0.8, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.91 0.   0.78 0.29], memory_salary=[8.74 1.95 2.37 2.09], birth=44, workaholic=0.83, needs=0.35
+
+Person(name=Garry Thomas, budget=43.7, starvation=-830, age=18.500000000000007, satisfaction=15.27, jobs=['PieMaker(name=Garry Thomas, job_satisfied=0.9, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.91 0.   0.78 0.29 0.89], memory_salary=[8.74 1.95 2.37 2.09 1.43], birth=45, workaholic=0.83, needs=0.44999999999999996
+
+Person(name=Garry Thomas, budget=47.83, starvation=30, age=18.60000000000001, satisfaction=16.35, jobs=['PieMaker(name=Garry Thomas, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.   0.78 0.29 0.89 0.91], memory_salary=[1.95 2.37 2.09 1.43 5.04], birth=46, workaholic=0.83, needs=0.5499999999999999
+
+Person(name=Garry Thomas, budget=53.7, starvation=-1970, age=18.70000000000001, satisfaction=15.03, jobs=['PieMaker(name=Garry Thomas, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.78 0.29 0.89 0.91 0.  ], memory_salary=[2.37 2.09 1.43 5.04 5.87], birth=47, workaholic=0.83, needs=0.6499999999999999
+
+Person(name=Garry Thomas, budget=53.52, starvation=320, age=18.80000000000001, satisfaction=18.91, jobs=['PieMaker(name=Garry Thomas, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.29 0.89 0.91 0.   1.79], memory_salary=[2.09 1.43 5.04 5.87 1.61], birth=48, workaholic=0.83, needs=0.7499999999999999
+
+Person(name=Garry Thomas, budget=57.66, starvation=-1680, age=18.900000000000013, satisfaction=17.48, jobs=['PieMaker(name=Garry Thomas, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.89 0.91 0.   1.79 0.  ], memory_salary=[1.43 5.04 5.87 1.61 4.14], birth=49, workaholic=0.83, needs=0.8499999999999999
+
+Person(name=Garry Thomas, budget=63.22, starvation=-1150, age=19.000000000000014, satisfaction=16.42, jobs=['PieMaker(name=Garry Thomas, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.91 0.   1.79 0.   0.8 ], memory_salary=[5.04 5.87 1.61 4.14 6.36], birth=50, workaholic=0.83, needs=0.9499999999999998
+

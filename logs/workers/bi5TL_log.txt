@@ -1,0 +1,20 @@
+MeatMaker(name=Samantha Jones, job_satisfied=0.5, employer=bbb, salary=22.74, working_hours=8)
+
+MeatMaker(name=Samantha Jones, job_satisfied=0.6, employer=bbb, salary=0.88, working_hours=8)
+
+MeatMaker(name=Samantha Jones, job_satisfied=0.7, employer=bbb, salary=0.6, working_hours=8)
+
+MeatMaker(name=Samantha Jones, job_satisfied=0.8, employer=bbb, salary=0.53, working_hours=8)
+
+MeatMaker(name=Samantha Jones, job_satisfied=0.9, employer=bbb, salary=0.36, working_hours=8)
+
+MeatMaker(name=Samantha Jones, job_satisfied=0.8, employer=bbb, salary=1.86, working_hours=8)
+
+MeatMaker(name=Samantha Jones, job_satisfied=0.9, employer=bbb, salary=1.1, working_hours=8)
+
+MeatMaker(name=Samantha Jones, job_satisfied=1.0, employer=bbb, salary=0.32, working_hours=8)
+
+MeatMaker(name=Samantha Jones, job_satisfied=1.0, employer=bbb, salary=0.95, working_hours=8)
+
+PieMaker(name=Samantha Jones, job_satisfied=0.92, employer=bbb, salary=2.44, working_hours=8)
+

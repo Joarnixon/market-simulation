@@ -1,0 +1,20 @@
+Person(name=David Williams, budget=37.1, starvation=1380, age=18.1, satisfaction=-1.46, jobs=['CerealMaker(name=David Williams, job_satisfied=0.5, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.02], memory_salary=[8.12], birth=9, workaholic=0.45, needs=0.05
+
+Person(name=David Williams, budget=36.89, starvation=1580, age=18.200000000000003, satisfaction=12.94, jobs=['CerealMaker(name=David Williams, job_satisfied=0.6, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.02 0.73], memory_salary=[8.12 0.52], birth=10, workaholic=0.45, needs=0.15000000000000002
+
+Person(name=David Williams, budget=38.16, starvation=-420, age=18.300000000000004, satisfaction=11.82, jobs=['CerealMaker(name=David Williams, job_satisfied=0.7, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.02 0.73 0.  ], memory_salary=[8.12 0.52 1.27], birth=11, workaholic=0.45, needs=0.25
+
+Person(name=David Williams, budget=40.32, starvation=-1320, age=18.400000000000006, satisfaction=11.65, jobs=['CerealMaker(name=David Williams, job_satisfied=0.8, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.02 0.73 0.   0.37], memory_salary=[8.12 0.52 1.27 2.52], birth=12, workaholic=0.45, needs=0.35
+
+Person(name=David Williams, budget=41.92, starvation=-460, age=18.500000000000007, satisfaction=13.36, jobs=['BreadMaker(name=David Williams, job_satisfied=0.9, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.02 0.73 0.   0.37 0.93], memory_salary=[8.12 0.52 1.27 2.52 2.53], birth=13, workaholic=0.45, needs=0.44999999999999996
+
+Person(name=David Williams, budget=42.29, starvation=400, age=18.60000000000001, satisfaction=15.16, jobs=['BreadMaker(name=David Williams, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.73 0.   0.37 0.93 1.14], memory_salary=[0.52 1.27 2.52 2.53 1.51], birth=14, workaholic=0.45, needs=0.5499999999999999
+
+Person(name=David Williams, budget=44.37, starvation=-1600, age=18.70000000000001, satisfaction=13.84, jobs=['BreadMaker(name=David Williams, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.   0.37 0.93 1.14 0.  ], memory_salary=[1.27 2.52 2.53 1.51 2.08], birth=15, workaholic=0.45, needs=0.6499999999999999
+
+Person(name=David Williams, budget=46.0, starvation=-740, age=18.80000000000001, satisfaction=13.77, jobs=['BreadMaker(name=David Williams, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.37 0.93 1.14 0.   0.91], memory_salary=[2.52 2.53 1.51 2.08 2.54], birth=16, workaholic=0.45, needs=0.7499999999999999
+
+Person(name=David Williams, budget=47.96, starvation=-1940, age=18.900000000000013, satisfaction=12.64, jobs=['BreadMaker(name=David Williams, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.93 1.14 0.   0.91 0.68], memory_salary=[2.53 1.51 2.08 2.54 2.64], birth=17, workaholic=0.45, needs=0.8499999999999999
+
+Person(name=David Williams, budget=49.94, starvation=-3140, age=19.000000000000014, satisfaction=11.26, jobs=['BreadMaker(name=David Williams, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.14 0.   0.91 0.68 0.68], memory_salary=[1.51 2.08 2.54 2.64 2.66], birth=18, workaholic=0.45, needs=0.9499999999999998
+

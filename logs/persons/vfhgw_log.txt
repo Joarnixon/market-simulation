@@ -1,0 +1,20 @@
+Person(name=David Thomas, budget=50.25, starvation=5900, age=18.1, satisfaction=-3.76, jobs=['CerealMaker(name=David Thomas, job_satisfied=0.5, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.13], memory_salary=[23.38], birth=3, workaholic=0.41, needs=0.05
+
+Person(name=David Thomas, budget=50.76, starvation=3900, age=18.200000000000003, satisfaction=-4.84, jobs=['CerealMaker(name=David Thomas, job_satisfied=0.6, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.13 0.  ], memory_salary=[23.38  0.51], birth=4, workaholic=0.41, needs=0.15000000000000002
+
+Person(name=David Thomas, budget=51.51, starvation=3330, age=18.300000000000004, satisfaction=11.22, jobs=['CerealMaker(name=David Thomas, job_satisfied=0.7, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.13 0.   0.49], memory_salary=[23.38  0.51  1.24], birth=5, workaholic=0.41, needs=0.25
+
+Person(name=David Thomas, budget=53.31, starvation=3310, age=18.400000000000006, satisfaction=10.98, jobs=['PieMaker(name=David Thomas, job_satisfied=0.8, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.13 0.   0.49 0.65], memory_salary=[23.38  0.51  1.24  2.46], birth=6, workaholic=0.41, needs=0.35
+
+Person(name=David Thomas, budget=58.41, starvation=2410, age=18.500000000000007, satisfaction=11.41, jobs=['PieMaker(name=David Thomas, job_satisfied=0.9, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.13 0.   0.49 0.65 0.32], memory_salary=[23.38  0.51  1.24  2.46  5.41], birth=7, workaholic=0.41, needs=0.44999999999999996
+
+Person(name=David Thomas, budget=60.26, starvation=410, age=18.60000000000001, satisfaction=10.14, jobs=['PieMaker(name=David Thomas, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.   0.49 0.65 0.32 0.  ], memory_salary=[0.51 1.24 2.46 5.41 1.85], birth=8, workaholic=0.41, needs=0.5499999999999999
+
+Person(name=David Thomas, budget=63.32, starvation=-1590, age=18.70000000000001, satisfaction=8.81, jobs=['PieMaker(name=David Thomas, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.49 0.65 0.32 0.   0.  ], memory_salary=[1.24 2.46 5.41 1.85 3.06], birth=9, workaholic=0.41, needs=0.6499999999999999
+
+Person(name=David Thomas, budget=65.85, starvation=370, age=18.80000000000001, satisfaction=9.27, jobs=['PieMaker(name=David Thomas, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.65 0.32 0.   0.   1.34], memory_salary=[2.46 5.41 1.85 3.06 3.87], birth=10, workaholic=0.41, needs=0.7499999999999999
+
+Person(name=David Thomas, budget=69.27, starvation=-1630, age=18.900000000000013, satisfaction=7.84, jobs=['PieMaker(name=David Thomas, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.32 0.   0.   1.34 0.  ], memory_salary=[5.41 1.85 3.06 3.87 3.42], birth=11, workaholic=0.41, needs=0.8499999999999999
+
+Person(name=David Thomas, budget=71.84, starvation=880, age=19.000000000000014, satisfaction=9.37, jobs=['PieMaker(name=David Thomas, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.   0.   1.34 0.   1.48], memory_salary=[1.85 3.06 3.87 3.42 4.05], birth=12, workaholic=0.41, needs=0.9499999999999998
+

@@ -1,0 +1,18 @@
+CerealMaker(name=Paul Thompson, job_satisfied=0.6, employer=bbbccaa, salary=0.6, working_hours=8)
+
+CerealMaker(name=Paul Thompson, job_satisfied=0.7, employer=bbbccaa, salary=1.47, working_hours=8)
+
+CerealMaker(name=Paul Thompson, job_satisfied=0.8, employer=bbbccaa, salary=2.92, working_hours=8)
+
+CerealMaker(name=Paul Thompson, job_satisfied=0.9, employer=bbbccaa, salary=2.92, working_hours=8)
+
+CerealMaker(name=Paul Thompson, job_satisfied=1.0, employer=bbbccaa, salary=1.79, working_hours=8)
+
+CerealMaker(name=Paul Thompson, job_satisfied=1.0, employer=bbbccaa, salary=1.83, working_hours=8)
+
+CerealMaker(name=Paul Thompson, job_satisfied=1.0, employer=bbbccaa, salary=1.28, working_hours=8)
+
+CerealMaker(name=Paul Thompson, job_satisfied=1.0, employer=bbbccaa, salary=1.39, working_hours=8)
+
+CerealMaker(name=Paul Thompson, job_satisfied=1.0, employer=bbbccaa, salary=1.67, working_hours=8)
+

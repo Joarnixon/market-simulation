@@ -1,0 +1,20 @@
+Person(name=Robert Martin, budget=256.82, starvation=3200, age=18.1, satisfaction=-2.17, jobs=[], memory_spent=[1.83], memory_salary=[0], birth=14, workaholic=0.96, needs=0.05
+
+Person(name=Robert Martin, budget=265.39, starvation=1200, age=18.200000000000003, satisfaction=-3.19, jobs=[], memory_spent=[1.83 0.  ], memory_salary=[0 0], birth=15, workaholic=0.96, needs=0.05
+
+Person(name=Robert Martin, budget=249.89, starvation=-800, age=18.300000000000004, satisfaction=-4.22, jobs=[], memory_spent=[1.83 0.   0.  ], memory_salary=[0 0 0], birth=16, workaholic=0.96, needs=0.05
+
+Person(name=Robert Martin, budget=198.35, starvation=60, age=18.400000000000006, satisfaction=-5.67, jobs=[], memory_spent=[1.83 0.   0.   1.14], memory_salary=[0 0 0 0], birth=17, workaholic=0.96, needs=0.05
+
+Person(name=Robert Martin, budget=168.96, starvation=-1940, age=18.500000000000007, satisfaction=-6.7, jobs=[], memory_spent=[1.83 0.   0.   1.14 0.  ], memory_salary=[0 0 0 0 0], birth=18, workaholic=0.96, needs=0.05
+
+Person(name=Robert Martin, budget=176.81, starvation=-1080, age=18.60000000000001, satisfaction=-8.25, jobs=[], memory_spent=[0.   0.   1.14 0.   0.81], memory_salary=[0 0 0 0 0], birth=19, workaholic=0.96, needs=0.05
+
+Person(name=Robert Martin, budget=234.97, starvation=-220, age=18.70000000000001, satisfaction=-9.79, jobs=[], memory_spent=[0.   1.14 0.   0.81 1.  ], memory_salary=[0 0 0 0 0], birth=20, workaholic=0.96, needs=0.05
+
+Person(name=Robert Martin, budget=308.47, starvation=-790, age=18.80000000000001, satisfaction=-10.95, jobs=[], memory_spent=[1.14 0.   0.81 1.   0.45], memory_salary=[0 0 0 0 0], birth=21, workaholic=0.96, needs=0.05
+
+Person(name=Robert Martin, budget=439.95, starvation=70, age=18.900000000000013, satisfaction=-12.24, jobs=[], memory_spent=[0.   0.81 1.   0.45 0.91], memory_salary=[0 0 0 0 0], birth=22, workaholic=0.96, needs=0.05
+
+Person(name=Robert Martin, budget=587.92, starvation=-500, age=19.000000000000014, satisfaction=-13.54, jobs=[], memory_spent=[0.81 1.   0.45 0.91 0.4 ], memory_salary=[0 0 0 0 0], birth=23, workaholic=0.96, needs=0.05
+

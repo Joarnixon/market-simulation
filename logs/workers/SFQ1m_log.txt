@@ -1,0 +1,20 @@
+MilkMaker(name=Diana Johnson, job_satisfied=0.5, employer=bbb, salary=7.3, working_hours=8)
+
+MilkMaker(name=Diana Johnson, job_satisfied=0.6, employer=bbb, salary=1.15, working_hours=8)
+
+MilkMaker(name=Diana Johnson, job_satisfied=0.7, employer=bbb, salary=1.32, working_hours=8)
+
+MilkMaker(name=Diana Johnson, job_satisfied=0.8, employer=bbb, salary=1.52, working_hours=8)
+
+MilkMaker(name=Diana Johnson, job_satisfied=0.9, employer=bbb, salary=1.22, working_hours=8)
+
+MilkMaker(name=Diana Johnson, job_satisfied=1.0, employer=bbb, salary=2.62, working_hours=8)
+
+PieMaker(name=Diana Johnson, job_satisfied=1.0, employer=bbb, salary=4.62, working_hours=8)
+
+PieMaker(name=Diana Johnson, job_satisfied=1.0, employer=bbb, salary=1.24, working_hours=8)
+
+PieMaker(name=Diana Johnson, job_satisfied=1.0, employer=bbb, salary=3.28, working_hours=8)
+
+BreadMaker(name=Diana Johnson, job_satisfied=1.0, employer=bbb, salary=2.03, working_hours=8)
+

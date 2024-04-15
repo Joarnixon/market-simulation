@@ -1,0 +1,14 @@
+Person(name=Josh Wilson, budget=26.59, starvation=5900, age=18.1, satisfaction=-3.41, jobs=['CerealMaker(name=Josh Wilson, job_satisfied=0.5, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.41], memory_salary=[0], birth=3, workaholic=0.46, needs=0.05
+
+Person(name=Josh Wilson, budget=27.9, starvation=3900, age=18.200000000000003, satisfaction=-4.43, jobs=['CerealMaker(name=Josh Wilson, job_satisfied=0.4, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.41 0.  ], memory_salary=[0.   1.31], birth=4, workaholic=0.46, needs=0.05
+
+Person(name=Josh Wilson, budget=29.04, starvation=1900, age=18.300000000000004, satisfaction=-5.46, jobs=['BreadMaker(name=Josh Wilson, job_satisfied=0.3, employer=bbb, salary=0, working_hours=8)'], memory_spent=[3.41 0.   0.  ], memory_salary=[0.   1.31 1.14], birth=5, workaholic=0.46, needs=0.05
+
+Person(name=Josh Wilson, budget=30.08, starvation=-100, age=18.400000000000006, satisfaction=-6.53, jobs=['MeatMaker(name=Josh Wilson, job_satisfied=0.2, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.41 0.   0.   0.  ], memory_salary=[0.   1.31 1.14 1.04], birth=6, workaholic=0.46, needs=0.15000000000000002
+
+Person(name=Josh Wilson, budget=32.18, starvation=-1000, age=18.500000000000007, satisfaction=-6.15, jobs=['MeatMaker(name=Josh Wilson, job_satisfied=0.3, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[3.41 0.   0.   0.   0.32], memory_salary=[0.   1.31 1.14 1.04 2.42], birth=7, workaholic=0.46, needs=0.25
+
+Person(name=Josh Wilson, budget=32.57, starvation=-80, age=18.60000000000001, satisfaction=-3.61, jobs=['MeatMaker(name=Josh Wilson, job_satisfied=0.4, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.   0.   0.   0.32 1.18], memory_salary=[1.31 1.14 1.04 2.42 1.57], birth=8, workaholic=0.46, needs=0.35
+
+Person(name=Josh Wilson, budget=33.46, starvation=140, age=18.70000000000001, satisfaction=-1.35, jobs=['MeatMaker(name=Josh Wilson, job_satisfied=0.5, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.   0.   0.32 1.18 1.03], memory_salary=[1.14 1.04 2.42 1.57 1.91], birth=9, workaholic=0.46, needs=0.44999999999999996
+

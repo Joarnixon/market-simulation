@@ -1,0 +1,10 @@
+CerealMaker(name=Charlie Johnson, job_satisfied=0.6, employer=bbbccaa, salary=1.58, working_hours=8)
+
+MeatMaker(name=Charlie Johnson, job_satisfied=0.7, employer=bbb, salary=1.59, working_hours=8)
+
+MeatMaker(name=Charlie Johnson, job_satisfied=0.8, employer=bbb, salary=0.46, working_hours=8)
+
+MeatMaker(name=Charlie Johnson, job_satisfied=0.9, employer=bbb, salary=1.39, working_hours=8)
+
+MeatMaker(name=Charlie Johnson, job_satisfied=1.0, employer=bbb, salary=2.15, working_hours=8)
+

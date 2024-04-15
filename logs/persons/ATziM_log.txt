@@ -1,0 +1,20 @@
+Person(name=Samantha Jones, budget=262.92, starvation=-450, age=18.1, satisfaction=-1.07, jobs=['CerealMaker(name=Samantha Jones, job_satisfied=0.5, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.16], memory_salary=[33.08], birth=7, workaholic=0.6, needs=0.05
+
+Person(name=Samantha Jones, budget=266.71, starvation=300, age=18.200000000000003, satisfaction=69.72, jobs=['CerealMaker(name=Samantha Jones, job_satisfied=0.6, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.16 0.83], memory_salary=[33.08  1.71], birth=8, workaholic=0.6, needs=0.15000000000000002
+
+Person(name=Samantha Jones, budget=257.17, starvation=-1700, age=18.300000000000004, satisfaction=68.59, jobs=['CerealMaker(name=Samantha Jones, job_satisfied=0.7, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.16 0.83 0.  ], memory_salary=[33.08  1.71  2.08], birth=9, workaholic=0.6, needs=0.25
+
+Person(name=Samantha Jones, budget=242.21, starvation=-400, age=18.400000000000006, satisfaction=73.55, jobs=['CerealMaker(name=Samantha Jones, job_satisfied=0.8, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.16 0.83 0.   1.  ], memory_salary=[33.08  1.71  2.08  1.83], birth=10, workaholic=0.6, needs=0.35
+
+Person(name=Samantha Jones, budget=231.37, starvation=350, age=18.500000000000007, satisfaction=76.57, jobs=['CerealMaker(name=Samantha Jones, job_satisfied=0.9, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.16 0.83 0.   1.   0.84], memory_salary=[33.08  1.71  2.08  1.83  0.77], birth=11, workaholic=0.6, needs=0.44999999999999996
+
+Person(name=Samantha Jones, budget=221.14, starvation=-1650, age=18.60000000000001, satisfaction=75.3, jobs=['PieMaker(name=Samantha Jones, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.83 0.   1.   0.84 0.  ], memory_salary=[1.71 2.08 1.83 0.77 3.84], birth=12, workaholic=0.6, needs=0.5499999999999999
+
+Person(name=Samantha Jones, budget=228.54, starvation=-350, age=18.70000000000001, satisfaction=77.19, jobs=['PieMaker(name=Samantha Jones, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.   1.   0.84 0.   0.94], memory_salary=[ 2.08  1.83  0.77  3.84 15.23], birth=13, workaholic=0.6, needs=0.6499999999999999
+
+Person(name=Samantha Jones, budget=229.43, starvation=400, age=18.80000000000001, satisfaction=82.27, jobs=['BreadMaker(name=Samantha Jones, job_satisfied=0.5, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.   0.84 0.   0.94 0.82], memory_salary=[ 1.83  0.77  3.84 15.23  3.79], birth=14, workaholic=0.6, needs=0.7499999999999999
+
+Person(name=Samantha Jones, budget=234.89, starvation=-1600, age=18.900000000000013, satisfaction=80.84, jobs=['BreadMaker(name=Samantha Jones, job_satisfied=0.6, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.84 0.   0.94 0.82 0.  ], memory_salary=[ 0.77  3.84 15.23  3.79 10.04], birth=15, workaholic=0.6, needs=0.8499999999999999
+
+Person(name=Samantha Jones, budget=244.2, starvation=-300, age=19.000000000000014, satisfaction=80.9, jobs=['BreadMaker(name=Samantha Jones, job_satisfied=0.7, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.   0.94 0.82 0.   0.99], memory_salary=[ 3.84 15.23  3.79 10.04 11.27], birth=16, workaholic=0.6, needs=0.9499999999999998
+

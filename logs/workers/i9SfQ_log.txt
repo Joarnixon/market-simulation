@@ -1,0 +1,20 @@
+CerealMaker(name=Paul Jones, job_satisfied=0.5, employer=bbb, salary=79.23, working_hours=8)
+
+CerealMaker(name=Paul Jones, job_satisfied=0.6, employer=bbb, salary=2.07, working_hours=8)
+
+PieMaker(name=Paul Jones, job_satisfied=0.7, employer=bbb, salary=6.01, working_hours=8)
+
+PieMaker(name=Paul Jones, job_satisfied=0.8, employer=bbb, salary=6.57, working_hours=8)
+
+PieMaker(name=Paul Jones, job_satisfied=0.9, employer=bbb, salary=4.55, working_hours=8)
+
+PieMaker(name=Paul Jones, job_satisfied=1.0, employer=bbb, salary=16.81, working_hours=8)
+
+PieMaker(name=Paul Jones, job_satisfied=1.0, employer=bbb, salary=18.44, working_hours=8)
+
+PieMaker(name=Paul Jones, job_satisfied=1.0, employer=bbb, salary=4.59, working_hours=8)
+
+PieMaker(name=Paul Jones, job_satisfied=1.0, employer=bbb, salary=11.55, working_hours=8)
+
+PieMaker(name=Paul Jones, job_satisfied=1.0, employer=bbb, salary=16.51, working_hours=8)
+

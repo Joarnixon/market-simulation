@@ -1,0 +1,20 @@
+Person(name=Kate Martin, budget=36.89, starvation=1380, age=18.1, satisfaction=-1.41, jobs=['CerealMaker(name=Kate Martin, job_satisfied=0.5, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.95], memory_salary=[7.84], birth=1, workaholic=1.0, needs=0.05
+
+Person(name=Kate Martin, budget=39.02, starvation=-620, age=18.200000000000003, satisfaction=-2.49, jobs=['CerealMaker(name=Kate Martin, job_satisfied=0.6, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.95 0.  ], memory_salary=[7.84 2.13], birth=2, workaholic=1.0, needs=0.15000000000000002
+
+Person(name=Kate Martin, budget=40.83, starvation=-90, age=18.300000000000004, satisfaction=10.99, jobs=['CerealMaker(name=Kate Martin, job_satisfied=0.7, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.95 0.   0.78], memory_salary=[7.84 2.13 2.59], birth=3, workaholic=1.0, needs=0.25
+
+Person(name=Kate Martin, budget=42.11, starvation=290, age=18.400000000000006, satisfaction=15.56, jobs=['CerealMaker(name=Kate Martin, job_satisfied=0.8, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.95 0.   0.78 1.01], memory_salary=[7.84 2.13 2.59 2.29], birth=4, workaholic=1.0, needs=0.35
+
+Person(name=Kate Martin, budget=42.43, starvation=-1310, age=18.500000000000007, satisfaction=15.84, jobs=['CerealMaker(name=Kate Martin, job_satisfied=0.9, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.95 0.   0.78 1.01 0.29], memory_salary=[7.84 2.13 2.59 2.29 0.61], birth=5, workaholic=1.0, needs=0.44999999999999996
+
+Person(name=Kate Martin, budget=44.57, starvation=-450, age=18.60000000000001, satisfaction=16.47, jobs=['CerealMaker(name=Kate Martin, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.   0.78 1.01 0.29 0.93], memory_salary=[2.13 2.59 2.29 0.61 3.07], birth=6, workaholic=1.0, needs=0.5499999999999999
+
+Person(name=Kate Martin, budget=45.09, starvation=410, age=18.70000000000001, satisfaction=17.14, jobs=['CerealMaker(name=Kate Martin, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.78 1.01 0.29 0.93 0.92], memory_salary=[2.59 2.29 0.61 3.07 1.44], birth=7, workaholic=1.0, needs=0.6499999999999999
+
+Person(name=Kate Martin, budget=45.52, starvation=-1590, age=18.80000000000001, satisfaction=15.77, jobs=['BreadMaker(name=Kate Martin, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[1.01 0.29 0.93 0.92 0.  ], memory_salary=[2.29 0.61 3.07 1.44 0.43], birth=8, workaholic=1.0, needs=0.7499999999999999
+
+Person(name=Kate Martin, budget=48.7, starvation=70, age=18.900000000000013, satisfaction=14.61, jobs=['BreadMaker(name=Kate Martin, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.29 0.93 0.92 0.   1.61], memory_salary=[0.61 3.07 1.44 0.43 4.79], birth=9, workaholic=1.0, needs=0.8499999999999999
+
+Person(name=Kate Martin, budget=51.51, starvation=-1930, age=19.000000000000014, satisfaction=13.14, jobs=['BreadMaker(name=Kate Martin, job_satisfied=1.0, employer=bbb, salary=0, working_hours=8)'], memory_spent=[0.93 0.92 0.   1.61 0.  ], memory_salary=[3.07 1.44 0.43 4.79 2.81], birth=10, workaholic=1.0, needs=0.9499999999999998
+

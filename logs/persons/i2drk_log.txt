@@ -1,0 +1,20 @@
+Person(name=David Davis, budget=241.6, starvation=3200, age=18.1, satisfaction=-1.94, jobs=['PieMaker(name=David Davis, job_satisfied=0.5, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.8], memory_salary=[13.4], birth=4, workaholic=0.87, needs=0.05
+
+Person(name=David Davis, budget=243.88, starvation=1200, age=18.200000000000003, satisfaction=-3.01, jobs=['PieMaker(name=David Davis, job_satisfied=0.6, employer=bbbccaa, salary=0.0, working_hours=8)'], memory_spent=[1.8 0. ], memory_salary=[13.4  0. ], birth=5, workaholic=0.87, needs=0.15000000000000002
+
+Person(name=David Davis, budget=234.39, starvation=-800, age=18.300000000000004, satisfaction=-4.14, jobs=['PieMaker(name=David Davis, job_satisfied=0.7, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.8 0.  0. ], memory_salary=[13.4  0.   5.2], birth=6, workaholic=0.87, needs=0.25
+
+Person(name=David Davis, budget=236.92, starvation=60, age=18.400000000000006, satisfaction=0.17, jobs=['PieMaker(name=David Davis, job_satisfied=0.8, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.8  0.   0.   0.96], memory_salary=[13.4   0.    5.2  11.51], birth=7, workaholic=0.87, needs=0.35
+
+Person(name=David Davis, budget=242.23, starvation=-1940, age=18.500000000000007, satisfaction=-1.05, jobs=['PieMaker(name=David Davis, job_satisfied=0.9, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.8  0.   0.   0.96 0.  ], memory_salary=[13.4   0.    5.2  11.51 10.6 ], birth=8, workaholic=0.87, needs=0.44999999999999996
+
+Person(name=David Davis, budget=237.12, starvation=350, age=18.60000000000001, satisfaction=22.44, jobs=['PieMaker(name=David Davis, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.   0.   0.96 0.   1.71], memory_salary=[ 0.    5.2  11.51 10.6   5.99], birth=9, workaholic=0.87, needs=0.5499999999999999
+
+Person(name=David Davis, budget=241.69, starvation=-1650, age=18.70000000000001, satisfaction=21.12, jobs=['PieMaker(name=David Davis, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.   0.96 0.   1.71 0.  ], memory_salary=[ 5.2  11.51 10.6   5.99  7.7 ], birth=10, workaholic=0.87, needs=0.6499999999999999
+
+Person(name=David Davis, budget=247.2, starvation=-790, age=18.80000000000001, satisfaction=28.58, jobs=['PieMaker(name=David Davis, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.96 0.   1.71 0.   1.01], memory_salary=[11.51 10.6   5.99  7.7   9.74], birth=11, workaholic=0.87, needs=0.7499999999999999
+
+Person(name=David Davis, budget=249.62, starvation=70, age=18.900000000000013, satisfaction=31.26, jobs=['PieMaker(name=David Davis, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[0.   1.71 0.   1.01 0.88], memory_salary=[10.6   5.99  7.7   9.74  7.09], birth=12, workaholic=0.87, needs=0.8499999999999999
+
+Person(name=David Davis, budget=255.48, starvation=-1930, age=19.000000000000014, satisfaction=29.78, jobs=['PieMaker(name=David Davis, job_satisfied=1.0, employer=bbbccaa, salary=0, working_hours=8)'], memory_spent=[1.71 0.   1.01 0.88 0.  ], memory_salary=[5.99 7.7  9.74 7.09 8.4 ], birth=13, workaholic=0.87, needs=0.9499999999999998
+

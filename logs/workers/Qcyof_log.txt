@@ -1,0 +1,20 @@
+MeatMaker(name=Sam Brown, job_satisfied=0.5, employer=bbbccaa, salary=6.14, working_hours=8)
+
+MeatMaker(name=Sam Brown, job_satisfied=0.6, employer=bbbccaa, salary=0.31, working_hours=8)
+
+MeatMaker(name=Sam Brown, job_satisfied=0.7, employer=bbbccaa, salary=1.13, working_hours=8)
+
+MeatMaker(name=Sam Brown, job_satisfied=0.8, employer=bbbccaa, salary=1.52, working_hours=8)
+
+MeatMaker(name=Sam Brown, job_satisfied=0.9, employer=bbbccaa, salary=2.49, working_hours=8)
+
+MeatMaker(name=Sam Brown, job_satisfied=1.0, employer=bbbccaa, salary=0.83, working_hours=8)
+
+CerealMaker(name=Sam Brown, job_satisfied=1.0, employer=bbbccaa, salary=1.02, working_hours=8)
+
+CerealMaker(name=Sam Brown, job_satisfied=0.9, employer=bbbccaa, salary=0.72, working_hours=8)
+
+CerealMaker(name=Sam Brown, job_satisfied=0.8, employer=bbbccaa, salary=0.9, working_hours=8)
+
+CerealMaker(name=Sam Brown, job_satisfied=0.9, employer=bbbccaa, salary=1.03, working_hours=8)
+

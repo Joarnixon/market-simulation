@@ -12,6 +12,7 @@ from objects.seller import Seller
 from objects.buyer import Buyer
 from objects.person import Person
 from settings.constants import *
+from other.logs import Logger
 
 
 # Define the table headers
@@ -92,6 +93,8 @@ class Market:
     manufacturer_salary_up_constant = MANUFACTURER_SALARY_UP_CONSTANT
     total_complexity = float(sum(1 / np.array(product_complexities)))
     total_prices = sum(list(product_first_price.values()))
+    globalLogger = Logger('logs/market')
+    logger = globalLogger.get_logger(__name__)
 
     def __init__(self):
         for s in range(Market.products_count):
@@ -227,7 +230,6 @@ class Market:
     def start():
         for k in range(Market.ticks):
             Market._iteration(k, verbose=0)
-            print(Market.inspecting_person)
             time.sleep(0)
             # TODO: still bug with number of persons in employer's list
         Market.visualise(verbose=1)
@@ -243,6 +245,10 @@ class Market:
 
         for manufacturer in Market.manufacturers:
             manufacturer.start()
+            Market.logger.info('Manufacturer started')
+
+        for person in Market.persons:
+            person.work()
 
         for person in Market.persons:
             person.work()
