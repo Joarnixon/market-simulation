@@ -157,7 +157,7 @@ class ManufactureWorker(Worker):
             return
         self.work()
         self.job_satisfaction()
-        self.logger.info(str(self) + '\n')
+        self.logger.info(str(self.as_person.market_ref.day) + '\n' + str(self) + '\n')
         self.get_payed()
         if rd.randint(0, 10) >= 8:
             found = self.find_job(changing=True, market_ref=self.as_person.market_ref)

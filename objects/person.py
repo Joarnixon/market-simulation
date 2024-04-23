@@ -144,6 +144,13 @@ class BasePerson:
     def budget(self, value):
         self.inventory.money = value
 
+    @property
+    def job_satisfied(self):
+        if len(self.jobs) == 0:
+            return 1
+        else:
+            return sum([worker.job_satisfied for worker in self.jobs]) / len(self.jobs)
+
     def delete_job(self, job):
         if job in self.jobs:
             self.jobs.remove(job)
@@ -196,7 +203,7 @@ class BasePerson:
 
     def try_birth_new(self):
         if self.birth >= self.birth_threshold:
-            if self.starvation >= 5000 * (1 + self.needs):
+            if self.starvation >= 6000 * (1 + self.needs):
                 if self.budget >= 3 * sum(self.memory_salary[-5:]) / 5 * (1 + self.needs):
                     self.birth_new()
 
@@ -237,7 +244,7 @@ class BasePerson:
             if product not in best_offers and product not in estimated:
                 biggest_seller = self.market_ref.find_biggest_seller(product)
                 if biggest_seller is not None:
-                    quality = biggest_seller.qualities[product]
+                    quality = biggest_seller.qualities[product] * 0.5
                     price = biggest_seller.prices[product] * 0.5
                 else:
                     quality = 0.5
@@ -262,9 +269,9 @@ class BasePerson:
         if self.budget >= 500 * (1 + self.greed):
             if self.ambition >= 70:
                 if (sum(sum(ask[product][-5:])/5 for product in ask) / len(ask) / self.market_ref.buyers_count > 0.5 or
-                        sum([buyer.job_satisfied for buyer in rd.sample(self.market_ref.buyers,
-                        self.market_ref.buyers_count // 3)]) /
-                        (self.market_ref.buyers_count // 3) < 0.5):
+                        sum([person.job_satisfied for person in rd.sample(self.market_ref.persons,
+                        self.market_ref.persons_count // 3)]) /
+                        (self.market_ref.persons_count // 3) < 0.5):
                     self.become_manufacturer()
 
     def become_manufacturer(self):
@@ -330,7 +337,7 @@ class Person(BasePerson):
             self.try_become_seller(ask, demand, bid, self.buyer.best_offers, self.buyer.estimated)
         if self.manufacturer is None:
             self.try_become_manufacturer(ask)
-        self.logger.info(str(self) + '\n')
+        self.logger.info(str(self.market_ref.day) + '\n' + str(self) + '\n')
 
     def get_available_roles(self):
         roles = []

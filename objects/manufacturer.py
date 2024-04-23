@@ -379,7 +379,7 @@ class Manufacturer(BaseManufacturer):
             if self.number_of_vacancies[product] < self.num_workers[product]:
                 fired = self.num_workers[product] - self.number_of_vacancies[product]
                 self.fire(person=None, product=product, amount=fired)
-        self.logger.info(str(self) + '\n')
+        self.logger.info(str(self.as_person.market_ref.day) + '\n' + str(self) + '\n')
         self.days += 1
 
 

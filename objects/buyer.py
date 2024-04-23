@@ -66,9 +66,9 @@ class BaseBuyer:
         A secret for buyer function that it will try to interpolate for himself.
         """
         # TODO: change to suit manufacturer
-        return amount * round((sum(self.memory_salary[-2:]) / 2 - price) * (
+        return float(amount * np.round((np.sum(self.memory_salary[-2:]) / 2 - price) * (
                 1 + 1.25 * (quality - self.needs) * np.sign(
-            sum(self.memory_salary[-2:]) / 2 - price)) ** 2 * product.satisfaction_bonus, 3)
+            np.sum(self.memory_salary[-2:]) / 2 - price)) ** 2 * product.satisfaction_bonus, 3))
 
     def get_fed_up_bonus(self, product):
         mean_fed = np.mean(list(self.fed_up.values()))
@@ -82,9 +82,10 @@ class BaseBuyer:
             plan = dict(zip(product, amount))
         bought = {}
         for product, amount in plan.items():
-            amounts = int(min(amount, seller.amounts[product], floor(self.budget / seller.prices[product])))
+            amounts = int(min(amount, seller.store[product]))
             if amounts < 1:
                 continue
+            amounts = int(min(amounts, floor(self.budget / seller.prices[product])))
 
             seller.sell(product=product, buyer=self, amount=amounts)
             # TODO: this should be done better somehow
@@ -251,7 +252,7 @@ class Buyer(BaseBuyer):
     def think(self, plans: dict, market_ref):
         satisfactions = {seller: {} for seller in set(market_ref.sellers).union(set(market_ref.newcomers_sellers))}
         list_of_products = plans
-        available = {product: [seller for seller in market_ref.sellers if seller.amounts[product] > 0] for product in
+        available = {product: [seller for seller in market_ref.sellers if seller.store[product] >= 1] for product in
                      list_of_products.keys()}
         visited = 0
 
@@ -271,7 +272,7 @@ class Buyer(BaseBuyer):
 
             if len(products) == 0:
                 return True
-            available = {product: [seller for seller in market_ref.sellers if seller.amounts[product] > 0] for product
+            available = {product: [seller for seller in market_ref.sellers if seller.store[product] > 0] for product
                          in
                          products.keys()}
             missing = []
@@ -357,7 +358,7 @@ class Buyer(BaseBuyer):
         def newcomers_visit(products):
             visited_all = sum([list(self.offers[item].keys()) for item in self.offers], start=[])
             new_available = sum([[seller for seller in market_ref.newcomers_sellers if
-                                  seller.amounts[product] > 0 and seller not in visited_all] for product in
+                                  seller.store[product] > 0 and seller not in visited_all] for product in
                                  products.keys()], start=[])
             if not new_available:
                 return {}
@@ -365,14 +366,15 @@ class Buyer(BaseBuyer):
             self.remember_seller(seller=current)
             bought = {}
             for product, amount in products.items():
-                amounts = min(amount, current.amounts[product], floor(self.budget / current.prices[product]))
+                amounts = int(min(amount, current.store[product]))
+                if amounts < 1:
+                    continue
+                amounts = int(min(amounts, floor(self.budget / current.prices[product])))
                 try:
                     # TODO: Bug: Каким-то образом новый продавец оказывается тут в списке.
                     #  Хотя satisfaction назначается всеми только возможными продавцами в самом начале.
                     #  Новый появиться не может во время хода покупателей.
                     #  Соответственно и не ясно откуда это берется. Идей нет.
-                    if amounts == 0:
-                        continue
                     satisfactions[current].update({product: self.get_food_satisfaction(price=current.prices[product],
                                                                                        quality=current.qualities[product],
                                                                                        product=product)})
@@ -395,12 +397,11 @@ class Buyer(BaseBuyer):
             self.remember_seller(seller=current)
             bought = {}
             for product, amount in products.items():
-                try:
-                    amounts = min(amount, current.amounts[product], floor(self.budget / current.prices[product]))
-                except OverflowError:
-                    amounts = 0
-                if amounts == 0:
+                amounts = int(min(amount, current.store[product]))
+                if amounts < 1:
                     continue
+                amounts = int(min(amounts, floor(self.budget / current.prices[product])))
+
                 satisfactions[current].update({product: self.get_food_satisfaction(price=current.prices[product],
                                                                                    quality=current.qualities[product],
                                                                                    product=product)})
@@ -422,9 +423,11 @@ class Buyer(BaseBuyer):
             self.remember_seller(seller=new_current)
             bought = {}
             for product, amount in products.items():
-                amounts = min(amount, new_current.amounts[product], floor(self.budget / new_current.prices[product]))
-                if amounts == 0:
+                amounts = int(min(amount, new_current.store[product]))
+                if amounts < 1:
                     continue
+                amounts = int(min(amounts, floor(self.budget / new_current.prices[product])))
+
                 satisfactions[new_current].update({product: self.get_food_satisfaction(price=new_current.prices[product],
                                                                                        quality=new_current.qualities[product],
                                                                                        product=product)})
@@ -443,20 +446,15 @@ class Buyer(BaseBuyer):
                 if product not in memory_available:
                     bought.update({product: 0})
                     continue
-
                 tree = KDTree(
                     [list(self.offers[product][seller].values()) for seller in memory_available[product]])
                 index = tree.query([self.estimated[product][0], self.estimated[product][1]])[1]
                 new_current = memory_available[product][index]
-                try:
-                    amounts = min(amount, new_current.amounts[product],
-                                  floor(self.budget / new_current.prices[product]))
-                except OverflowError:
-                    amounts = 0
-                    print(new_current.prices)
-                    print(new_current.forcheckX)
-                if amounts == 0:
+
+                amounts = int(min(amount, new_current.store[product]))
+                if amounts < 1:
                     continue
+                amounts = int(min(amounts, floor(self.budget / new_current.prices[product])))
                 satisfactions[new_current].update({product: self.get_food_satisfaction(price=new_current.prices[product],
                                                                                        quality=new_current.qualities[product],
                                                                                        product=product)})
@@ -468,7 +466,7 @@ class Buyer(BaseBuyer):
         def visit(availables, products, visit_func):
             bought = visit_func(products)
             outcome = update_dict(products, bought)
-            new_available = {product: [seller for seller in market_ref.sellers if seller.amounts[product] > 0] for
+            new_available = {product: [seller for seller in market_ref.sellers if seller.store[product] > 0] for
                              product
                              in
                              products.keys()}
@@ -554,16 +552,16 @@ class Buyer(BaseBuyer):
             for product in amounts:
                 Buyer.product_ask[product] += amounts[product]
                 self.estimate_best_offer(product)
-            return amounts
         else:
-            do_something_plan = {product: 1 for product in market_ref.products if product not in exclude_products}
-            if len(do_something_plan) == 0:
+            amounts = {product: 1 for product in market_ref.products if product not in exclude_products}
+            if len(amounts) == 0:
                 return {}
             else:
-                for product in do_something_plan:
+                for product in amounts:
                     Buyer.product_ask[product] += 1
                     self.estimate_best_offer(product)
-                return do_something_plan
+        self.plan = amounts
+        return amounts
 
     def start(self, market_ref):
         plan = self.planning(market_ref)
@@ -577,7 +575,7 @@ class Buyer(BaseBuyer):
 
         # TODO: ?
         Buyer.starvation_index += [self.starvation]
-        self.logger.info(str(self) + '\n')
+        self.logger.info(str(self.as_person.market_ref.day) + '\n' + str(self) + '\n')
         self.day_calories_bought = 0
         self.satisfaction = 0
         self.spent = 0

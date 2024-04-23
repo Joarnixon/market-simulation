@@ -156,8 +156,6 @@ class Market:
         for seller in Market.sellers:
             x_axis[seller] = []
             seller_wealth[seller] = []
-            for product in Market.products:
-                seller.local_ask[product] = []
             for buyer in Market.buyers:
                 buyer.loyalty[seller] = 5
 
@@ -168,7 +166,7 @@ class Market:
     @staticmethod
     def find_biggest_seller(product):
         if Market.sellers:
-            return max([seller.local_ask[product][-1] for seller in Market.sellers])
+            return max([seller.local_ask[product] for seller in Market.sellers])
         else:
             return None
 
@@ -256,7 +254,7 @@ class Market:
         for seller in Market.sellers:
             seller_wealth[seller] += [seller.profit]
             x_axis[seller] += [n]
-            seller.start(market_ref=Market, ask=ask)
+            seller.start()
 
         for buyer in Market.buyers:
             buyer.start(market_ref=Market)
@@ -344,17 +342,17 @@ class Market:
 
         def statistics_gather():
             for product in Market.products:
-                bid[product] += [sum([seller.memory[product][-1][2] for seller in Market.sellers if product in seller.memory])]
+                bid[product] += [sum([seller.memory_amounts[product][-1] for seller in Market.sellers if len(seller.memory_amounts[product]) != 0])]
                 demand[product] += [Buyer.product_ask[product]]
                 satisfied[product] += [Buyer.product_bought[product]]
                 ask[product] += [Buyer.product_ask[product] - Buyer.product_bought[product]]
                 if Buyer.product_prices[product] or len(y_axis[product]) < 1:
                     # weighted price of product in the market.
-                    total_market_amount_product = sum(seller.memory[product][-1][2] for seller in Market.sellers if product in seller.memory)
+                    total_market_amount_product = sum(seller.memory_amounts[product][-1] for seller in Market.sellers if len(seller.memory_amounts[product]) != 0)
                     if total_market_amount_product == 0:
                         y_axis[product] += [0]
                     else:
-                        y_axis[product] += [sum(seller.memory[product][-1][2] * seller.prices[product] for seller in Market.sellers if product in seller.memory) / total_market_amount_product]
+                        y_axis[product] += [sum(seller.memory_amounts[product][-1] * seller.prices[product] for seller in Market.sellers if len(seller.memory_amounts[product]) != 0) / total_market_amount_product]
                 else:
                     y_axis[product] += [y_axis[product][-1]]
                 Buyer.product_prices[product] = []
