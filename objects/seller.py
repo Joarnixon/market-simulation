@@ -1,7 +1,7 @@
 import random as rd
 from functools import cache
 import numpy as np
-from sklearn.linear_model import LinearRegression, SGDRegressor
+from sklearn.linear_model import LinearRegression, SGDRegressor, PoissonRegressor
 from sklearn.preprocessing import MinMaxScaler, RobustScaler
 from typing import Union
 from random import sample
@@ -37,7 +37,7 @@ class BaseSeller:
         self.profit = 0
         self.initial_guess = {}
         self.guess = {} if not guess else guess
-        self.brains = {'product': LinearRegression(), 'amount': SGDRegressor(max_iter=200)}
+        self.brains = {'product': LinearRegression(), 'amount': PoissonRegressor()}
 
     def __str__(self):
         return f'Seller(budget={self.budget}, overprices={np.round(list(self.overprices.values()), 2)}, prices={np.round(list(self.prices.values()), 2)}, amounts={list(self.amounts.values())}, local_ask={list(self.local_ask.values())}, memory_income={list(map(lambda x: np.round(x[-3:], 2), list(self.memory_incomes.values())))}, store={list(self.store.values())}'
@@ -115,12 +115,12 @@ class BaseSeller:
     def get_amounts(self, product):
         # if (self.from_start and self.days == 5) or (not self.from_start and self.days == 12):
         #     return self.local_ask[product]
-        if rd.randint(0, 10 + self.days // 10) >= (5 + self.days // 10):
+        if rd.randint(0, 10 + self.days // 10) >= (6 + self.days // 10):
             guess_amounts = max(0, int((self.memory_estimate_product[product][-1][-1] + 1 / (self.memory_estimate_product[product][-1][-1] + 0.5)) * (1 + rd.random() / 4)))
         else:
             guess_amounts = max(0, self.brains['amount'].predict(self.amounts_scaler.transform([self.memory_estimate_amount[product][-1]]))[0])
             border = self.memory_amounts[product][-1] + 1 / (self.memory_amounts[product][-1] + 0.5)
-            border_percentile = (self.memory_amounts[product][-1] + 10) / (5 * (self.memory_amounts[product][-1] + 0.2))
+            border_percentile = (self.memory_amounts[product][-1] + 10) / (3 * (self.memory_amounts[product][-1] + 0.2))
             guess_amounts = int(np.clip(guess_amounts, border * (1 - border_percentile), border * (1 + border_percentile)))
         self.amounts[product] = guess_amounts
         return guess_amounts
@@ -179,8 +179,8 @@ class Seller(BaseSeller):
 
     def update_values(self):
         for product in self.initialized_products:
-            self.memory_estimate_product[product] += [[self.qualities[product], self.overprices[product], self.amounts[product], self.local_ask[product]]]
-            self.memory_estimate_amount[product] += [[self.local_ask[product], self.prices[product], self.income[product]]]
+            self.memory_estimate_product[product] += [[self.qualities[product], self.overprices[product], 1 / (self.local_ask[product] + 0.25), self.local_ask[product]]]
+            self.memory_estimate_amount[product] += [[self.local_ask[product], self.store[product], 1 / (self.store[product] + 0.25), 1 / (self.local_ask[product] + 0.25)]]
             self.memory_incomes[product] += [self.income[product]]
             self.memory_amounts[product] += [self.amounts[product]]
             self.profit += self.income[product]

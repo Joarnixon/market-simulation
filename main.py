@@ -380,9 +380,9 @@ class Market:
         #     else:
         #         salary_distribution[buyer.generation] = [buyer.salary]
         #
-        # st = sellers_test(demand, satisfied, Market.buyers_count_list)
+        st = sellers_test(demand, satisfied, Market.buyers_count_list)
         # bt = buyers_test(Market.initial_salary, salary_distribution)
-        # print('Sellers test:', st)
+        print('Sellers test:', st)
         # print('Buyers test:', bt[0], '\n', bt[1])
         # log(st, bt[0], bt[1])
 
