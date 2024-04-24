@@ -67,9 +67,11 @@ class BaseSeller:
         x = np.array(self.memory_estimate_product[product])
         y = np.array(self.memory_incomes[product])[-len(x):]
         if len(self.memory_estimate_product[product]) >= 60:
-            x, y = cluster_data(x, y, num_clusters=20)
-            self.memory_estimate_product[product] = x
-            self.memory_incomes[product] = y
+            last_memory_x = x[-5:]
+            last_memory_y = y[-5:]
+            x, y = cluster_data(x[:-5], y[:-5], num_clusters=15)
+            self.memory_estimate_product[product] = np.vstack((x, last_memory_x)).tolist()
+            self.memory_incomes[product] = np.hstack((y, last_memory_y)).tolist()
 
         # Pick a random point with some help of knowing the global market info
         changes = rd.randint(0, 10 + self.days // 10)
@@ -105,9 +107,12 @@ class BaseSeller:
         y = np.array(self.memory_amounts[product])[-len(x):]
 
         if len(self.memory_estimate_amount[product]) >= 60:
-            x, y = cluster_data(x, y, num_clusters=20)
-            self.memory_estimate_amount[product] = x
-            self.memory_amounts[product] = y
+            last_memory_x = x[-5:]
+            last_memory_y = y[-5:]
+            x, y = cluster_data(x[:-5], y[:-5], num_clusters=15)
+            self.memory_estimate_amount[product] = np.vstack((x, last_memory_x)).tolist()
+            self.memory_amounts[product] = np.hstack((y, last_memory_y)).tolist()
+
         x = self.amounts_scaler.fit_transform(x)
         model = self.brains['amount']
         model.fit(x, y)

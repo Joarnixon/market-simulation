@@ -130,15 +130,20 @@ class BaseManufacturer:
         else:
             x = np.array(list(memory.values())).T
             y = np.array(target)[-len(x):]
+            x = x[-len(y):]
 
             adding_point = x[-1][:num_changing]
             model = self.brains['salary']
 
             if len(target) >= 60:
-                x, y = cluster_data(x, y, num_clusters=20)
+                last_memory_x = x[-5:]
+                last_memory_y = y[-5:]
+                x, y = cluster_data(x[:-5], y[:-5], num_clusters=15)
+
                 for j, product in enumerate(memory):
-                    memory[product] = list(np.array(x)[:, j])
-                target = y
+                    memory[product] = np.vstack((x, last_memory_x))[:, j].tolist()
+                target = np.vstack((y, last_memory_y)).tolist()
+
             model.fit(x, y)
             if model.coef_.ndim == 2:
                 slope = model.coef_[0][:num_changing]
@@ -164,9 +169,11 @@ class BaseManufacturer:
             model = self.brains['technology']
 
             if len(y) >= 60:
-                x, y = cluster_data(x, y, num_clusters=20)
-                memory = x
-                target = y
+                last_memory_x = x[-5:]
+                last_memory_y = y[-5:]
+                x, y = cluster_data(x[:-5], y[:-5], num_clusters=15)
+                memory = np.vstack((x, last_memory_x)).tolist()
+                target = np.hstack((y, last_memory_y)).tolist()
             model.fit(x, y)
             slope = model.coef_[0]
             z_adding = np.copysign(adding_point * rd.uniform(0.1, 0.3) / 40, np.round(slope, 2))
@@ -185,6 +192,7 @@ class BaseManufacturer:
                                                                                memory=self.memory_hr,
                                                                                target=self.memory_income_total_hr,
                                                                                num_changing=len(self.products)-1)
+
 
     def update_daily(self):
         self.daily_income = {product: 0 for product in self.products}
@@ -309,15 +317,19 @@ class Manufacturer(BaseManufacturer):
         else:
             x = np.array(list(memory.values())).T
             y = np.array(target)[-len(x):]
+            x = x[-len(y):]
 
             adding_point = x[-1][:num_changing]
             model = self.brains['business']
 
             if len(target) >= 60:
-                x, y = cluster_data(x, y, num_clusters=20)
+                last_memory_x = x[-5:]
+                last_memory_y = y[-5:]
+                x, y = cluster_data(x[:-5], y[:-5], num_clusters=15)
                 for j, product in enumerate(memory):
-                    memory[product] = list(np.array(x)[:, j])
-                target = y
+                    memory[product] = np.hstack((x, last_memory_x))[:, j].tolist()
+                target = np.vstack((y, last_memory_y)).flatten().tolist()
+
             model.fit(x, y)
             slope = model.coef_[:num_changing]
             z_adding = np.copysign(adding_point * rd.randint(1, 3) / 40, np.round(slope, 2))
