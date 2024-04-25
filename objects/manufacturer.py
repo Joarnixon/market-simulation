@@ -327,8 +327,8 @@ class Manufacturer(BaseManufacturer):
                 last_memory_y = y[-5:]
                 x, y = cluster_data(x[:-5], y[:-5], num_clusters=15)
                 for j, product in enumerate(memory):
-                    memory[product] = np.hstack((x, last_memory_x))[:, j].tolist()
-                target = np.vstack((y, last_memory_y)).flatten().tolist()
+                    memory[product] = np.vstack((x, last_memory_x))[:, j].tolist()
+                target = np.hstack((y, last_memory_y)).flatten().tolist()
 
             model.fit(x, y)
             slope = model.coef_[:num_changing]

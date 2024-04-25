@@ -8,6 +8,7 @@ from random import sample
 from other.utils import cluster_data, f_round, assign_numbers, generate_id
 from other.logs import Logger
 from objects.products import Products
+from objects.storage import Storage
 from settings.constants import *
 
 
@@ -26,7 +27,7 @@ class BaseSeller:
         self.qualities = {product: 0. for product in self.products}
         self.amounts = {product: 0 for product in self.products}
         self.local_ask = {product: 0 for product in self.products}
-        self.store = {product: 0 for product in self.products}
+        self.store = Storage()
         self.income = {product: 0. for product in self.products}
         self.memory_amounts_scaler = MinMaxScaler()
         self.amounts_scaler = MinMaxScaler()
@@ -40,7 +41,7 @@ class BaseSeller:
         self.brains = {'product': LinearRegression(), 'amount': PoissonRegressor()}
 
     def __str__(self):
-        return f'Seller(budget={self.budget}, overprices={np.round(list(self.overprices.values()), 2)}, prices={np.round(list(self.prices.values()), 2)}, amounts={list(self.amounts.values())}, local_ask={list(self.local_ask.values())}, memory_income={list(map(lambda x: np.round(x[-3:], 2), list(self.memory_incomes.values())))}, store={list(self.store.values())}'
+        return f'Seller(budget={self.budget}, overprices={np.round(list(self.overprices.values()), 2)}, prices={np.round(list(self.prices.values()), 2)}, amounts={list(self.amounts.values())}, local_ask={list(self.local_ask.values())}, memory_income={list(map(lambda x: np.round(x[-3:], 2), list(self.memory_incomes.values())))}, store={list(self.store.food.values())}'
 
     def __getattr__(self, name):
         return getattr(self.as_person, name)
@@ -144,13 +145,15 @@ class BaseSeller:
         return offers
 
     def _buy_product(self, product, required_amount, initial_quality=None):
+        if required_amount == 0:
+            return False
         offers = self.get_offers(product, initial_quality or self.qualities[product])
         bought_amount = 0
         spent = 0
         for manufactory, price in offers:
             k = min(int(manufactory.storage[product]), required_amount - bought_amount)
             manufactory.sell(product, k, initial_quality or self.qualities[product])
-            self.store[product] += k
+            self.store += {product: k}
             spent += price * k
             bought_amount += k
         if spent == 0:
@@ -165,7 +168,9 @@ class BaseSeller:
         for product, amount in asks.items():
             amount = min(amount, self.store[product])
             self.income[product] += self.prices[product] * amount
-            self.store[product] -= amount
+            self.budget += self.prices[product] * amount
+            self.profit += self.prices[product] * amount
+            self.store -= {product: amount}
             self.local_ask[product] += amount
 
         for product, amount in buyer.plan.items():
@@ -183,23 +188,22 @@ class Seller(BaseSeller):
         self.logger = Seller.globalLogger.get_logger(self.uid)
 
     def update_values(self):
+        expired = self.store.update_expiration()
+        self.income = {product: round(self.income[product] - expired.get(product, 0) * self.prices[product], 3) for product in self.income}
         for product in self.initialized_products:
             self.memory_estimate_product[product] += [[self.qualities[product], self.overprices[product], 1 / (self.local_ask[product] + 0.25), self.local_ask[product]]]
             self.memory_estimate_amount[product] += [[self.local_ask[product], self.store[product], 1 / (self.store[product] + 0.25), 1 / (self.local_ask[product] + 0.25)]]
             self.memory_incomes[product] += [self.income[product]]
             self.memory_amounts[product] += [self.amounts[product]]
-            self.profit += self.income[product]
-            self.budget += self.income[product]
 
     def reset_values(self):
         for product in self.initialized_products:
             self.income[product] = 0
             self.local_ask[product] = 0
-            self.store[product] = 0
 
     def init_product(self, product):
         initial_quality, initial_amount = list(self.get_guess(product).values())
-        required_amount = initial_amount - self.store[product]
+        required_amount = max(initial_amount - self.store[product], 0)
         success = self._buy_product(product, required_amount, initial_quality)
         if not success:
             return
@@ -212,7 +216,7 @@ class Seller(BaseSeller):
         return success
 
     def start_product(self, product):
-        required_amount = self.get_amounts(product) - self.store[product]
+        required_amount = max(self.get_amounts(product) - self.store[product], 0)
         success = self._buy_product(product, required_amount)
         if not success:
             return False
@@ -229,20 +233,21 @@ class Seller(BaseSeller):
                 spent, bought_amount = a
                 min_price = spent / bought_amount
                 self.prices[product] = min_price + self.overprices[product]
-                self.income[product] -= spent
+                self.budget -= spent
+                self.profit -= spent
 
     def get_guess(self, product):
         if self.from_start:
             if product.name == "cereal":
-                return {"quality": round(rd.uniform(0.2, 0.4), 2), "amount": 20}
+                return {"quality": round(rd.uniform(0.2, 0.4), 2), "amount": 15}
             if product.name == "milk":
-                return {"quality": round(rd.uniform(0.2, 0.4), 2), "amount": 10}
+                return {"quality": round(rd.uniform(0.2, 0.4), 2), "amount": 5}
             if product.name == "bread":
-                return {"quality": round(rd.uniform(0.2, 0.4), 2), "amount": 10}
+                return {"quality": round(rd.uniform(0.2, 0.4), 2), "amount": 5}
             if product.name == "meat":
-                return {"quality": round(rd.uniform(0.2, 0.4), 2), "amount": 10}
+                return {"quality": round(rd.uniform(0.2, 0.4), 2), "amount": 5}
             if product.name == "pie":
-                return {"quality": round(rd.uniform(0.2, 0.4), 2), "amount": 10}
+                return {"quality": round(rd.uniform(0.2, 0.4), 2), "amount": 5}
         else:
             return self.guess[product]
 

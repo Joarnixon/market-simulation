@@ -106,7 +106,7 @@ class BaseBuyer:
 
             bought[product] = amounts
 
-        self.inventory.add(bought)
+        self.inventory += bought
         return bought
 
 

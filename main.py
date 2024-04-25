@@ -71,6 +71,7 @@ class Market:
     manufacturer_names = MANUFACTURER_NAMES
     product_names = PRODUCT_NAMES
     product_calories = PRODUCT_CALORIES
+    product_spoils_time = PRODUCT_SPOILING
     product_complexities = PRODUCT_COMPLEXITIES
     product_bonuses = PRODUCT_BONUSES
     product_first_price = PRODUCT_FIRST_PRICE
@@ -101,7 +102,8 @@ class Market:
             Market.products.append(Products(name=Market.product_names[s],
                                             calories=Market.product_calories[s],
                                             satisfaction_bonus=Market.product_bonuses[s],
-                                            complexity=Market.product_complexities[s]))
+                                            complexity=Market.product_complexities[s],
+                                            spoils=Market.product_spoils_time[s]))
 
         for i in range(Market.start_sellers_count):
             person_seller = Person(default_data={'name': generate_name(), 'market_ref': self}, seller_data={}, buyer_data={})
@@ -279,7 +281,7 @@ class Market:
 
         def check_sellers_bankrupt(verbose: int = 0):
             for seller in list(Market.sellers):
-                if sum(seller_wealth[seller][-50:]) < -50 and seller.budget < 50:
+                if (sum(seller_wealth[seller][-50:]) < -100 and seller.budget < 50) or (seller.budget < 0):
                     print(sum(seller_wealth[seller][-50:]))
                     Market.clean_up_seller_info(seller)
                     Market.delete_seller(seller)
@@ -360,8 +362,8 @@ class Market:
                 Buyer.product_ask[product] = 0
                 volatility_index[product] = np.clip(abs((bid[product][-1]-ask[product][-1]))//(Market.buyers_count//5), np.clip(Market.buyers_count//(10*Market.sellers_count), 1, 2), 2)
 
-            Market.buyers_money += [np.mean([buyer.budget for buyer in Market.buyers])]
-            Market.buyers_satisfaction += [np.mean([buyer.satisfaction for buyer in Market.buyers])]
+            Market.buyers_money += [np.median([buyer.budget for buyer in Market.buyers])]
+            Market.buyers_satisfaction += [np.median([buyer.satisfaction for buyer in Market.buyers])]
             Market.buyers_count_list += [Market.buyers_count]
             Market.buyers_starvation += [np.mean(Buyer.starvation_index)]
             Buyer.starvation_index = []
@@ -388,8 +390,8 @@ class Market:
 
         if verbose <= 0:
             return True
-
         x_axis2 = [v for v in range(Market.ticks)]
+
         fig1, axs1 = plt.subplots(2, 5, figsize=(15, 10))
         for d, product in enumerate(Market.products):
             y1 = np.cumsum(np.insert(y_axis[product], 0, 0))
@@ -400,12 +402,14 @@ class Market:
             axs1[1, d].plot(x_axis2, ask[product], color="y")
             axs1[0, d].set_title(Market.product_names[d])
             axs1[1, d].set_title(Market.product_names[d] + " r - Ask/b - Bid")
-        plt.show()
-        fig2, axs2 = plt.subplots(5, 6, figsize=(15, 10))
-        if Market.sellers_count < 30:
+        #plt.show()
+
+        fig2, axs2 = plt.subplots(6, 7, figsize=(15, 10))
+        if Market.sellers_count < 42:
             for b, seller in enumerate(Market.sellers):
-                axs2[b//6, b % 6].plot(x_axis2[Market.ticks - seller.days:], seller_wealth[seller])
-            plt.show()
+                axs2[b//7, b % 7].plot(x_axis2[Market.ticks - seller.days:], seller_wealth[seller])
+            #plt.show()
+
         fig3, axs3 = plt.subplots(1, 5, figsize=(15, 10))
         axs3[0].plot(Market.buyers_money)
         axs3[0].set_title("Wealth")

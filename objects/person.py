@@ -1,9 +1,9 @@
-from copy import copy
 from objects.buyer import Buyer
 from objects.seller import Seller
 from objects.manufacturer import Manufacturer
 from objects.worker import ManufactureWorker
 from objects.products import Products
+from objects.storage import Inventory
 from settings.constants import REQUIRES, AGING, MANUFACTURER_SALARY_UP_CONSTANT, MANUFACTURER_SALARY_LOW_CONSTANT
 from other.utils import generate_name, generate_id
 from other.logs import Logger
@@ -62,42 +62,6 @@ def set_jobs() -> list:
 
 def set_memory_spent() -> list:
     return []
-
-
-class Inventory:
-    def __init__(self, money=30):
-        self.money = money
-        self.food = {}
-        self.items = {}
-
-    def add(self, other):
-        for key, value in other.items():
-            if isinstance(key, Products):
-                if key in self.food:
-                    self.food[key] += value
-                else:
-                    self.food[key] = value
-
-    def get(self, other):
-        resources = {}
-        for key, value in other.items():
-            if isinstance(key, Products):
-                if key in self.food:
-                    value = min(self.food[key], value)
-                    self.food[key] -= value
-                    resources[key] = value
-        return resources
-
-    def empty_food(self):
-        self.food = {}
-
-    def get_all_food(self):
-        resources = copy(self.food)
-        self.empty_food()
-        return resources
-
-    def empty_items(self):
-        self.items = {}
 
 
 @dataclass
