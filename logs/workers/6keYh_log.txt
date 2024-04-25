@@ -1,4 +1,0 @@
-BreadMaker(name=Samantha Jones, job_satisfied=0.6, employer=bbbccaa, salary=10.04, working_hours=8)
-
-BreadMaker(name=Samantha Jones, job_satisfied=0.7, employer=bbbccaa, salary=11.27, working_hours=8)
-

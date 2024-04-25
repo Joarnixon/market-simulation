@@ -1,6 +1,0 @@
-CerealMaker(name=Charlie Johnson, job_satisfied=0.4, employer=bbbccaa, salary=0.62, working_hours=8)
-
-CerealMaker(name=Charlie Johnson, job_satisfied=0.3, employer=bbbccaa, salary=1.09, working_hours=8)
-
-MilkMaker(name=Charlie Johnson, job_satisfied=0.2, employer=bbb, salary=0.68, working_hours=8)
-

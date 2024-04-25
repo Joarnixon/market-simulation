@@ -1,2 +1,0 @@
-CerealMaker(name=Bob Brown, job_satisfied=0.5, employer=bbbccaa, salary=22.14, working_hours=8)
-

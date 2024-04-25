@@ -1,0 +1,514 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="95fc6191-61ee-428c-9f33-6b8fc82cc0cc" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/1Lg4o_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/2jDYk_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/3dTRN_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/3oADG_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/4JAoD_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/5Kq14_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/5MVyp_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/5frNP_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/7nkjj_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/8YDdj_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/8oPaS_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/A5sZQ_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/AFq2T_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/BEKgp_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/BMmPM_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/BV2GB_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/ByGVa_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/Cv6hS_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/DeQ1k_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/ENkeR_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/Etc11_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/F17EJ_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/FfwDR_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/Fi1ds_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/FzQJg_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/GHTsv_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/KyCPu_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/LctB2_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/LjQQw_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/MtZYk_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/NWhbU_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/P5sQc_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/Pc1VB_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/QdXNy_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/SAZi9_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/ShXgz_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/SqqhA_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/TNQLP_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/UPZWA_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/USmr9_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/UtDEE_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/VLF3w_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/WH9kE_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/WoKRR_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/XXLJA_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/Y5WSf_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/ZKJyu_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/afKNX_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/auuea_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/axQ14_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/bmuRg_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/cE1Fg_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/cW5DP_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/d6h2y_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/edd9A_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/fiBAh_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/gSEiC_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/geXJ6_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/gx6cW_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/hHyLi_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/ici3X_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/itPjw_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/jRRn7_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/kAU3M_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/mY77v_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/mmkub_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/n9VGY_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/ntzWP_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/o6hSx_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/p2SCG_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/pF9Lf_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/pcmZh_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/q99wL_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/qEhcY_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/qKPbd_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/quWg6_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/tDy84_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/tnZej_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/u7n6S_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/uGXB1_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/vYcLX_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/vioBU_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/wGH3y_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/wHav1_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/wVWHG_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/y1SGT_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/buyers/yQXUy_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/manufacturers/kD5Rt_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/manufacturers/r22rv_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/market/__main___log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/logs/market/__main___log.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/1tzGt_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/3AoRq_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/3N6Mr_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/4Er5V_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/6CJPK_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/6MASh_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/6hT1d_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/6iUW4_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/6wxB2_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/7ACTT_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/7DerK_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/7j9HB_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/7wZpQ_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/81Mny_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/8k5P8_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/8qqMb_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/93nFm_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/9BP4B_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/9RzuC_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/ATziM_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/B1tKR_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/C2pN9_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/C7Gw8_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/ChifP_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/DfMJ7_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/DvPL1_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/Dyhbz_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/E6Ytj_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/G4TUi_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/GQEXP_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/HDdqF_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/KazpH_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/KonGQ_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/LZYXJ_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/Mqvpm_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/P9Bf7_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/PMRDM_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/Q1P3q_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/QCZMt_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/QTdXS_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/QuQfK_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/SEDoQ_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/T4ury_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/U3fCk_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/UVDJg_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/UkAtY_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/Vp7XM_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/X3HEb_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/YSf99_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/Z7FXB_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/bGqwY_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/cD4tv_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/d8jMU_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/dLiEy_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/dRrJ6_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/dUZ5v_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/eFMkY_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/eL2CX_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/embp6_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/fajiL_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/i2drk_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/jdHTz_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/kVpmk_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/kx8Sn_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/mJigM_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/mzfyr_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/nHrHM_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/nJkgg_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/nN5jH_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/neRFx_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/ocoYV_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/p6NsW_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/q4Z8N_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/s1RgE_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/sCYH5_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/sDNwU_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/uKgXo_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/ue8Jk_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/ueEjN_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/uuTwh_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/vfhgw_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/xdr5U_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/xrTE4_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/y1TTQ_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/yajMf_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/yxawZ_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/persons/zHG6j_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/sellers/18evY_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/sellers/HrLL9_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/sellers/Vj8kJ_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/sellers/VsopA_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/sellers/dwAKt_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/sellers/hcCrP_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/sellers/qVsfQ_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/sellers/w4rDe_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/2anTN_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/2qbXG_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/3mR5x_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/4EEFm_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/4KEeV_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/4VmAm_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/5EBx9_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/63ava_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/6QYkb_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/6ToRZ_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/6keYh_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/6mzqi_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/7fL9U_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/9FxQw_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/CtbVv_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/DJfKL_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/EYtpd_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/EgP7k_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/EnHSP_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/EzSAP_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/F2LT3_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/FjaeD_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/Fot7i_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/FzpzK_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/GTzrS_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/Jim9z_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/K75My_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/KMVWa_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/L8p2V_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/LLCvq_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/LXcgT_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/N8WVo_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/NFkCB_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/NstaW_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/PKhtT_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/Q5iwg_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/Qcyof_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/R6GkM_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/RpECZ_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/RyVVc_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/SFQ1m_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/STe3f_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/ShUdZ_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/TZCpK_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/Uy1T7_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/V6emV_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/V95rp_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/VBvqc_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/W1J32_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/WgT97_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/Wit3r_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/WyXpx_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/XK8eH_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/XNxYd_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/XTZ7h_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/aXk1Q_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/avm2m_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/ayeWA_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/bi5TL_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/boEAp_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/cXTXU_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/cjSzr_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/cysGr_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/d4ASY_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/d95Vw_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/eUmgB_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/egxr5_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/emS8j_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/ez8Rc_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/fj13S_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/hmQf6_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/i5GoY_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/i9SfQ_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/jFXc2_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/jQ1Le_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/k2pFk_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/kQWrT_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/mWv8A_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/ntovV_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/qbau8_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/qhoTH_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/r3bSK_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/ryQwZ_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/rz6N5_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/s7d1v_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/sj3xZ_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/tyu6C_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/u8GRM_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/uWSs1_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/uYP8w_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/viKSN_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/w1TVr_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/w8AFB_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/xFWwE_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/xhpu4_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/xsah7_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/yHH9q_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/workers/yUHzA_log.txt" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Rebase.Settings">
+    <option name="NEW_BASE" value="main" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
+    <option name="RECENT_COMMON_BRANCH" value="main" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="ROOT_SYNC" value="SYNC" />
+    <option name="SWAP_SIDES_IN_COMPARE_BRANCHES" value="true" />
+    <option name="UPDATE_TYPE" value="REBASE" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/main.py" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
+  <component name="ProjectId" id="2b7XNDgRnLwXQDvujPCIEtIptMA" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.main.executor": "Run",
+    "Python.person.executor": "Run",
+    "Python.seller_nn_model.executor": "Run",
+    "Python.test.executor": "Run",
+    "Python.test2.executor": "Run",
+    "Python.utils.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "D:/projects/market-simulation",
+    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings"
+  }
+}]]></component>
+  <component name="RunManager" selected="Python.main">
+    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="market-simulation" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="person" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="market-simulation" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/objects" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/objects/person.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="seller_nn_model" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="market-simulation" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/seller_nn_model.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="market-simulation" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="test2" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="market-simulation" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test2.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.main" />
+        <item itemvalue="Python.test" />
+        <item itemvalue="Python.test2" />
+        <item itemvalue="Python.person" />
+        <item itemvalue="Python.seller_nn_model" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-50da183f06c8-d3b881c8e49f-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-233.13135.95" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="95fc6191-61ee-428c-9f33-6b8fc82cc0cc" name="Changes" comment="" />
+      <created>1705567049160</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1705567049160</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <default-breakpoints>
+        <breakpoint type="python-exception">
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
