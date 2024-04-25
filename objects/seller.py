@@ -41,7 +41,7 @@ class BaseSeller:
         self.brains = {'product': LinearRegression(), 'amount': PoissonRegressor()}
 
     def __str__(self):
-        return f'Seller(budget={self.budget}, overprices={np.round(list(self.overprices.values()), 2)}, prices={np.round(list(self.prices.values()), 2)}, amounts={list(self.amounts.values())}, local_ask={list(self.local_ask.values())}, memory_income={list(map(lambda x: np.round(x[-3:], 2), list(self.memory_incomes.values())))}, store={list(self.store.food.values())}'
+        return f'Seller(budget={self.budget}, qualities={np.round(list(self.qualities.values()), 2)}, overprices={np.round(list(self.overprices.values()), 2)}, prices={np.round(list(self.prices.values()), 2)}, amounts={list(self.amounts.values())}, local_ask={list(self.local_ask.values())}, memory_income={list(map(lambda x: np.round(x[-3:], 2), list(self.memory_incomes.values())))}, store={list(self.store.food.values())}'
 
     def __getattr__(self, name):
         return getattr(self.as_person, name)
@@ -67,6 +67,7 @@ class BaseSeller:
         adding_point = self.memory_estimate_product[product][-1][:self.n_product_params]
         x = np.array(self.memory_estimate_product[product])
         y = np.array(self.memory_incomes[product])[-len(x):]
+
         if len(self.memory_estimate_product[product]) >= 60:
             last_memory_x = x[-5:]
             last_memory_y = y[-5:]
@@ -77,7 +78,7 @@ class BaseSeller:
         # Pick a random point with some help of knowing the global market info
         changes = rd.randint(0, 10 + self.days // 10)
         if changes >= (4 + self.days // 10):
-            for i in range(self.n_product_params - 1):  # three parameters (quality, overprice)
+            for i in range(self.n_product_params):  # three parameters (quality, overprice)
                 adding_point[i] = round(adding_point[i] * (1 + rd.uniform(-0.05, 0.05)), 2)
             self.qualities[product] = float(np.clip(adding_point[0], 0.05, 1))
             self.overprices[product] = float(np.clip(adding_point[1], 0.05, 10000000))
@@ -97,11 +98,9 @@ class BaseSeller:
             z_adding = z_adding * assign_numbers(slope)
 
             adding_point = adding_point + z_adding
-            adding_point[0] = np.clip(adding_point[0], 0.05, 1)  # quality
-            adding_point[1] = np.clip(adding_point[1], 0.05, 10000000)  # overprice
 
-            self.qualities[product] = float(adding_point[0])
-            self.overprices[product] = float(adding_point[1])
+            self.qualities[product] = float(np.clip(adding_point[0], 0.05, 1))
+            self.overprices[product] = float(np.clip(adding_point[1], 0.05, 10000000))
 
     def train_amount_brains(self, product):
         x = np.array(self.memory_estimate_amount[product])
@@ -189,7 +188,7 @@ class Seller(BaseSeller):
 
     def update_values(self):
         expired = self.store.update_expiration()
-        self.income = {product: round(self.income[product] - expired.get(product, 0) * self.prices[product], 3) for product in self.income}
+        self.income = {product: round(self.income[product] - expired.get(product, 0) * (self.prices[product] - self.overprices[product]), 3) for product in self.income}
         for product in self.initialized_products:
             self.memory_estimate_product[product] += [[self.qualities[product], self.overprices[product], 1 / (self.local_ask[product] + 0.25), self.local_ask[product]]]
             self.memory_estimate_amount[product] += [[self.local_ask[product], self.store[product], 1 / (self.store[product] + 0.25), 1 / (self.local_ask[product] + 0.25)]]
