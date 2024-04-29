@@ -83,7 +83,6 @@ class BaseManufacturer:
         self.workers[person.product].remove(person)
         self.num_workers[person.product] -= 1
         person.employer = None
-        del person
 
     def pay_salary(self, worker: ManufactureWorker, product, produced):
         if self.days == 1:

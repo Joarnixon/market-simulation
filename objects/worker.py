@@ -24,7 +24,7 @@ class Worker:
         self.as_person.delete_job(self)
 
     def __eq__(self, other):
-        return self.uid == other.uid
+        return (self.uid == other.uid) and (self.employer == other.employer) and (self.employer == other.employer)
 
 
 class ManufactureWorker(Worker):
@@ -37,7 +37,7 @@ class ManufactureWorker(Worker):
         self.logger = ManufactureWorker.globalLogger.get_logger(self.uid)
 
     def __eq__(self, other):
-        return (self.uid == other.uid) and (self.product == other.product)
+        return (self.uid == other.uid) and (self.product == other.product) and (self.employer == other.employer)
 
     @property
     def memory_spent(self):
@@ -97,8 +97,10 @@ class ManufactureWorker(Worker):
     def change_job(self, changing):
         self.as_person.jobs.append(changing)
         self.as_person.delete_job(self)
+        self.employer = None
 
     def quit_job(self):
+        self.employer = None
         del self
         return
 

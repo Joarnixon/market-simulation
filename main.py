@@ -160,7 +160,6 @@ class Market:
             seller_wealth[seller] = []
             for buyer in Market.buyers:
                 buyer.loyalty[seller] = 5
-
         for person in Market.persons:
             if person.manufacturer not in Market.manufacturers:
                 person.find_new_job()
@@ -206,8 +205,11 @@ class Market:
             Market.delete_seller(person.seller)
         if person.buyer is not None:
             Market.delete_buyer(person.buyer)
-        for job in list(person.jobs):
-            del job
+        for worker in list(person.jobs):
+            if worker.employer is not None:
+                worker.employer.fire(person=worker)
+            worker.as_person.delete_job(worker)
+            del worker
 
     @staticmethod
     def delete_manufacturer(manufacturer):
