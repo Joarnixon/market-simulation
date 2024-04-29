@@ -68,10 +68,10 @@ class BaseSeller:
         x = np.array(self.memory_estimate_product[product])
         y = np.array(self.memory_incomes[product])[-len(x):]
 
-        if len(self.memory_estimate_product[product]) >= 60:
-            last_memory_x = x[-5:]
-            last_memory_y = y[-5:]
-            x, y = cluster_data(x[:-5], y[:-5], num_clusters=15)
+        if len(self.memory_estimate_product[product]) >= NUM_MAX_MEMORY:
+            last_memory_x = x[-NUM_MEMORY_SAVE:]
+            last_memory_y = y[-NUM_MEMORY_SAVE:]
+            x, y = cluster_data(x[:-NUM_MEMORY_SAVE], y[:-NUM_MEMORY_SAVE], num_clusters=NUM_CLUSTERS_SELLER)
             self.memory_estimate_product[product] = np.vstack((x, last_memory_x)).tolist()
             self.memory_incomes[product] = np.hstack((y, last_memory_y)).tolist()
 
@@ -106,10 +106,10 @@ class BaseSeller:
         x = np.array(self.memory_estimate_amount[product])
         y = np.array(self.memory_amounts[product])[-len(x):]
 
-        if len(self.memory_estimate_amount[product]) >= 60:
-            last_memory_x = x[-5:]
-            last_memory_y = y[-5:]
-            x, y = cluster_data(x[:-5], y[:-5], num_clusters=15)
+        if len(self.memory_estimate_amount[product]) >= NUM_MAX_MEMORY:
+            last_memory_x = x[-NUM_MEMORY_SAVE:]
+            last_memory_y = y[-NUM_MEMORY_SAVE:]
+            x, y = cluster_data(x[:-NUM_MEMORY_SAVE], y[:-NUM_MEMORY_SAVE], num_clusters=NUM_CLUSTERS_SELLER)
             self.memory_estimate_amount[product] = np.vstack((x, last_memory_x)).tolist()
             self.memory_amounts[product] = np.hstack((y, last_memory_y)).tolist()
 

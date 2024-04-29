@@ -356,7 +356,7 @@ class Market:
                     if total_market_amount_product == 0:
                         y_axis[product] += [0]
                     else:
-                        y_axis[product] += [sum(seller.memory_amounts[product][-1] * seller.prices[product] for seller in Market.sellers if len(seller.memory_amounts[product]) != 0) / total_market_amount_product]
+                        y_axis[product] += [sum(seller.memory_amounts[product][-1] * seller.overprices[product] for seller in Market.sellers if len(seller.memory_amounts[product]) != 0) / total_market_amount_product]
                 else:
                     y_axis[product] += [y_axis[product][-1]]
                 Buyer.product_prices[product] = []
@@ -365,9 +365,9 @@ class Market:
                 volatility_index[product] = np.clip(abs((bid[product][-1]-ask[product][-1]))//(Market.buyers_count//5), np.clip(Market.buyers_count//(10*Market.sellers_count), 1, 2), 2)
 
             Market.buyers_money += [np.median([buyer.budget for buyer in Market.buyers])]
-            Market.buyers_satisfaction += [np.median([buyer.satisfaction for buyer in Market.buyers])]
+            Market.buyers_satisfaction += [np.median([person.satisfaction for person in Market.persons])]
             Market.buyers_count_list += [Market.buyers_count]
-            Market.buyers_starvation += [np.mean(Buyer.starvation_index)]
+            Market.buyers_starvation += [np.median(Buyer.starvation_index)]
             Buyer.starvation_index = []
             Market.unemployed = sum([person.jobs == [] for person in Market.persons]) - Market.manufacturers_count
             jobbers = np.array([len([job for job in person.jobs if job.employer is not None]) for person in Market.persons])

@@ -134,10 +134,10 @@ class BaseManufacturer:
             adding_point = x[-1][:num_changing]
             model = self.brains['salary']
 
-            if len(target) >= 60:
-                last_memory_x = x[-5:]
-                last_memory_y = y[-5:]
-                x, y = cluster_data(x[:-5], y[:-5], num_clusters=15)
+            if len(target) >= NUM_MAX_MEMORY:
+                last_memory_x = x[-NUM_MEMORY_SAVE:]
+                last_memory_y = y[-NUM_MEMORY_SAVE:]
+                x, y = cluster_data(x[:-NUM_MEMORY_SAVE], y[:-NUM_MEMORY_SAVE], num_clusters=NUM_CLUSTERS_MANUFACTURER)
 
                 for j, product in enumerate(memory):
                     memory[product] = np.vstack((x, last_memory_x))[:, j].tolist()
@@ -167,10 +167,10 @@ class BaseManufacturer:
             adding_point = x[-1]
             model = self.brains['technology']
 
-            if len(y) >= 60:
-                last_memory_x = x[-5:]
-                last_memory_y = y[-5:]
-                x, y = cluster_data(x[:-5], y[:-5], num_clusters=15)
+            if len(y) >= NUM_MAX_MEMORY:
+                last_memory_x = x[-NUM_MEMORY_SAVE:]
+                last_memory_y = y[-NUM_MEMORY_SAVE:]
+                x, y = cluster_data(x[:-NUM_MEMORY_SAVE], y[:-NUM_MEMORY_SAVE], num_clusters=NUM_CLUSTERS_MANUFACTURER)
                 memory = np.vstack((x, last_memory_x)).tolist()
                 target = np.hstack((y, last_memory_y)).tolist()
             model.fit(x, y)
@@ -191,7 +191,6 @@ class BaseManufacturer:
                                                                                memory=self.memory_hr,
                                                                                target=self.memory_income_total_hr,
                                                                                num_changing=len(self.products)-1)
-
 
     def update_daily(self):
         self.daily_income = {product: 0 for product in self.products}
@@ -321,10 +320,10 @@ class Manufacturer(BaseManufacturer):
             adding_point = x[-1][:num_changing]
             model = self.brains['business']
 
-            if len(target) >= 60:
-                last_memory_x = x[-5:]
-                last_memory_y = y[-5:]
-                x, y = cluster_data(x[:-5], y[:-5], num_clusters=15)
+            if len(target) >= NUM_MAX_MEMORY:
+                last_memory_x = x[-NUM_MEMORY_SAVE:]
+                last_memory_y = y[-NUM_MEMORY_SAVE:]
+                x, y = cluster_data(x[:-NUM_MEMORY_SAVE], y[:-NUM_MEMORY_SAVE], num_clusters=NUM_CLUSTERS_MANUFACTURER)
                 for j, product in enumerate(memory):
                     memory[product] = np.vstack((x, last_memory_x))[:, j].tolist()
                 target = np.hstack((y, last_memory_y)).flatten().tolist()
