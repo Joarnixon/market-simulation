@@ -100,7 +100,8 @@ class BaseManufacturer:
                     salary_scale = c * (self.salary[product]) / sum([self.salary[product] for product in self.salary if self.daily_produced[product] != 0])
                 else:
                     salary_scale = self.salary[product] / sum([self.salary[product] for product in self.salary])
-                money = (3/4) * salary_scale * produced * self.wage_rate[product]
+                total_scaling = np.mean(list(self.salary.values())) / MANUFACTURER_SALARY_UP_CONSTANT
+                money = (0.25 + total_scaling) * salary_scale * produced * self.wage_rate[product]
 
         money = round(money, 2)
         worker.salary = money

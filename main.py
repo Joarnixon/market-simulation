@@ -402,7 +402,7 @@ class Market:
             axs1[1, d].plot(x_axis2, demand[product], color="r")
             axs1[1, d].plot(x_axis2, bid[product], color="b")
             axs1[1, d].plot(x_axis2, ask[product], color="y")
-            axs1[0, d].set_title(Market.product_names[d])
+            axs1[0, d].set_title('Overprice:' + Market.product_names[d])
             axs1[1, d].set_title(Market.product_names[d] + " r - Ask/b - Bid")
         #plt.show()
 

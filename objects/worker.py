@@ -4,6 +4,7 @@ import random as rd
 import numpy as np
 from other.utils import generate_id
 from other.logs import Logger
+from settings.constants import MANUFACTURER_SALARY_UP_CONSTANT
 
 
 def set_id():
@@ -126,7 +127,7 @@ class ManufactureWorker(Worker):
             a = (0.6 - self.job_satisfied) * 1000
             b = (manufactory.wage_rate[job] / job.complexity - self.employer.wage_rate[
                 self.product] / self.product.complexity) * 1000
-            c = (manufactory.salary[job] / sum(manufactory.salary.values()) - self.employer.salary[self.product] / sum(self.employer.salary.values())) * 5000
+            c = (np.mean(list(manufactory.salary.values())) * manufactory.salary[job] / sum(manufactory.salary.values()) - np.mean(list(self.employer.salary.values())) * self.employer.salary[self.product] / sum(self.employer.salary.values())) * 10000 / MANUFACTURER_SALARY_UP_CONSTANT
             d = (50 - self.as_person.plainness) * 4
         else:
             a = manufactory.wage_rate[job] / job.complexity * 500
