@@ -7,6 +7,7 @@ from objects.storage import Inventory
 from settings.constants import REQUIRES, AGING, MANUFACTURER_SALARY_UP_CONSTANT, MANUFACTURER_SALARY_LOW_CONSTANT
 from other.utils import generate_name, generate_id
 from other.logs import Logger
+from other.npc_generator_utils import npc_generator
 from dataclasses import dataclass, field
 from functools import cache
 import numpy as np
