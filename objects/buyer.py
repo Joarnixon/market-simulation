@@ -68,12 +68,14 @@ class BaseBuyer:
         # TODO: change to suit manufacturer
         return float(amount * np.round((np.sum(self.memory_salary[-2:]) / 2 - price) * (
                 1 + 1.25 * (quality - self.needs) * np.sign(
-            np.sum(self.memory_salary[-2:]) / 2 - price)) ** 2 * product.satisfaction_bonus, 3))
+            np.sum(self.memory_salary[-2:]) / 2 - price)) ** 2 * product.satisfaction_bonus * self.get_fed_up_bonus(product), 3))
 
     def get_fed_up_bonus(self, product):
+        if product not in self.fed_up:
+            return 2
         mean_fed = np.mean(list(self.fed_up.values()))
         max_fed = np.max(list(self.fed_up.values()))
-        return 1 + (self.fed_up[product] - mean_fed) / (max_fed - mean_fed) / 2
+        return 1 + (mean_fed - self.fed_up[product]) / (max_fed - mean_fed + 1) / 2
 
     def buy(self, seller: Seller, product: Union[dict, Products], amount: Union[dict, int], satisfactions: dict):
         if isinstance(amount, int):
@@ -319,9 +321,9 @@ class Buyer(BaseBuyer):
 
         def final_decision(seller: Seller, product: Products, availables, amount: int, satisfactions: dict):
             if rd.randint(0, 120) <= self.loyalty[seller]:
-                threshold = 1 - (self.plainness + self.loyalty[seller]) / 1500
+                threshold = 1 - (self.characteristics.get('plainness') * 100 + self.loyalty[seller]) / 1500
             else:
-                threshold = 1 + (0.2 + (120 - self.loyalty[seller]) / 1000 - self.plainness / 1000)
+                threshold = 1 + (0.2 + (120 - self.loyalty[seller]) / 1000 - 100 * self.characteristics.get('plainness') / 1000)
 
             if self.estimated_stf[product] < 0:
                 threshold = (1 - threshold) + 1
@@ -497,7 +499,7 @@ class Buyer(BaseBuyer):
             if visited == 3:
                 return True
 
-            if rd.randint(0, 400) > 2 * np.mean(list(self.loyalty.values())) + self.plainness:
+            if rd.randint(0, 400) > 2 * np.mean(list(self.loyalty.values())) + 100 * self.characteristics.get('plainness'):
                 if visit(available, list_of_products, precise_visit_else):
                     return True
             else:

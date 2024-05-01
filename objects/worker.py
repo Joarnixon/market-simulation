@@ -4,7 +4,8 @@ import random as rd
 import numpy as np
 from other.utils import generate_id
 from other.logs import Logger
-from settings.constants import MANUFACTURER_SALARY_UP_CONSTANT
+from math import pow
+from settings.constants import MANUFACTURER_SALARY_UP_CONSTANT, MANUFACTURER_SALARY_LOW_CONSTANT
 
 
 def set_id():
@@ -26,6 +27,9 @@ class Worker:
 
     def __eq__(self, other):
         return (self.uid == other.uid) and (self.employer == other.employer) and (self.employer == other.employer)
+
+    def __getattr__(self, name):
+        return getattr(self.as_person, name)
 
 
 class ManufactureWorker(Worker):
@@ -58,7 +62,7 @@ class ManufactureWorker(Worker):
 
     @property
     def workaholic(self):
-        return self.as_person.workaholic
+        return self.as_person.characteristics.get('workaholic')
 
     @property
     def budget(self):
@@ -75,13 +79,10 @@ class ManufactureWorker(Worker):
         available_manufacturers = {}
         for manufacturer in [manufacturer for manufacturer in market_ref.manufacturers]:
             best_production = None
-            best_score = -10000000 if not changing else self.score_manufacture(self.employer, self.product)
-            for product in [product for product in manufacturer.products if manufacturer != self.employer or product != self.product]:
-                # example
-                # score = (manufacturer.working_hours - 8) * self.workaholic * manufacturer.salary
+            best_score = -10000000 if not changing else self.score_manufacture(self.employer, self.product) + self.characteristics.get('plainness') / 2
+            for product in [product for product in manufacturer.products if manufacturer != self.employer or product != self.product and manufacturer.number_of_vacancies[product] - manufacturer.num_workers[product] > 0]:
                 score = self.score_manufacture(manufacturer, product)
-                if score > best_score and manufacturer.number_of_vacancies[product] - manufacturer.num_workers[
-                    product] > 0:
+                if score > best_score:
                     best_score = score
                     best_production = product
             if best_production is not None:
@@ -122,19 +123,40 @@ class ManufactureWorker(Worker):
         return {
         }
 
+    # def score_manufacture(self, manufactory, job):
+    #     if self.employer != manufactory and self.employer is not None:
+    #         a = (0.6 - self.job_satisfied) * 1000
+    #         b = (manufactory.wage_rate[job] / job.complexity - self.employer.wage_rate[
+    #             self.product] / self.product.complexity) * 1000
+    #         c = (np.mean(list(manufactory.salary.values())) * manufactory.salary[job] / sum(manufactory.salary.values()) - np.mean(list(self.employer.salary.values())) * self.employer.salary[self.product] / sum(self.employer.salary.values())) * 10000 / MANUFACTURER_SALARY_UP_CONSTANT
+    #         d = (50 - 100 * self.characteristics.get('plainness')) * 4
+    #     else:
+    #         a = manufactory.wage_rate[job] / job.complexity * 500
+    #         b = manufactory.salary[job] * 10
+    #         c = (self.job_satisfied - 1) * 1000
+    #         d = 0
+    #     return a + b + c + d
+
     def score_manufacture(self, manufactory, job):
-        if self.employer != manufactory and self.employer is not None:
-            a = (0.6 - self.job_satisfied) * 1000
-            b = (manufactory.wage_rate[job] / job.complexity - self.employer.wage_rate[
-                self.product] / self.product.complexity) * 1000
-            c = (np.mean(list(manufactory.salary.values())) * manufactory.salary[job] / sum(manufactory.salary.values()) - np.mean(list(self.employer.salary.values())) * self.employer.salary[self.product] / sum(self.employer.salary.values())) * 10000 / MANUFACTURER_SALARY_UP_CONSTANT
-            d = (50 - self.as_person.plainness) * 4
-        else:
-            a = manufactory.wage_rate[job] / job.complexity * 500
-            b = manufactory.salary[job] * 10
-            c = (self.job_satisfied - 1) * 1000
-            d = 0
-        return a + b + c + d
+        def normalize(value, min_val, max_val):
+            return (value - min_val) / (max_val - min_val)
+
+        def sigmoid(value):
+            return 2 / (1 + pow(2, -value)) - 1
+
+        min_salary = np.mean(np.sqrt(list(manufactory.salary.values()))) * MANUFACTURER_SALARY_LOW_CONSTANT / sum(manufactory.salary.values())
+        max_salary = np.mean(np.sqrt(list(manufactory.salary.values()))) * MANUFACTURER_SALARY_UP_CONSTANT / sum(manufactory.salary.values())
+
+        a = sigmoid(manufactory.wage_rate[job] / job.complexity / job.first_price)
+        b = normalize(np.mean(np.sqrt(list(manufactory.salary.values()))) * manufactory.salary[job] / sum(manufactory.salary.values()), min_salary, max_salary)
+        # c = normalize(self.job_satisfied, 0, 1)
+        # d = normalize(50 - 100 * self.characteristics.get('plainness'), 0, 50)
+
+        a_weight = 1
+        b_weight = 2
+
+        score = a_weight * a + b_weight * b
+        return score
 
     def job_satisfaction(self):
         if self.workaholic > 0.5:

@@ -48,7 +48,7 @@ class BaseSeller:
 
     @property
     def greed(self):
-        return self.as_person.greed
+        return self.as_person.characteristics.get('greed')
 
     @property
     def budget(self):
@@ -120,13 +120,16 @@ class BaseSeller:
     def get_amounts(self, product):
         # if (self.from_start and self.days == 5) or (not self.from_start and self.days == 12):
         #     return self.local_ask[product]
-        if rd.randint(0, 10 + self.days // 10) >= (6 + self.days // 10):
-            guess_amounts = max(0, int((self.memory_estimate_product[product][-1][-1] + 1 / (self.memory_estimate_product[product][-1][-1] + 0.5)) * (1 + rd.random() / 4)))
+        if rd.randint(0, 10 + self.days // 10) >= (3 + self.days // 10):
+            guess_amounts = max(0, int((self.memory_estimate_amount[product][-1][0] + 1 / (
+                        self.memory_estimate_amount[product][-1][0] + 0.5)) * (1 + rd.random() / 4)))
         else:
-            guess_amounts = max(0, self.brains['amount'].predict(self.amounts_scaler.transform([self.memory_estimate_amount[product][-1]]))[0])
+            guess_amounts = max(0, self.brains['amount'].predict(
+                self.amounts_scaler.transform([self.memory_estimate_amount[product][-1]]))[0])
             border = self.memory_amounts[product][-1] + 1 / (self.memory_amounts[product][-1] + 0.5)
             border_percentile = (self.memory_amounts[product][-1] + 10) / (3 * (self.memory_amounts[product][-1] + 0.2))
-            guess_amounts = int(np.clip(guess_amounts, border * (1 - border_percentile), border * (1 + border_percentile)))
+            guess_amounts = int(
+                np.clip(guess_amounts, border * (1 - border_percentile), border * (1 + border_percentile)))
         self.amounts[product] = guess_amounts
         return guess_amounts
 
@@ -190,8 +193,8 @@ class Seller(BaseSeller):
         expired = self.store.update_expiration()
         self.income = {product: round(self.income[product] - expired.get(product, 0) * (self.prices[product] - self.overprices[product]), 3) for product in self.income}
         for product in self.initialized_products:
-            self.memory_estimate_product[product] += [[self.qualities[product], self.overprices[product], 1 / (self.local_ask[product] + 0.25), self.local_ask[product]]]
-            self.memory_estimate_amount[product] += [[self.local_ask[product], self.store[product], 1 / (self.store[product] + 0.25), 1 / (self.local_ask[product] + 0.25)]]
+            self.memory_estimate_product[product] += [[self.qualities[product], self.overprices[product], 1 / (self.local_ask[product] + 0.1)]]
+            self.memory_estimate_amount[product] += [[self.local_ask[product], self.store[product], 1 / (self.store[product] + 0.1), 1 / (self.local_ask[product] + 0.1)]]
             self.memory_incomes[product] += [self.income[product]]
             self.memory_amounts[product] += [self.amounts[product]]
 

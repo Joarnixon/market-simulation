@@ -36,8 +36,8 @@ class BaseManufacturer:
         self.memory_income: list = []
         self.memory_tech: list = []
         self.memory_income_total_hr: list = []
-        self.brains = {'salary': LinearRegression(), 'technology_param': LinearRegression()}
-
+        self.memory_income_total_tech: list = []
+        self.brains = {'salary': LinearRegression(), 'technology': LinearRegression()}
         self.forcheck_n = {}
 
     def __str__(self):
@@ -60,7 +60,7 @@ class BaseManufacturer:
         return 1 + (a_const - b_const * self.technology_param)**x / c_const
 
     def get_price(self, product: Products, quality: float):
-        return PRODUCT_FIRST_PRICE[product.name] * self.technology(quality)
+        return product.first_price * self.technology(quality)
 
     def hire(self, worker: ManufactureWorker, job, resume=None, desired_vacancy=None):
         specific_worker = assignClass(job)(worker_data=worker.get_base_data())
@@ -100,8 +100,8 @@ class BaseManufacturer:
                     salary_scale = c * (self.salary[product]) / sum([self.salary[product] for product in self.salary if self.daily_produced[product] != 0])
                 else:
                     salary_scale = self.salary[product] / sum([self.salary[product] for product in self.salary])
-                total_scaling = np.mean(list(self.salary.values())) / MANUFACTURER_SALARY_UP_CONSTANT
-                money = (0.25 + total_scaling) * salary_scale * produced * self.wage_rate[product]
+                total_scaling = np.mean(np.sqrt(list(self.salary.values()))) / np.sqrt(MANUFACTURER_SALARY_UP_CONSTANT)
+                money = total_scaling * salary_scale * produced * (abs(self.wage_rate[product]) + self.wage_rate[product]) / 2
 
         money = round(money, 2)
         worker.salary = money
@@ -158,12 +158,13 @@ class BaseManufacturer:
                                             MANUFACTURER_SALARY_UP_CONSTANT)
             return memory, target
 
-    def estimate_technology(self, memory: float = None, target: float = None, random: bool = True):
+    def estimate_technology(self, memory: list = None, target: list = None, random: bool = True):
         if random:
             self.technology_param = np.clip(self.technology_param + rd.uniform(-0.05, 0.05), 0, 1)
         else:
             x = np.array(memory).reshape(1, -1)
-            y = np.array(target)
+            y = np.array(target)[-len(x):]
+            x = x[-len(y):]
 
             adding_point = x[-1]
             model = self.brains['technology']
@@ -202,6 +203,7 @@ class BaseManufacturer:
             self.memory_hr[product] += [self.salary[product]]
         self.memory_income_total_hr += [sum(self.daily_income[product] / self.daily_produced[product] for product in self.products if self.daily_produced[product] != 0)]
         self.memory_tech += [self.technology_param]
+        self.memory_income_total_tech += [sum([self.daily_income[product] for product in self.daily_income])]
         self.memory_hr['produced'] += [sum(self.daily_produced.values())]
         self.memory_income += [sum([self.daily_income[product] for product in self.daily_income])]
         self.daily_income_before = {product: self.daily_income[product] for product in self.daily_income}
@@ -244,7 +246,6 @@ class Manufacturer(BaseManufacturer):
         self.brains['business'] = LinearRegression()
         self.memory_income_in = []
         self.memory_income_out = []
-        self.memory_income_total_hr = []
         self.memory_income_total_business = []
         self.hr_changing_params = len(self.salary)
         self.business_changing_params = len(self.number_of_vacancies) + 1
@@ -254,7 +255,7 @@ class Manufacturer(BaseManufacturer):
         return f'Manufacturer(name={self.as_person.name}, budget={round(self.budget, 2)}, payed={np.round(list(self.payed.values()), 2)}, income={np.round(list(self.daily_income_before.values()), 2)}, salary={np.round(list(self.salary.values()), 2)}, n_workers={list(self.num_workers.values())}, wage={np.round(list(self.wage_rate.values()), 2)}, technology={round(self.technology_param, 2)}, storage={np.round(list(self.storage.values()), 2)})'
 
     def get_price_out(self, product):
-        return 2.5 * PRODUCT_FIRST_PRICE[product.name]
+        return self.market_ref.sell_out_prices[product]
 
     def hire(self, worker: ManufactureWorker, job=None, resume=None, desired_vacancy=None):
         if job is not None:
@@ -294,7 +295,7 @@ class Manufacturer(BaseManufacturer):
 
     def make_production(self, worker: ManufactureWorker, product, hours):
         produced = super().make_production(worker, product, hours)
-        self.daily_income_in[product] -= PRODUCT_FIRST_PRICE[product.name] * self.raw_material_buy * produced
+        self.daily_income_in[product] -= product.first_price * self.raw_material_buy * produced
 
     def sell(self, product, amount, quality):
         k = super().sell(product, amount, quality)
@@ -344,7 +345,7 @@ class Manufacturer(BaseManufacturer):
         if changes >= (4 + self.days // 10):
             self.estimate_salary(changing=self.salary, random=True)
             self.estimate_business(changing=self.number_of_vacancies, random=True, unemployed=unemployed)
-            self.estimate_technology()
+            self.estimate_technology(random=True)
         else:
             self.memory_hr, self.memory_income_total_hr = self.estimate_salary(changing=self.salary, random=False,
                                                                                memory=self.memory_hr,
@@ -356,6 +357,9 @@ class Manufacturer(BaseManufacturer):
                                                                                              target=self.memory_income_total_business,
                                                                                              num_changing=self.business_changing_params,
                                                                                              unemployed=unemployed)
+            self.memory_tech, self.memory_income_total_tech = self.estimate_technology(random=False,
+                                                                                       memory=self.memory_tech,
+                                                                                       target=self.memory_income_total_tech)
 
     def update_daily(self):
         super().update_daily()
@@ -373,6 +377,7 @@ class Manufacturer(BaseManufacturer):
         self.memory_income_in += [sum(self.daily_income_in.values())]
         self.memory_income_out += [sum(self.daily_income_out.values())]
         self.memory_income_total_business += [self.memory_income_in[-1] + self.memory_income_out[-1]]
+        self.memory_income_total_tech[-1] = [sum((self.daily_income_in[product] + self.daily_income_out[product]) / self.daily_produced[product] for product in self.products if self.daily_produced[product] != 0)]
         self.memory_income[-1] = self.memory_income_in[-1] + self.memory_income_out[-1]
         self.memory_business['unemployed'] += [unemployed]
         self.daily_income_before = {product: self.daily_income_in[product] + self.daily_income_out[product] for product

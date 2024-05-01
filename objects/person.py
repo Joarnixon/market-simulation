@@ -7,7 +7,7 @@ from objects.storage import Inventory
 from settings.constants import REQUIRES, AGING, MANUFACTURER_SALARY_UP_CONSTANT, MANUFACTURER_SALARY_LOW_CONSTANT
 from other.utils import generate_name, generate_id
 from other.logs import Logger
-from other.npc_generator_utils import npc_generator
+from other.npc_generator_utils import characteristics_generator, CharacteristicArray
 from dataclasses import dataclass, field
 from functools import cache
 import numpy as np
@@ -17,18 +17,6 @@ from typing import Any
 
 def set_id():
     return generate_id()
-
-
-def set_workaholic() -> float:
-    return rd.uniform(0.1, 1)
-
-
-def set_plainness() -> int:
-    return rd.randint(0, 100)
-
-
-def set_greed() -> float:
-    return rd.uniform(0.2, 0.5)
 
 
 def set_age() -> int:
@@ -50,8 +38,6 @@ def set_fed_up() -> dict:
 def set_birth_threshold() -> int:
     return 25 + rd.randint(-10, 15)
 
-
-# TODO: update this somehow through buyer
 
 def set_memory_salary() -> list:
     return []
@@ -88,15 +74,13 @@ class BasePerson:
     birth_threshold: int = field(default_factory=set_birth_threshold)
     birth: int = field(default_factory=set_birth)
     age: int = field(default_factory=set_age)
-    plainness: int = field(default_factory=set_plainness)
-    workaholic: float = field(default_factory=set_workaholic)
-    greed: float = field(default_factory=set_greed)
+    characteristics: CharacteristicArray = field(default_factory=characteristics_generator)
 
     def __del__(self):
         self.market_ref.delete_person(self)
 
     def __str__(self):
-        return f'Person(name={self.name}, budget={round(self.budget, 2)}, starvation={self.starvation}, age={self.age}, satisfaction={round(self.satisfaction, 2)}, jobs={[str(job) for job in self.jobs]}, memory_spent={np.round(self.memory_spent[-5:], 2)}, memory_salary={np.round(self.memory_salary[-5:], 2)}, birth={self.birth}, workaholic={round(self.workaholic, 2)}, needs={self.needs}'
+        return f'Person(name={self.name}, budget={round(self.budget, 2)}, starvation={self.starvation}, age={self.age}, satisfaction={round(self.satisfaction, 2)}, jobs={[str(job) for job in self.jobs]}, memory_spent={np.round(self.memory_spent[-5:], 2)}, memory_salary={np.round(self.memory_salary[-5:], 2)}, birth={self.birth}, workaholic={round(self.characteristics.get("workaholic"), 2)}, needs={self.needs}, characteristics={self.characteristics}'
 
     def __eq__(self, other):
         return self.uid == other.uid
@@ -138,7 +122,6 @@ class BasePerson:
         self.memory_salary += [self.day_salary]
 
     def update_day_values(self):
-        # TODO: not updating right now
         self.alive += 1
         self.day_saturation = 0
         self.day_satisfaction = 0
@@ -172,7 +155,6 @@ class BasePerson:
                 if self.budget >= 3 * sum(self.memory_salary[-5:]) / 5 * (1 + self.needs):
                     self.birth_new()
 
-    # TODO: remake the mistake
     def birth_new(self):
         self.budget -= 2 * sum(self.memory_salary[-5:]) / 5 * (1 + self.needs)
         self.starvation = 4000
@@ -182,9 +164,7 @@ class BasePerson:
             'name': generate_name(),
             'market_ref': self.market_ref,
             'generation': self.generation + 1,
-            'workaholic': self.workaholic,
-            'greed': self.greed,
-            'plainness': self.plainness
+            'characteristics': np.clip(self.characteristics * (1.5 + np.random.random(size=len(self.characteristics))) / 2, 0, 1)
         })
 
     def try_become_seller(self, ask, demand, bid, best_offers, estimated):
@@ -201,7 +181,7 @@ class BasePerson:
 
     def become_seller(self, best_offers, estimated, ask):
         print('BECOMING SELLERRRRR')
-        self.budget = sum(self.memory_salary[-5:]) / 5 * 3
+        self.budget -= 50 * (2 / 3 + self.needs) ** 4 / 2
         self.ambition = 0
         guess = {}
         prices = {}
@@ -210,7 +190,7 @@ class BasePerson:
                 biggest_seller = self.market_ref.find_biggest_seller(product)
                 if biggest_seller is not None:
                     quality = biggest_seller.qualities[product] * 0.5
-                    price = biggest_seller.prices[product] * 0.5
+                    price = biggest_seller.overprices[product] * 0.2
                 else:
                     quality = 0.5
                     price = self.market_ref.product_first_price[product] / 5
@@ -231,7 +211,7 @@ class BasePerson:
 
     # TODO: надо доделать этот метод
     def try_become_manufacturer(self, ask):
-        if self.budget >= 500 * (1 + self.greed):
+        if self.budget >= 500 * (1 + self.characteristics.get('greed')):
             if self.ambition >= 70:
                 if (sum(sum(ask[product][-5:])/5 for product in ask) / len(ask) / self.market_ref.buyers_count > 0.5 or
                         sum([person.job_satisfied for person in rd.sample(self.market_ref.persons,
@@ -254,7 +234,7 @@ class BasePerson:
             'salary': salaries,
             'technology_param': 0
         })
-        self.budget -= 500 * (1 + self.greed)
+        self.budget -= 500 * (1 + self.characteristics.get('greed'))
         self.ambition = 0
         for job in self.jobs:
             del job

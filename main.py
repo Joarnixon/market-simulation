@@ -50,6 +50,7 @@ seller_wealth = {}
 # TODO: buy for now but loss of loyalty
 # TODO: buy if it's last on the list - want to end this.
 # TODO: buy if there is a lot of product of this type.
+# TODO: impulsive buys even if not in plan
 
 # noinspection PyShadowingNames
 class Market:
@@ -67,6 +68,7 @@ class Market:
     manufacturers = []
     persons = []
     products = []
+    sell_out_prices = {}
     unemployed = 0
     manufacturer_names = MANUFACTURER_NAMES
     product_names = PRODUCT_NAMES
@@ -93,17 +95,20 @@ class Market:
     manufacturer_salary_low_constant = MANUFACTURER_SALARY_LOW_CONSTANT
     manufacturer_salary_up_constant = MANUFACTURER_SALARY_UP_CONSTANT
     total_complexity = float(sum(1 / np.array(product_complexities)))
-    total_prices = sum(list(product_first_price.values()))
+    total_prices = sum(product_first_price)
     globalLogger = Logger('logs/market')
     logger = globalLogger.get_logger(__name__)
 
     def __init__(self):
         for s in range(Market.products_count):
-            Market.products.append(Products(name=Market.product_names[s],
-                                            calories=Market.product_calories[s],
-                                            satisfaction_bonus=Market.product_bonuses[s],
-                                            complexity=Market.product_complexities[s],
-                                            spoils=Market.product_spoils_time[s]))
+            product = Products(name=Market.product_names[s],
+                               calories=Market.product_calories[s],
+                               satisfaction_bonus=Market.product_bonuses[s],
+                               complexity=Market.product_complexities[s],
+                               spoils=Market.product_spoils_time[s],
+                               first_price=Market.product_first_price[s])
+            Market.products.append(product)
+            Market.sell_out_prices_random_walk(product)
 
         for i in range(Market.start_sellers_count):
             person_seller = Person(default_data={'name': generate_name(), 'market_ref': self}, seller_data={}, buyer_data={})
@@ -163,6 +168,14 @@ class Market:
         for person in Market.persons:
             if person.manufacturer not in Market.manufacturers:
                 person.find_new_job()
+
+    @staticmethod
+    def sell_out_prices_random_walk(product):
+        if product in Market.sell_out_prices:
+            Market.sell_out_prices[product] += rd.choice([-product.first_price/10, product.first_price/10])
+            Market.sell_out_prices[product] = np.clip(Market.sell_out_prices[product], 0, np.inf)
+        else:
+            Market.sell_out_prices[product] = product.first_price * 2.5
 
     @staticmethod
     def find_biggest_seller(product):
@@ -244,7 +257,6 @@ class Market:
         shuffle(Market.buyers)
         shuffle(Market.sellers)
         shuffle(Market.manufacturers)
-
         for manufacturer in Market.manufacturers:
             manufacturer.start()
             Market.logger.info('Manufacturer started')
@@ -271,6 +283,9 @@ class Market:
 
         for manufacturer in Market.manufacturers:
             manufacturer.summarize(Market.unemployed)
+
+        for product in Market.products:
+            Market.sell_out_prices_random_walk(product)
 
 
         def function_sequence():

@@ -1,3 +1,4 @@
+import numpy as np
 from numpy import eye, array, where, clip, corrcoef, sin, pi
 from math import sqrt
 from scipy.stats import norm
@@ -14,15 +15,40 @@ class Characteristic:
         return self.name == other
 
 
+class CharacteristicArray(np.ndarray):
+    def __new__(cls, data, names):
+        obj = np.asarray(data).view(cls)
+        return obj
+
+    def __init__(self, data, names):
+        super().__init__()
+        self.names = names
+
+    def __mul__(self, other):
+        data = super(CharacteristicArray, self).__mul__(other)
+        return data
+
+    def get(self, name: str):
+        idx = self.names.index(name)
+        return self[idx]
+
+    def __array_finalize__(self, obj):
+        if obj is None:
+            return
+        self.names = getattr(obj, 'names', None)
+
+
 class CharacteristicsGenerator:
     def __init__(self):
         self.characteristics = []
+        self.characteristics_names = []
         self.correlation_matrix = []
         self.bernoulli_adjust_poly = None
         self.bernoulli_adjust_model = None
 
-    def complete_correlation_matrix(self):
+    def complete_init(self):
         self.correlation_matrix = 2 * sin(pi/6 * array(self.correlation_matrix))
+        self.characteristics_names = [char.name for char in self.characteristics]
 
     def add_characteristic(self, characteristic):
         self.characteristics.append(characteristic)
@@ -42,12 +68,12 @@ class CharacteristicsGenerator:
         n = len(self.characteristics)
         self.correlation_matrix = eye(n)
 
-    def __call__(self, k=1):
-        chars = array(norm.cdf(multivariate_normal(mean=[0]*len(characteristics), cov=self.correlation_matrix, size=k)))
+    def __call__(self):
+        chars = array(norm.cdf(multivariate_normal(mean=[0]*len(characteristics), cov=self.correlation_matrix)))
         ind = [char.data_type == 'bernoulli' for char in self.characteristics]
         ps = array([char.p for char in self.characteristics])
-        chars[:, ind] = where(chars[:, ind] > ps[ind], 1, 0)
-        return chars
+        chars[ind] = where(chars[ind] > ps[ind], 1, 0)
+        return CharacteristicArray(chars, self.characteristics_names)
 
 
 characteristics_generator = CharacteristicsGenerator()
@@ -77,12 +103,19 @@ characteristics_correlation = [
 ]
 
 [characteristics_generator.update_correlation(*corr) for corr in characteristics_correlation]
-characteristics_generator.complete_correlation_matrix()
+characteristics_generator.complete_init()
 
 #
 # Testing
-#
-# points = characteristics_generator(k=1000000)
+# #
+# points1 = characteristics_generator()
+# points2 = characteristics_generator()
+
+# print(points1)
+# print(points2)
+# print(points1 * points2)
+# print(points1 @ characteristics_generator.correlation_matrix @ points2)
+# print(points1.get('strength'))
 # print(characteristics_generator.correlation_matrix)
 # print(where((0.1 < corrcoef(array(points).T)) + (corrcoef(array(points).T) < -0.1), corrcoef(array(points).T), 0))
 # print(points[0])
